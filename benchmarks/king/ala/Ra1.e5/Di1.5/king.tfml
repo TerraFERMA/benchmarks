@@ -1,0 +1,1043 @@
+<terraferma_options>
+  <geometry>
+    <dimension>
+      <integer_value rank="0">2</integer_value>
+    </dimension>
+    <mesh name="Mesh">
+      <source name="File">
+        <file>
+          <string_value lines="1" type="filename">square</string_value>
+        </file>
+        <cell>
+          <string_value>triangle</string_value>
+        </cell>
+      </source>
+    </mesh>
+  </geometry>
+  <io>
+    <output_base_name>
+      <string_value lines="1">rbconvection</string_value>
+    </output_base_name>
+    <visualization>
+      <element name="P2DG">
+        <family>
+          <string_value>DG</string_value>
+        </family>
+        <degree>
+          <integer_value rank="0">2</integer_value>
+        </degree>
+      </element>
+    </visualization>
+    <dump_periods>
+      <visualization_period>
+        <real_value rank="0">1.e4</real_value>
+      </visualization_period>
+      <detectors_period>
+        <real_value rank="0">1.e4</real_value>
+      </detectors_period>
+    </dump_periods>
+    <detectors>
+      <array name="Array">
+        <python>
+          <string_value lines="20" type="code" language="python">def val():
+  from numpy import arange
+  loc = [[x, 1.0] for x in arange(0.0,1.0+1./1000.,1./1000.)]
+  return loc</string_value>
+        </python>
+      </array>
+    </detectors>
+  </io>
+  <timestepping>
+    <current_time>
+      <real_value rank="0">0.0</real_value>
+    </current_time>
+    <finish_time>
+      <real_value rank="0">1.e6</real_value>
+    </finish_time>
+    <timestep>
+      <coefficient name="Timestep">
+        <ufl_symbol>
+          <string_value lines="1">dt</string_value>
+        </ufl_symbol>
+        <type name="Constant">
+          <rank name="Scalar" rank="0">
+            <value name="WholeMesh">
+              <constant>
+                <real_value rank="0">0.0</real_value>
+              </constant>
+            </value>
+          </rank>
+        </type>
+      </coefficient>
+      <adaptive>
+        <constraint name="Courant">
+          <system name="CourantNumber"/>
+          <field name="CourantNumber"/>
+          <requested_maximum_value>
+            <real_value rank="0">2.5</real_value>
+          </requested_maximum_value>
+        </constraint>
+        <increase_tolerance>
+          <real_value rank="0">1.1</real_value>
+        </increase_tolerance>
+      </adaptive>
+    </timestep>
+    <steady_state>
+      <tolerance>
+        <real_value rank="0">1.e-9</real_value>
+      </tolerance>
+    </steady_state>
+  </timestepping>
+  <global_parameters>
+    <ufl>
+      <string_value lines="20" type="code" language="python">theta = 1.0
+theta_v = 1.0
+
+dim = us.cell().d
+
+depth = 1.0 - us.cell().x[1]
+
+# define reference states
+rhobar = exp(depth*Di/gammar) # reference density
+Tbar   = Tsurf*exp(Di*depth) - Tsurf # (shifted so that full temperature goes from 0 -&gt; 1) reference temperature
+alphabar = 1.0  # reference thermal expansivity
+cpbar = 1.0 # reference isobaric heat capacity
+Chibar = 1.0 # reference isothermal bulk compressibility
+
+recRa = 1./Ra
+
+I = Identity(dim)
+
+def stress(v):
+  return 2*sym(grad(v))-0.666666666666666*I*div(v)</string_value>
+    </ufl>
+  </global_parameters>
+  <system name="Stokes">
+    <mesh name="Mesh"/>
+    <ufl_symbol>
+      <string_value lines="1">us</string_value>
+    </ufl_symbol>
+    <field name="Velocity">
+      <ufl_symbol>
+        <string_value lines="1">v</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Vector" rank="1">
+          <element name="P2">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">2</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <constant name="dim">
+              <real_value shape="2" dim1="dim" rank="1">0.0 0.0</real_value>
+            </constant>
+          </initial_condition>
+          <boundary_condition name="LeftX">
+            <boundary_ids>
+              <integer_value shape="1" rank="1">1</integer_value>
+            </boundary_ids>
+            <sub_components name="X">
+              <components>
+                <integer_value shape="1" rank="1">0</integer_value>
+              </components>
+              <type type="boundary_condition" name="Dirichlet">
+                <constant>
+                  <real_value rank="0">0</real_value>
+                </constant>
+              </type>
+            </sub_components>
+          </boundary_condition>
+          <boundary_condition name="RightX">
+            <boundary_ids>
+              <integer_value shape="1" rank="1">2</integer_value>
+            </boundary_ids>
+            <sub_components name="X">
+              <components>
+                <integer_value shape="1" rank="1">0</integer_value>
+              </components>
+              <type type="boundary_condition" name="Dirichlet">
+                <constant>
+                  <real_value rank="0">0</real_value>
+                </constant>
+              </type>
+            </sub_components>
+          </boundary_condition>
+          <boundary_condition name="BottomY">
+            <boundary_ids>
+              <integer_value shape="1" rank="1">3</integer_value>
+            </boundary_ids>
+            <sub_components name="Y">
+              <components>
+                <integer_value shape="1" rank="1">1</integer_value>
+              </components>
+              <type type="boundary_condition" name="Dirichlet">
+                <constant>
+                  <real_value rank="0">0</real_value>
+                </constant>
+              </type>
+            </sub_components>
+          </boundary_condition>
+          <boundary_condition name="TopY">
+            <boundary_ids>
+              <integer_value shape="1" rank="1">4</integer_value>
+            </boundary_ids>
+            <sub_components name="Y">
+              <components>
+                <integer_value shape="1" rank="1">1</integer_value>
+              </components>
+              <type type="boundary_condition" name="Dirichlet">
+                <constant>
+                  <real_value rank="0">0</real_value>
+                </constant>
+              </type>
+            </sub_components>
+          </boundary_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+        <include_in_statistics>
+          <functional name="L2NormSquared">
+            <string_value lines="20" type="code" language="python">int = inner(v,v)*dx</string_value>
+            <ufl_symbol>
+              <string_value lines="1">int</string_value>
+            </ufl_symbol>
+            <quadrature_rule name="default"/>
+          </functional>
+          <functional name="TopSurfaceIntegral">
+            <string_value lines="20" type="code" language="python">int = v[0]*ds(4)</string_value>
+            <ufl_symbol>
+              <string_value lines="1">int</string_value>
+            </ufl_symbol>
+            <quadrature_rule name="default"/>
+          </functional>
+        </include_in_statistics>
+        <include_in_steady_state>
+          <norm>
+            <string_value>linf</string_value>
+          </norm>
+        </include_in_steady_state>
+        <include_in_detectors/>
+      </diagnostics>
+    </field>
+    <field name="Pressure">
+      <ufl_symbol>
+        <string_value lines="1">p</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Scalar" rank="0">
+          <element name="P1">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">1</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <constant>
+              <real_value rank="0">0.0</real_value>
+            </constant>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_statistics>
+          <functional name="Integral">
+            <string_value lines="20" type="code" language="python">int = p*dx</string_value>
+            <ufl_symbol>
+              <string_value lines="1">int</string_value>
+            </ufl_symbol>
+            <quadrature_rule name="default"/>
+          </functional>
+        </include_in_statistics>
+        <include_in_steady_state>
+          <norm>
+            <string_value>linf</string_value>
+          </norm>
+        </include_in_steady_state>
+      </diagnostics>
+    </field>
+    <field name="Temperature">
+      <ufl_symbol>
+        <string_value lines="1">T</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Scalar" rank="0">
+          <element name="P2">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">2</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <cpp rank="0">
+              <members>
+                <string_value lines="20" type="code" language="cpp">mutable double range;</string_value>
+              </members>
+              <initialization>
+                <string_value lines="20" type="code" language="cpp">GenericFunction_ptr Di_ptr, TSurf_ptr;
+Di_ptr = system()-&gt;fetch_coeff("DissipationNumber")-&gt;genericfunction_ptr(time());
+TSurf_ptr = system()-&gt;fetch_coeff("SurfaceTemperature")-&gt;genericfunction_ptr(time());
+
+double Di = double(*boost::dynamic_pointer_cast&lt;dolfin::Constant&gt;(Di_ptr));
+double TSurf = double(*boost::dynamic_pointer_cast&lt;dolfin::Constant&gt;(TSurf_ptr));
+
+range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
+              </initialization>
+              <eval>
+                <string_value lines="20" type="code" language="cpp">const double pi = 3.141592653589793;
+values[0] = (1.-x[1])*range + 0.2*std::cos(x[0]*pi)*std::sin(x[1]*pi);</string_value>
+              </eval>
+            </cpp>
+          </initial_condition>
+          <boundary_condition name="Top">
+            <boundary_ids>
+              <integer_value shape="1" rank="1">4</integer_value>
+            </boundary_ids>
+            <sub_components name="All">
+              <type type="boundary_condition" name="Dirichlet">
+                <constant>
+                  <real_value rank="0">0.0</real_value>
+                </constant>
+              </type>
+            </sub_components>
+          </boundary_condition>
+          <boundary_condition name="Bottom">
+            <boundary_ids>
+              <integer_value shape="1" rank="1">3</integer_value>
+            </boundary_ids>
+            <sub_components name="All">
+              <type type="boundary_condition" name="Dirichlet">
+                <cpp rank="0">
+                  <members>
+                    <string_value lines="20" type="code" language="cpp">mutable double range;</string_value>
+                  </members>
+                  <initialization>
+                    <string_value lines="20" type="code" language="cpp">GenericFunction_ptr Di_ptr, TSurf_ptr;
+Di_ptr = system()-&gt;fetch_coeff("DissipationNumber")-&gt;genericfunction_ptr(time());
+TSurf_ptr = system()-&gt;fetch_coeff("SurfaceTemperature")-&gt;genericfunction_ptr(time());
+
+double Di = double(*boost::dynamic_pointer_cast&lt;dolfin::Constant&gt;(Di_ptr));
+double TSurf = double(*boost::dynamic_pointer_cast&lt;dolfin::Constant&gt;(TSurf_ptr));
+
+range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
+                  </initialization>
+                  <eval>
+                    <string_value lines="20" type="code" language="cpp">values[0] = range;</string_value>
+                  </eval>
+                </cpp>
+              </type>
+            </sub_components>
+          </boundary_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+        <include_in_statistics>
+          <functional name="TopSurfaceIntegral">
+            <string_value lines="20" type="code" language="python">int = T.dx(1)*ds(4)</string_value>
+            <ufl_symbol>
+              <string_value lines="1">int</string_value>
+            </ufl_symbol>
+            <quadrature_rule name="default"/>
+          </functional>
+          <functional name="BottomSurfaceIntegral">
+            <string_value lines="20" type="code" language="python">int = T.dx(1)*ds(3)</string_value>
+            <ufl_symbol>
+              <string_value lines="1">int</string_value>
+            </ufl_symbol>
+            <quadrature_rule name="default"/>
+          </functional>
+          <functional name="Integral">
+            <string_value lines="20" type="code" language="python">int = T*dx</string_value>
+            <ufl_symbol>
+              <string_value lines="1">int</string_value>
+            </ufl_symbol>
+            <quadrature_rule name="default"/>
+          </functional>
+          <functional name="FullIntegral">
+            <string_value lines="20" type="code" language="python">int = (T + Tbar)*dx</string_value>
+            <comment>to ensure full T lies between 0 and 1 we subtract off non-dimensionalized Tsurf here</comment>
+            <ufl_symbol>
+              <string_value lines="1">int</string_value>
+            </ufl_symbol>
+            <quadrature_rule name="default"/>
+          </functional>
+          <functional name="FullTopSurfaceIntegral">
+            <string_value lines="20" type="code" language="python">int = (T+Tbar).dx(1)*ds(4)</string_value>
+            <ufl_symbol>
+              <string_value lines="1">int</string_value>
+            </ufl_symbol>
+            <quadrature_rule name="default"/>
+          </functional>
+        </include_in_statistics>
+        <include_in_steady_state>
+          <norm>
+            <string_value>linf</string_value>
+          </norm>
+        </include_in_steady_state>
+      </diagnostics>
+    </field>
+    <coefficient name="RayleighNumber">
+      <ufl_symbol>
+        <string_value lines="1">Ra</string_value>
+      </ufl_symbol>
+      <type name="Constant">
+        <rank name="Scalar" rank="0">
+          <value type="value" name="WholeMesh">
+            <constant>
+              <real_value rank="0">1.e5</real_value>
+            </constant>
+          </value>
+        </rank>
+      </type>
+      <diagnostics/>
+    </coefficient>
+    <coefficient name="DissipationNumber">
+      <ufl_symbol>
+        <string_value lines="1">Di</string_value>
+      </ufl_symbol>
+      <type name="Constant">
+        <rank name="Scalar" rank="0">
+          <value type="value" name="WholeMesh">
+            <constant>
+              <real_value rank="0">1.5</real_value>
+            </constant>
+          </value>
+        </rank>
+      </type>
+      <diagnostics/>
+    </coefficient>
+    <coefficient name="ReferenceGruneisenParameter">
+      <ufl_symbol>
+        <string_value lines="1">gammar</string_value>
+      </ufl_symbol>
+      <type name="Constant">
+        <rank name="Scalar" rank="0">
+          <value type="value" name="WholeMesh">
+            <constant>
+              <real_value rank="0">1.0</real_value>
+            </constant>
+          </value>
+        </rank>
+      </type>
+      <diagnostics/>
+    </coefficient>
+    <coefficient name="Gravity">
+      <ufl_symbol>
+        <string_value lines="1">gravity</string_value>
+      </ufl_symbol>
+      <type name="Constant">
+        <rank name="Vector" rank="1">
+          <value type="value" name="WholeMesh">
+            <constant name="dim">
+              <real_value shape="2" dim1="dim" rank="1">0.0 -1.0</real_value>
+            </constant>
+          </value>
+        </rank>
+      </type>
+      <diagnostics/>
+    </coefficient>
+    <coefficient name="ReferenceIsobaricSpecificHeatCapacity">
+      <ufl_symbol>
+        <string_value lines="1">cpr</string_value>
+      </ufl_symbol>
+      <type name="Constant">
+        <rank name="Scalar" rank="0">
+          <value type="value" name="WholeMesh">
+            <constant>
+              <real_value rank="0">1.0</real_value>
+            </constant>
+          </value>
+        </rank>
+      </type>
+      <diagnostics/>
+    </coefficient>
+    <coefficient name="ReferenceIsovolumetricSpecificHeatCapacity">
+      <ufl_symbol>
+        <string_value lines="1">cvr</string_value>
+      </ufl_symbol>
+      <type name="Constant">
+        <rank name="Scalar" rank="0">
+          <value type="value" name="WholeMesh">
+            <constant>
+              <real_value rank="0">1.0</real_value>
+            </constant>
+          </value>
+        </rank>
+      </type>
+      <diagnostics/>
+    </coefficient>
+    <coefficient name="SurfaceTemperature">
+      <ufl_symbol>
+        <string_value lines="1">Tsurf</string_value>
+      </ufl_symbol>
+      <type name="Constant">
+        <rank name="Scalar" rank="0">
+          <value type="value" name="WholeMesh">
+            <constant>
+              <real_value rank="0">0.091</real_value>
+            </constant>
+          </value>
+        </rank>
+      </type>
+      <diagnostics/>
+    </coefficient>
+    <nonlinear_solver name="Solver">
+      <type name="SNES">
+        <form name="Residual" rank="0">
+          <string_value lines="20" type="code" language="python">v_theta = theta_v*v_i + (1.-theta_v)*v_n
+
+rv = (inner(sym(grad(v_t)), stress(v_i)) - div(v_t)*p_i \
+      + inner(v_t, gravity)*(rhobar*alphabar*T_i - (Di/gammar)*(cpr/cvr)*rhobar*Chibar*p_i)\
+     )*dx
+rp = p_t*div(rhobar*v_i)*dx
+rT = (T_t*(rhobar*cpbar*((T_i - T_n) \
+                         + dt*theta*inner(v_theta, grad(T_i)) + dt*(1.-theta)*inner(v_theta, grad(T_n))) \
+           - dt*theta*Di*inner(v_theta, gravity)*alphabar*rhobar*T_i - dt*(1.-theta)*Di*inner(v_theta, gravity)*alphabar*rhobar*T_n \
+           - dt*Di*inner(stress(v_theta), grad(v_theta))) \
+      + dt*recRa*theta*inner(grad(T_t), grad(T_i)) + dt*recRa*(1.-theta)*inner(grad(T_t), grad(T_n)) \
+      + dt*recRa*inner(grad(T_t), grad(Tbar))\
+     )*dx
+
+r = rv + rp + rT</string_value>
+          <comment>No viscosity!</comment>
+          <ufl_symbol>
+            <string_value lines="1">r</string_value>
+          </ufl_symbol>
+        </form>
+        <form name="Jacobian" rank="1">
+          <string_value lines="20" type="code" language="python">a = derivative(r, us_i, us_a)</string_value>
+          <ufl_symbol>
+            <string_value lines="1">a</string_value>
+          </ufl_symbol>
+        </form>
+        <form name="JacobianPC" rank="1">
+          <string_value lines="20" type="code" language="python">aPC = a + p_t*p_a*dx</string_value>
+          <comment>No viscosity!</comment>
+          <ufl_symbol>
+            <string_value lines="1">aPC</string_value>
+          </ufl_symbol>
+        </form>
+        <quadrature_rule name="default"/>
+        <snes_type name="ls">
+          <ls_type name="cubic"/>
+        </snes_type>
+        <relative_error>
+          <real_value rank="0">1.e-7</real_value>
+        </relative_error>
+        <absolute_error>
+          <real_value rank="0">1e-10</real_value>
+        </absolute_error>
+        <max_iterations>
+          <integer_value rank="0">50</integer_value>
+        </max_iterations>
+        <monitors>
+          <residual/>
+        </monitors>
+        <linear_solver>
+          <iterative_method name="fgmres">
+            <restart>
+              <integer_value rank="0">30</integer_value>
+            </restart>
+            <relative_error>
+              <real_value rank="0">1.e-6</real_value>
+            </relative_error>
+            <absolute_error>
+              <real_value rank="0">1.e-11</real_value>
+            </absolute_error>
+            <max_iterations>
+              <integer_value rank="0">100</integer_value>
+            </max_iterations>
+            <zero_initial_guess/>
+            <monitors>
+              <preconditioned_residual/>
+            </monitors>
+          </iterative_method>
+          <preconditioner name="fieldsplit">
+            <composite_type name="multiplicative"/>
+            <fieldsplit name="Temperature">
+              <field name="Temperature"/>
+              <monitors/>
+              <linear_solver>
+                <iterative_method name="gmres">
+                  <restart>
+                    <integer_value rank="0">30</integer_value>
+                  </restart>
+                  <relative_error>
+                    <real_value rank="0">1.e-6</real_value>
+                  </relative_error>
+                  <max_iterations>
+                    <integer_value rank="0">10000</integer_value>
+                  </max_iterations>
+                  <zero_initial_guess/>
+                  <monitors>
+                    <preconditioned_residual/>
+                  </monitors>
+                </iterative_method>
+                <preconditioner name="eisenstat"/>
+              </linear_solver>
+            </fieldsplit>
+            <fieldsplit name="Stokes">
+              <field name="Pressure"/>
+              <field name="Velocity"/>
+              <monitors/>
+              <linear_solver>
+                <iterative_method name="fgmres">
+                  <restart>
+                    <integer_value rank="0">30</integer_value>
+                  </restart>
+                  <relative_error>
+                    <real_value rank="0">1.e-6</real_value>
+                  </relative_error>
+                  <absolute_error>
+                    <real_value rank="0">1.e-11</real_value>
+                  </absolute_error>
+                  <max_iterations>
+                    <integer_value rank="0">100</integer_value>
+                  </max_iterations>
+                  <zero_initial_guess/>
+                  <monitors>
+                    <preconditioned_residual/>
+                  </monitors>
+                </iterative_method>
+                <preconditioner name="fieldsplit">
+                  <composite_type name="multiplicative"/>
+                  <fieldsplit name="Pressure">
+                    <field name="Pressure"/>
+                    <monitors/>
+                    <linear_solver>
+                      <iterative_method name="cg">
+                        <relative_error>
+                          <real_value rank="0">1.e-6</real_value>
+                        </relative_error>
+                        <max_iterations>
+                          <integer_value rank="0">1000</integer_value>
+                        </max_iterations>
+                        <zero_initial_guess/>
+                        <monitors>
+                          <preconditioned_residual/>
+                        </monitors>
+                      </iterative_method>
+                      <preconditioner name="sor"/>
+                    </linear_solver>
+                  </fieldsplit>
+                  <fieldsplit name="Velocity">
+                    <field name="Velocity"/>
+                    <monitors/>
+                    <linear_solver>
+                      <iterative_method name="preonly"/>
+                      <preconditioner name="fieldsplit">
+                        <composite_type name="multiplicative"/>
+                        <fieldsplit name="Velocity0">
+                          <field name="Velocity">
+                            <components>
+                              <integer_value shape="1" rank="1">0</integer_value>
+                            </components>
+                          </field>
+                          <monitors/>
+                          <linear_solver>
+                            <iterative_method name="preonly"/>
+                            <preconditioner name="hypre">
+                              <hypre_type name="boomeramg"/>
+                            </preconditioner>
+                          </linear_solver>
+                        </fieldsplit>
+                        <fieldsplit name="Velocity1">
+                          <field name="Velocity">
+                            <components>
+                              <integer_value shape="1" rank="1">1</integer_value>
+                            </components>
+                          </field>
+                          <monitors/>
+                          <linear_solver>
+                            <iterative_method name="preonly"/>
+                            <preconditioner name="hypre">
+                              <hypre_type name="boomeramg"/>
+                            </preconditioner>
+                          </linear_solver>
+                        </fieldsplit>
+                      </preconditioner>
+                    </linear_solver>
+                  </fieldsplit>
+                </preconditioner>
+              </linear_solver>
+            </fieldsplit>
+          </preconditioner>
+          <remove_null_space>
+            <null_space name="Pressure">
+              <field name="Pressure">
+                <constant>
+                  <real_value rank="0">1.0</real_value>
+                </constant>
+              </field>
+              <monitors/>
+            </null_space>
+            <monitors/>
+          </remove_null_space>
+        </linear_solver>
+        <never_ignore_solver_failures/>
+      </type>
+    </nonlinear_solver>
+    <solve name="in_timeloop"/>
+  </system>
+  <system name="Divergence">
+    <mesh name="Mesh"/>
+    <ufl_symbol>
+      <string_value lines="1">ud</string_value>
+    </ufl_symbol>
+    <field name="Divergence">
+      <ufl_symbol>
+        <string_value lines="1">d</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Scalar" rank="0">
+          <element name="P1">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">1</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <constant>
+              <real_value rank="0">0.0</real_value>
+            </constant>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+        <include_in_statistics/>
+      </diagnostics>
+    </field>
+    <nonlinear_solver name="Solver">
+      <type name="Picard">
+        <preamble>
+          <string_value lines="20" type="code" language="python">r = (d_t*d_a - d_t*div(v_i))*dx</string_value>
+        </preamble>
+        <form name="Bilinear" rank="1">
+          <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
+          <ufl_symbol>
+            <string_value lines="1">a</string_value>
+          </ufl_symbol>
+        </form>
+        <form name="Linear" rank="0">
+          <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
+          <ufl_symbol>
+            <string_value lines="1">L</string_value>
+          </ufl_symbol>
+        </form>
+        <form name="Residual" rank="0">
+          <string_value lines="20" type="code" language="python">res = action(a, ud_i) - L</string_value>
+          <ufl_symbol>
+            <string_value lines="1">res</string_value>
+          </ufl_symbol>
+        </form>
+        <quadrature_rule name="default"/>
+        <relative_error>
+          <real_value rank="0">1.e-6</real_value>
+        </relative_error>
+        <absolute_error>
+          <real_value rank="0">1.e-10</real_value>
+        </absolute_error>
+        <max_iterations>
+          <integer_value rank="0">1</integer_value>
+        </max_iterations>
+        <monitors/>
+        <linear_solver>
+          <iterative_method name="cg">
+            <relative_error>
+              <real_value rank="0">1.e-6</real_value>
+            </relative_error>
+            <max_iterations>
+              <integer_value rank="0">100</integer_value>
+            </max_iterations>
+            <nonzero_initial_guess/>
+            <monitors>
+              <preconditioned_residual/>
+            </monitors>
+          </iterative_method>
+          <preconditioner name="sor"/>
+          <monitors/>
+        </linear_solver>
+        <ignore_all_solver_failures/>
+      </type>
+    </nonlinear_solver>
+    <solve name="with_diagnostics"/>
+  </system>
+  <system name="CourantNumber">
+    <mesh name="Mesh"/>
+    <ufl_symbol>
+      <string_value lines="1">uc</string_value>
+    </ufl_symbol>
+    <field name="CourantNumber">
+      <ufl_symbol>
+        <string_value lines="1">c</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Scalar" rank="0">
+          <element name="P0">
+            <family>
+              <string_value>DG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">0</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <constant>
+              <real_value rank="0">0.0</real_value>
+            </constant>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+        <include_in_statistics/>
+      </diagnostics>
+    </field>
+    <nonlinear_solver name="Solver">
+      <type name="Picard">
+        <preamble>
+          <string_value lines="20" type="code" language="python">n = c_e.cell().n
+vn = dot(v_i, n)
+vout = 0.5*(vn + abs(vn))
+
+r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS - c_t*vout*dt*ds(1) - c_t*vout*dt*ds(2) - c_t*vout*dt*ds(3) - c_t*vout*dt*ds(4)</string_value>
+        </preamble>
+        <form name="Bilinear" rank="1">
+          <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
+          <ufl_symbol>
+            <string_value lines="1">a</string_value>
+          </ufl_symbol>
+        </form>
+        <form name="Linear" rank="0">
+          <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
+          <ufl_symbol>
+            <string_value lines="1">L</string_value>
+          </ufl_symbol>
+        </form>
+        <form name="Residual" rank="0">
+          <string_value lines="20" type="code" language="python">res = action(a, uc_i) - L</string_value>
+          <ufl_symbol>
+            <string_value lines="1">res</string_value>
+          </ufl_symbol>
+        </form>
+        <quadrature_rule name="default"/>
+        <relative_error>
+          <real_value rank="0">1.e-6</real_value>
+        </relative_error>
+        <absolute_error>
+          <real_value rank="0">1.e-16</real_value>
+        </absolute_error>
+        <max_iterations>
+          <integer_value rank="0">1</integer_value>
+        </max_iterations>
+        <monitors/>
+        <linear_solver>
+          <iterative_method name="preonly"/>
+          <preconditioner name="jacobi"/>
+          <monitors/>
+        </linear_solver>
+        <never_ignore_solver_failures/>
+      </type>
+    </nonlinear_solver>
+    <solve name="with_diagnostics"/>
+  </system>
+  <system name="ViscousDissipation">
+    <mesh name="Mesh"/>
+    <ufl_symbol>
+      <string_value lines="1">uphi</string_value>
+    </ufl_symbol>
+    <field name="ViscousDissipation">
+      <ufl_symbol>
+        <string_value lines="1">phi</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Scalar" rank="0">
+          <element name="P2DG">
+            <family>
+              <string_value>DG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">2</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <constant>
+              <real_value rank="0">0.0</real_value>
+            </constant>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+        <include_in_statistics>
+          <functional name="Integral">
+            <string_value lines="20" type="code" language="python">int = phi*dx</string_value>
+            <ufl_symbol>
+              <string_value lines="1">int</string_value>
+            </ufl_symbol>
+            <quadrature_rule name="default"/>
+          </functional>
+        </include_in_statistics>
+        <include_in_detectors/>
+      </diagnostics>
+    </field>
+    <nonlinear_solver name="Solver">
+      <type name="Picard">
+        <preamble>
+          <string_value lines="20" type="code" language="python">r = phi_t*phi_a*dx - phi_t*inner(stress(v_i), grad(v_i))*dx</string_value>
+          <comment>Missing divergence and viscosity!</comment>
+        </preamble>
+        <form name="Bilinear" rank="1">
+          <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
+          <ufl_symbol>
+            <string_value lines="1">a</string_value>
+          </ufl_symbol>
+        </form>
+        <form name="Linear" rank="0">
+          <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
+          <ufl_symbol>
+            <string_value lines="1">L</string_value>
+          </ufl_symbol>
+        </form>
+        <form name="Residual" rank="0">
+          <string_value lines="20" type="code" language="python">res = action(a, uphi_i) - L</string_value>
+          <ufl_symbol>
+            <string_value lines="1">res</string_value>
+          </ufl_symbol>
+        </form>
+        <quadrature_rule name="default"/>
+        <relative_error>
+          <real_value rank="0">1.e-6</real_value>
+        </relative_error>
+        <absolute_error>
+          <real_value rank="0">1.e-10</real_value>
+        </absolute_error>
+        <max_iterations>
+          <integer_value rank="0">1</integer_value>
+        </max_iterations>
+        <monitors/>
+        <linear_solver>
+          <iterative_method name="cg">
+            <relative_error>
+              <real_value rank="0">1.e-6</real_value>
+            </relative_error>
+            <max_iterations>
+              <integer_value rank="0">500</integer_value>
+            </max_iterations>
+            <nonzero_initial_guess/>
+            <monitors/>
+          </iterative_method>
+          <preconditioner name="sor"/>
+          <monitors/>
+        </linear_solver>
+        <never_ignore_solver_failures/>
+      </type>
+    </nonlinear_solver>
+    <solve name="with_diagnostics"/>
+  </system>
+  <system name="WorkDone">
+    <mesh name="Mesh"/>
+    <ufl_symbol>
+      <string_value lines="1">uwork</string_value>
+    </ufl_symbol>
+    <field name="WorkDone">
+      <ufl_symbol>
+        <string_value lines="1">work</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Scalar" rank="0">
+          <element name="UserDefined">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">3</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <constant>
+              <real_value rank="0">0.0</real_value>
+            </constant>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+        <include_in_statistics>
+          <functional name="Integral">
+            <string_value lines="20" type="code" language="python">int = work*dx</string_value>
+            <ufl_symbol>
+              <string_value lines="1">int</string_value>
+            </ufl_symbol>
+            <quadrature_rule name="default"/>
+          </functional>
+        </include_in_statistics>
+        <include_in_detectors/>
+      </diagnostics>
+    </field>
+    <nonlinear_solver name="Solver">
+      <type name="Picard">
+        <preamble>
+          <string_value lines="20" type="code" language="python">r = work_t*work_a*dx + work_t*Di*inner(gravity, v_i)*alphabar*rhobar*T_i*dx</string_value>
+        </preamble>
+        <form name="Bilinear" rank="1">
+          <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
+          <ufl_symbol>
+            <string_value lines="1">a</string_value>
+          </ufl_symbol>
+        </form>
+        <form name="Linear" rank="0">
+          <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
+          <ufl_symbol>
+            <string_value lines="1">L</string_value>
+          </ufl_symbol>
+        </form>
+        <form name="Residual" rank="0">
+          <string_value lines="20" type="code" language="python">res = action(a, uwork_i) - L</string_value>
+          <ufl_symbol>
+            <string_value lines="1">res</string_value>
+          </ufl_symbol>
+        </form>
+        <quadrature_rule name="default"/>
+        <relative_error>
+          <real_value rank="0">1.e-6</real_value>
+        </relative_error>
+        <absolute_error>
+          <real_value rank="0">1.e-10</real_value>
+        </absolute_error>
+        <max_iterations>
+          <integer_value rank="0">1</integer_value>
+        </max_iterations>
+        <monitors/>
+        <linear_solver>
+          <iterative_method name="cg">
+            <relative_error>
+              <real_value rank="0">1.e-6</real_value>
+            </relative_error>
+            <max_iterations>
+              <integer_value rank="0">500</integer_value>
+            </max_iterations>
+            <nonzero_initial_guess/>
+            <monitors/>
+          </iterative_method>
+          <preconditioner name="sor"/>
+          <monitors/>
+        </linear_solver>
+        <never_ignore_solver_failures/>
+      </type>
+    </nonlinear_solver>
+    <solve name="with_diagnostics"/>
+  </system>
+</terraferma_options>
