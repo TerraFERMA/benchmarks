@@ -11,8 +11,6 @@ import hashlib
 import shutil
 from string import Template as template
 
-tf_repo_path = os.environ["TF_CMAKE_PATH"]
-
 def generate():
   libspud.load_options(name+".tfml")
   meshbasename = libspud.get_option("/geometry/mesh::Mesh/source::File/file")
