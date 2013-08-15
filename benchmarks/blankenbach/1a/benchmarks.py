@@ -98,6 +98,7 @@ def run():
     dir_name = "run_"+`n`
     chdir(dir_name)
     try:
+      print "running in ",dir_name
       subprocess.check_call(["../build/"+name, "-vINFO", "-l", "../"+name+".tfml"])
     except:
       print "ERROR while calling running in directory ", dir_name
