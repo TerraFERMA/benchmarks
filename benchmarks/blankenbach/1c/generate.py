@@ -1,0 +1,4 @@
+import benchmarks
+
+benchmarks.generate()  
+
