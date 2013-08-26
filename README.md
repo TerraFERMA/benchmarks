@@ -4,7 +4,7 @@ This repository contains a set of benchmark problems chosen from published geody
 
 ###Contents
 
-*  a [pdf](https://bitbucket.org/tferma/benchmarks/downloads/Benchmark_descriptions.pdf) file briefly describing the benchmark problems and results using TerraFERMA 
+*  a [pdf](http://www.ldeo.columbia.edu/%7ecwilson/preprints/Wilson_GCubed_2013_Supplementary.pdf) file briefly describing the benchmark problems and results using TerraFERMA 
 *  representative tfml options files for each benchmark 
 *  gmsh source files (.geo) for benchmark meshes
 
