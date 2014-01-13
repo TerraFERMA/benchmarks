@@ -80,7 +80,7 @@ v["ze2"] = det["Array"]["position_1"][detlen/2:,-1][expos2]
 table0.append("\\begin{tabular}{c|cccccc}\n")
 table0.append("    &amp; $\Nu$ &amp; $v_{rms}$ &amp; $q_1$ &amp; $q_2$ &amp; $T_{e}$ &amp; $z_{e}$ \\\\\n")
 table0.append("\hline\n")
-for ncells in v.param['ncells']:
+for ncells in v.parameters['ncells']:
   table0.append("{ncells:2d}$\\times${ncells:2d} &amp; {nu:.3f} &amp; {v_rms:.3f} &amp; {q1:.3f} &amp; {q2:.3f} &amp; {Te1:.3f} &amp; {ze1:.3f} \\\\\n".format(ncells=int(ncells), **v[{'ncells':ncells}]))
 table0.append("\hline\n")
 table0.append("Benchmark &amp; 4.884 &amp; 42.865 &amp; 8.059 &amp; 0.589 &amp; 0.422 &amp; 0.225 \\\\\n")
