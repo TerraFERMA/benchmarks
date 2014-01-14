@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <harness_options>
   <length>
-    <string_value>long</string_value>
+    <string_value>short</string_value>
   </length>
   <owner>cwilson</owner>
   <description>Blankenbach 1a benchmark.</description>
@@ -12,7 +12,7 @@
       </input_file>
       <parameter_sweep>
         <parameter name="ncells">
-          <values>16 32 64 128 256</values>
+          <values>16</values>
         </parameter>
       </parameter_sweep>
       <dependencies>
