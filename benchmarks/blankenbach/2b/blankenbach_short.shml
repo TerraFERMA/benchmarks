@@ -18,26 +18,26 @@
       <dependencies>
         <run name="Mesh">
           <input_file>
-            <string_value lines="1" type="filename">../../src/transfinite_square.geo</string_value>
+            <string_value lines="1" type="filename">../../src/transfinite_rectangle.geo</string_value>
           </input_file>
           <parameter_sweep>
             <parameter name="ncells">
               <update>
                 <string_value lines="20" type="code" language="python">from string import Template as template
-input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.01'})</string_value>
+input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.01', 'aspect':'2.5'})</string_value>
               </update>
             </parameter>
           </parameter_sweep>
           <required_output>
             <filenames name="meshfiles">
               <python>
-                <string_value lines="20" type="code" language="python">meshfiles = ["transfinite_square"+ext for ext in [".xml", "_facet_region.xml"]]</string_value>
+                <string_value lines="20" type="code" language="python">meshfiles = ["transfinite_rectangle"+ext for ext in [".xml", "_facet_region.xml"]]</string_value>
               </python>
             </filenames>
           </required_output>
           <commands>
-            <command name="GMsh">gmsh -2 transfinite_square.geo</command>
-            <command name="Convert">dolfin-convert transfinite_square.msh transfinite_square.xml</command>
+            <command name="GMsh">gmsh -2 transfinite_rectangle.geo</command>
+            <command name="Convert">dolfin-convert transfinite_rectangle.msh transfinite_rectangle.xml</command>
           </commands>
         </run>
       </dependencies>
@@ -56,8 +56,8 @@ stat = parser(ioname+".stat")
 det  = parser(ioname+".det")
 
 v = {}
-v["nu"] = -1.0*(stat["Stokes"]["Temperature"]["TopSurfaceIntegral"][-1])
-v["v_rms"] = sqrt(stat["Stokes"]["Velocity"]["L2NormSquared"][-1])*Ra
+v["nu"] = -1.0*(stat["Stokes"]["Temperature"]["TopSurfaceIntegral"][-1])/2.5
+v["v_rms"] = sqrt(stat["Stokes"]["Velocity"]["L2NormSquared"][-1]/2.5)*Ra
 v["q1"] = -det["TemperatureGradient"]["TemperatureGradient"]["TopLeft"][-1][-1]
 v["q2"] = -det["TemperatureGradient"]["TemperatureGradient"]["TopRight"][-1][-1]
 v["q3"] = -det["TemperatureGradient"]["TemperatureGradient"]["BottomRight"][-1][-1]
@@ -74,7 +74,7 @@ v["ze2"] = det["Array"]["position_1"][detlen/2:,-1][expos2]</string_value>
     </simulation>
   </simulations>
   <tests>
-    <test name="relative_errors_less_than_10_percent">
+    <test name="relative_errors_less_than_5_percent">
       <string_value lines="20" type="code" language="python">import csv
 vb = {}
 filehandle = open("benchmark.csv")
@@ -88,7 +88,7 @@ rerr = {}
 for key,val in vb.items():
   rerr[key] = abs(vfine[key]-val)/abs(val)
 print "relative errors = ", rerr
-assert(numpy.all(numpy.array(rerr.values()) &lt; 0.1))
+assert(numpy.all(numpy.array(rerr.values()) &lt; 0.05))
 
 table0 = []
 table0.append("\\begin{tabular}{c|cccccc}\n")

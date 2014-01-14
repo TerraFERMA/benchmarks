@@ -1,4 +1,0 @@
-import benchmarks
-
-benchmarks.extract()
-

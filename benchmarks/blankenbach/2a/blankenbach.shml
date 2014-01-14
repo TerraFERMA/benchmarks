@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <harness_options>
   <length>
-    <string_value>short</string_value>
+    <string_value>long</string_value>
   </length>
   <owner>cwilson</owner>
   <description>Blankenbach 1a benchmark.</description>
@@ -12,7 +12,7 @@
       </input_file>
       <parameter_sweep>
         <parameter name="ncells">
-          <values>16</values>
+          <values>16 32 64 128 256</values>
         </parameter>
       </parameter_sweep>
       <dependencies>
@@ -74,7 +74,7 @@ v["ze2"] = det["Array"]["position_1"][detlen/2:,-1][expos2]</string_value>
     </simulation>
   </simulations>
   <tests>
-    <test name="relative_errors_less_than_10_percent">
+    <test name="relative_errors_less_than_5_percent">
       <string_value lines="20" type="code" language="python">import csv
 vb = {}
 filehandle = open("benchmark.csv")
@@ -88,7 +88,7 @@ rerr = {}
 for key,val in vb.items():
   rerr[key] = abs(vfine[key]-val)/abs(val)
 print "relative errors = ", rerr
-assert(numpy.all(numpy.array(rerr.values()) &lt; 0.1))
+assert(numpy.all(numpy.array(rerr.values()) &lt; 0.05))
 
 table0 = []
 table0.append("\\begin{tabular}{c|cccccc}\n")
