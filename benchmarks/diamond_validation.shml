@@ -89,7 +89,6 @@ class DiamondValidator:
       filenames += glob.glob(os.path.join(dirname, '*.'+extension))
       if depth == maxDepth:
         dirnames[:] = []
-    print filenames
     return filenames
 
   def Passes(self):
