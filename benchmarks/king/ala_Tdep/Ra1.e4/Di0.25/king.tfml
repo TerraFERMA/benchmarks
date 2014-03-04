@@ -93,9 +93,9 @@
       <string_value lines="20" type="code" language="python">theta = 1.0
 theta_v = 1.0
 
-dim = us.cell().d
+dim = us.cell().geometric_dimension()
 
-depth = 1.0 - us.cell().x[1]
+depth = 1.0 - SpatialCoordinate(us.cell())[1]
 
 # define reference states
 rhobar = exp(depth*Di/gammar) # reference density
@@ -909,7 +909,7 @@ aPC = a + invmu*p_t*p_a*dx</string_value>
     <nonlinear_solver name="Solver">
       <type name="Picard">
         <preamble>
-          <string_value lines="20" type="code" language="python">n = c_e.cell().n
+          <string_value lines="20" type="code" language="python">n = FacetNormal(c_e.cell())
 vn = dot(v_i, n)
 vout = 0.5*(vn + abs(vn))
 
