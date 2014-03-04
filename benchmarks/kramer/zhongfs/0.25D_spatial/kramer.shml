@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='utf-8'?>
+<harness_options>
+  <length>
+    <string_value>long</string_value>
+  </length>
+  <owner>cwilson</owner>
+  <description>Kramer free surface benchmark.</description>
+  <simulations>
+    <simulation name="Kramer">
+      <input_file>
+        <string_value lines="1" type="filename">kramer.tfml</string_value>
+      </input_file>
+      <parameter_sweep>
+        <parameter name="ncells">
+          <values>20 40 80 160 320</values>
+        </parameter>
+      </parameter_sweep>
+      <dependencies>
+        <run name="Mesh">
+          <input_file>
+            <string_value lines="1" type="filename">src/square.geo</string_value>
+          </input_file>
+          <parameter_sweep>
+            <parameter name="ncells">
+              <update>
+                <string_value lines="20" type="code" language="python">from string import Template as template
+input_file = template(input_file).safe_substitute({'ncells':ncells})</string_value>
+              </update>
+            </parameter>
+          </parameter_sweep>
+          <required_output>
+            <filenames name="meshfiles">
+              <python>
+                <string_value lines="20" type="code" language="python">meshfiles = ["square"+ext for ext in [".xml", "_facet_region.xml"]]</string_value>
+              </python>
+            </filenames>
+          </required_output>
+          <commands>
+            <command name="GMsh">gmsh -2 square.geo</command>
+            <command name="Convert">dolfin-convert square.msh square.xml</command>
+          </commands>
+        </run>
+      </dependencies>
+    </simulation>
+  </simulations>
+</harness_options>
