@@ -18,7 +18,7 @@
       <dependencies>
         <run name="Mesh">
           <input_file>
-            <string_value lines="1" type="filename">../../src/transfinite_square.geo</string_value>
+            <string_value lines="1" type="filename">../../../../src/transfinite_square.geo</string_value>
           </input_file>
           <parameter_sweep>
             <parameter name="ncells">
