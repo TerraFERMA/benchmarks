@@ -336,7 +336,7 @@ mutable double scale;</string_value>
               <initialization>
                 <string_value lines="20" type="code" language="cpp">etatilde = system()-&gt;fetch_field("ScaledFreeSurface")-&gt;genericfunction_ptr(time());
 etabar = system()-&gt;fetch_coeff("AnalyticalFreeSurface")-&gt;genericfunction_ptr(time());
-scale = double(*boost::dynamic_pointer_cast&lt;dolfin::Constant&gt;(system()-&gt;fetch_coeff("ScaleFactor")-&gt;genericfunction_ptr(time())));</string_value>
+scale = double(*std::dynamic_pointer_cast&lt;dolfin::Constant&gt;(system()-&gt;fetch_coeff("ScaleFactor")-&gt;genericfunction_ptr(time())));</string_value>
               </initialization>
               <eval>
                 <string_value lines="20" type="code" language="cpp">dolfin::Array&lt;double&gt; etatildevalues(1);

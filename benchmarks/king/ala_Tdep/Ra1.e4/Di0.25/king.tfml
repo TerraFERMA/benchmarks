@@ -288,8 +288,8 @@ def stress(v):
 Di_ptr = system()-&gt;fetch_coeff("DissipationNumber")-&gt;genericfunction_ptr(time());
 TSurf_ptr = system()-&gt;fetch_coeff("SurfaceTemperature")-&gt;genericfunction_ptr(time());
 
-double Di = double(*boost::dynamic_pointer_cast&lt;dolfin::Constant&gt;(Di_ptr));
-double TSurf = double(*boost::dynamic_pointer_cast&lt;dolfin::Constant&gt;(TSurf_ptr));
+double Di = double(*std::dynamic_pointer_cast&lt;dolfin::Constant&gt;(Di_ptr));
+double TSurf = double(*std::dynamic_pointer_cast&lt;dolfin::Constant&gt;(TSurf_ptr));
 
 range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
               </initialization>
@@ -326,8 +326,8 @@ values[0] = (1.-x[1])*range + 0.2*std::cos(x[0]*pi)*std::sin(x[1]*pi);</string_v
 Di_ptr = system()-&gt;fetch_coeff("DissipationNumber")-&gt;genericfunction_ptr(time());
 TSurf_ptr = system()-&gt;fetch_coeff("SurfaceTemperature")-&gt;genericfunction_ptr(time());
 
-double Di = double(*boost::dynamic_pointer_cast&lt;dolfin::Constant&gt;(Di_ptr));
-double TSurf = double(*boost::dynamic_pointer_cast&lt;dolfin::Constant&gt;(TSurf_ptr));
+double Di = double(*std::dynamic_pointer_cast&lt;dolfin::Constant&gt;(Di_ptr));
+double TSurf = double(*std::dynamic_pointer_cast&lt;dolfin::Constant&gt;(TSurf_ptr));
 
 range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
                   </initialization>
