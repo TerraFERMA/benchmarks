@@ -88,7 +88,7 @@ mu = exp(b0 + b1/(T_i + deltaT))
 theta = 0.5
 theta_v = 0.5
 
-radius = us.cell().x[0]</string_value>
+radius = SpatialCoordinate(us.cell())[0]</string_value>
     </ufl>
   </global_parameters>
   <system name="Silicone">
@@ -641,7 +641,7 @@ aPC = a + invmu*p_t*p_a*radius*dx</string_value>
     <nonlinear_solver name="Solver">
       <type name="Picard">
         <preamble>
-          <string_value lines="20" type="code" language="python">n = c_e.cell().n
+          <string_value lines="20" type="code" language="python">n = FacetNormal(c_e.cell())
 vn = dot(v_i, n)
 vout = 0.5*(vn + abs(vn))
 

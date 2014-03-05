@@ -111,7 +111,7 @@ Xi_i = hsquared*f_i
 Xi_n = hsquared*f_n
 
 # facet normal for forcing term
-fn = f_e.cell().n</string_value>
+fn = FacetNormal(f_e.cell())</string_value>
     </ufl>
   </global_parameters>
   <system name="magma">
