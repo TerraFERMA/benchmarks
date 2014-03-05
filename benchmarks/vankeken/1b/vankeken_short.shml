@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='utf-8'?>
+<harness_options>
+  <length>
+    <string_value>short</string_value>
+  </length>
+  <owner>cwilson</owner>
+  <description>VanKeken subduction benchmark.</description>
+  <simulations>
+    <simulation name="VanKeken">
+      <input_file>
+        <string_value lines="1" type="filename">vankeken.tfml</string_value>
+      </input_file>
+      <parameter_sweep>
+        <parameter name="scale">
+          <values>4.0</values>
+        </parameter>
+      </parameter_sweep>
+      <dependencies>
+        <run name="Mesh">
+          <input_file>
+            <string_value lines="1" type="filename">vankeken.smml</string_value>
+            <spud_file/>
+          </input_file>
+          <parameter_sweep>
+            <parameter name="scale">
+              <update>
+                <string_value lines="20" type="code" language="python">import libspud
+libspud.set_option("/mesh/resolution_scale", float(scale))</string_value>
+              </update>
+            </parameter>
+          </parameter_sweep>
+          <required_output>
+            <filenames name="meshfiles">
+              <python>
+                <string_value lines="20" type="code" language="python">meshfiles = ["subduction"+ext for ext in [".xml", "_physical_region.xml", "_facet_region.xml"]]</string_value>
+              </python>
+            </filenames>
+          </required_output>
+          <commands>
+            <command name="Generate">generate_subduction_geometry vankeken.smml</command>
+            <command name="GMsh">gmsh -2 -algo del2d subduction.geo</command>
+            <command name="Convert">dolfin-convert subduction.msh subduction.xml</command>
+          </commands>
+        </run>
+      </dependencies>
+    </simulation>
+  </simulations>
+</harness_options>
