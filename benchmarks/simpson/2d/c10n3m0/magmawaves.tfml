@@ -98,16 +98,15 @@
       <string_value lines="20" type="code" language="python"># Global parameters for porosity pressure residual 
 
 # h_on_delta: height of domain in compaction lengths
-h_on_delta = 64.
+import parameters
+h_on_delta = parameters.h_on_delta
 hsquared = h_on_delta**2
 
 # permeability
-n = 3
+n = parameters.n
 K = f_i**n
 
 #inverse bulk viscosity function (assume constant bulk viscosity)
-#m = 0
-#Xi = hsquared*f_i**m
 Xi = hsquared
 
 # facet normal for forcing term
@@ -190,12 +189,8 @@ fn = FacetNormal(f_e.cell())</string_value>
 from pysolwave.solitarywave import *
 from numpy import array
 from math import sqrt
+from parameters import *
 
-c = 10.                                 #Wave speed
-n = 3                                  # permeability exponent
-m = 0                                 # bulk-viscosity exponent
-d = 2                                # dimension
-N = 400                              # number of collocation points
 swave = SolitaryWave(c,n,m,d,N)
 
 # sort out index depending on d
@@ -207,10 +202,6 @@ else:
 
 # location of solitary wave maximum
 x0 = array([.5, .5]) 
-
-# size of the domain in compaction lengths
-h_on_delta = 64.
-r_max = 25.
 
 def val(x):
   global x0, h_on_delta, swave, sqrt, array, r_max, index
