@@ -99,7 +99,7 @@ class DiamondValidator:
 
 validator = DiamondValidator(rootDir = dirname)
 
-validator.ValidateOptionsFiles(extensions = ["tfml", "shml"])
+validator.ValidateOptionsFiles(extensions = ["tfml", "shml", "smml"])
 
 passes = validator.Passes()
 optionErrors = validator.OptionErrors()
