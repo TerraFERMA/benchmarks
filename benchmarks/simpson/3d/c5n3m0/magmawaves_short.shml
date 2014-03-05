@@ -15,7 +15,7 @@
           <values>16</values>
           <update>
             <string_value lines="20" type="code" language="python">import libspud
-libspud.set_option("/geometry/mesh::Mesh/source::UnitSquare/number_cells", [int(ncells), int(ncells)])</string_value>
+libspud.set_option("/geometry/mesh::Mesh/source::UnitCube/number_cells", [int(ncells), int(ncells), int(ncells)])</string_value>
             <single_build/>
           </update>
         </parameter>
