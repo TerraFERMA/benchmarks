@@ -314,6 +314,7 @@ r = rv + rp + rT</string_value>
         <quadrature_rule name="default"/>
         <snes_type name="ls">
           <ls_type name="cubic"/>
+          <convergence_test name="default"/>
         </snes_type>
         <relative_error>
           <real_value rank="0">1.e-5</real_value>
@@ -420,6 +421,7 @@ aPC = a + invmu*p_t*p_a*radius*dx</string_value>
         <quadrature_rule name="default"/>
         <snes_type name="ls">
           <ls_type name="cubic"/>
+          <convergence_test name="default"/>
         </snes_type>
         <relative_error>
           <real_value rank="0">1.e-6</real_value>
