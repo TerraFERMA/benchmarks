@@ -1,10 +1,10 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <harness_options>
   <length>
     <string_value>short</string_value>
   </length>
-  <owner>cwilson</owner>
-  <description>VanKeken subduction benchmark.</description>
+  <owner><string_value lines="1">cwilson</string_value></owner>
+  <description><string_value lines="1">VanKeken subduction benchmark.</string_value></description>
   <simulations>
     <simulation name="VanKeken">
       <input_file>
@@ -12,7 +12,7 @@
       </input_file>
       <parameter_sweep>
         <parameter name="scale">
-          <values>4.0</values>
+          <values><string_value lines="1">4.0</string_value></values>
         </parameter>
       </parameter_sweep>
       <dependencies>
@@ -37,9 +37,9 @@ libspud.set_option("/mesh/resolution_scale", float(scale))</string_value>
             </filenames>
           </required_output>
           <commands>
-            <command name="Generate">generate_subduction_geometry vankeken.smml</command>
-            <command name="GMsh">gmsh -2 -algo del2d subduction.geo</command>
-            <command name="Convert">dolfin-convert subduction.msh subduction.xml</command>
+            <command name="Generate"><string_value lines="1">generate_subduction_geometry vankeken.smml</string_value></command>
+            <command name="GMsh"><string_value lines="1">gmsh -2 -algo del2d subduction.geo</string_value></command>
+            <command name="Convert"><string_value lines="1">dolfin-convert subduction.msh subduction.xml</string_value></command>
           </commands>
         </run>
       </dependencies>

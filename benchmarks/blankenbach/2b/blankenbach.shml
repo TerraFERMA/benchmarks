@@ -1,10 +1,10 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <harness_options>
   <length>
     <string_value>long</string_value>
   </length>
-  <owner>cwilson</owner>
-  <description>Blankenbach 1a benchmark.</description>
+  <owner><string_value lines="1">cwilson</string_value></owner>
+  <description><string_value lines="1">Blankenbach 1a benchmark.</string_value></description>
   <simulations>
     <simulation name="Blankenbach">
       <input_file>
@@ -12,7 +12,7 @@
       </input_file>
       <parameter_sweep>
         <parameter name="ncells">
-          <values>16 32 64</values>
+          <values><string_value lines="1">16 32 64</string_value></values>
         </parameter>
       </parameter_sweep>
       <dependencies>
@@ -36,8 +36,8 @@ input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.
             </filenames>
           </required_output>
           <commands>
-            <command name="GMsh">gmsh -2 transfinite_rectangle.geo</command>
-            <command name="Convert">dolfin-convert transfinite_rectangle.msh transfinite_rectangle.xml</command>
+            <command name="GMsh"><string_value lines="1">gmsh -2 transfinite_rectangle.geo</string_value></command>
+            <command name="Convert"><string_value lines="1">dolfin-convert transfinite_rectangle.msh transfinite_rectangle.xml</string_value></command>
           </commands>
         </run>
       </dependencies>

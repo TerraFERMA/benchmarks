@@ -1,10 +1,10 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <harness_options>
   <length>
     <string_value>long</string_value>
   </length>
-  <owner>cwilson</owner>
-  <description>Kramer free surface benchmark.</description>
+  <owner><string_value lines="1">cwilson</string_value></owner>
+  <description><string_value lines="1">Kramer free surface benchmark.</string_value></description>
   <simulations>
     <simulation name="Kramer">
       <input_file>
@@ -12,7 +12,7 @@
       </input_file>
       <parameter_sweep>
         <parameter name="dt">
-          <values>32.0 16.0 8.0 4.0 2.0 1.0 0.5 0.25 0.125</values>
+          <values><string_value lines="1">32.0 16.0 8.0 4.0 2.0 1.0 0.5 0.25 0.125</string_value></values>
           <update>
             <string_value type="code" lines="20" language="python">import libspud
 libspud.set_option("/timestepping/timestep/coefficient::Timestep/type::Constant/rank::Scalar/value::WholeMesh/constant", float(dt))</string_value>
