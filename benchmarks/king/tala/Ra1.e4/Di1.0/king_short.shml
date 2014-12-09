@@ -1,18 +1,25 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <harness_options>
   <length>
     <string_value>short</string_value>
   </length>
-  <owner><string_value lines="1">cwilson</string_value></owner>
-  <description><string_value lines="1">King benchmark.</string_value></description>
+  <owner>
+    <string_value lines="1">cwilson</string_value>
+  </owner>
+  <description>
+    <string_value lines="1">King benchmark.</string_value>
+  </description>
   <simulations>
     <simulation name="King">
       <input_file>
         <string_value lines="1" type="filename">king.tfml</string_value>
       </input_file>
+      <run_when name="input_changed_or_output_missing"/>
       <parameter_sweep>
         <parameter name="ncells">
-          <values><string_value lines="1">16</string_value></values>
+          <values>
+            <string_value lines="1">16</string_value>
+          </values>
         </parameter>
       </parameter_sweep>
       <dependencies>
@@ -20,6 +27,7 @@
           <input_file>
             <string_value lines="1" type="filename">../../../../src/transfinite_square.geo</string_value>
           </input_file>
+          <run_when name="input_changed_or_output_missing"/>
           <parameter_sweep>
             <parameter name="ncells">
               <update>
@@ -36,8 +44,12 @@ input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.
             </filenames>
           </required_output>
           <commands>
-            <command name="GMsh"><string_value lines="1">gmsh -2 transfinite_square.geo</string_value></command>
-            <command name="Convert"><string_value lines="1">dolfin-convert transfinite_square.msh transfinite_square.xml</string_value></command>
+            <command name="GMsh">
+              <string_value lines="1">gmsh -2 transfinite_square.geo</string_value>
+            </command>
+            <command name="Convert">
+              <string_value lines="1">dolfin-convert transfinite_square.msh transfinite_square.xml</string_value>
+            </command>
           </commands>
         </run>
       </dependencies>
