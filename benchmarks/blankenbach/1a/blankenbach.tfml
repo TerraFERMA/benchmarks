@@ -419,7 +419,7 @@ r = rv + rp + rT</string_value>
                     <preconditioned_residual/>
                   </monitors>
                 </iterative_method>
-                <preconditioner name="ilu"/>
+                <preconditioner name="gamg"/>
               </linear_solver>
             </fieldsplit>
             <fieldsplit name="Stokes">
