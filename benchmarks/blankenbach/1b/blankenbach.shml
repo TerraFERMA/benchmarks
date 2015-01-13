@@ -39,7 +39,7 @@ input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.
           <required_output>
             <filenames name="meshfiles">
               <python>
-                <string_value lines="20" type="code" language="python">meshfiles = ["transfinite_square"+ext for ext in [".xml", "_facet_region.xml"]]</string_value>
+                <string_value lines="20" type="code" language="python">meshfiles = ["transfinite_square.xml"]</string_value>
               </python>
             </filenames>
           </required_output>
@@ -80,7 +80,8 @@ v["Te1"] = det["Stokes"]["Temperature"]["Array"][0:detlen/2,-1][expos1]
 v["ze1"] = det["Array"]["position_1"][0:detlen/2,-1][expos1]
 expos2 = det["Stokes"]["Temperature"]["Array"][detlen/2:,-1].argmax()
 v["Te2"] = det["Stokes"]["Temperature"]["Array"][detlen/2:,-1][expos2]
-v["ze2"] = det["Array"]["position_1"][detlen/2:,-1][expos2]</string_value>
+v["ze2"] = det["Array"]["position_1"][detlen/2:,-1][expos2]
+v["Walltime"] = stat["ElapsedWallTime"]["value"][-1]</string_value>
         </variable>
       </variables>
     </simulation>
@@ -116,10 +117,15 @@ table0.append("\\end{tabular}\n")
 for line in table0:
   print line[0:-1]
 
-filename = "table0_short.tex"
+filename = "table0.tex"
 filehandle = file(filename, 'w')
 filehandle.writelines(table0)
 filehandle.close()</string_value>
+    </test>
+    <test name="Walltime">
+      <string_value lines="20" type="code" language="python">ncells = v.parameters['ncells']
+slice = {'ncells': ncells}
+print 'walltime =',[ v[slice][i]["Walltime"] for i in range(len(ncells)) ]</string_value>
     </test>
   </tests>
 </harness_options>
