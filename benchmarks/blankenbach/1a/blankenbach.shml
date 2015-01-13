@@ -117,7 +117,7 @@ table0.append("\\end{tabular}\n")
 for line in table0:
   print line[0:-1]
 
-filename = "table0_short.tex"
+filename = "table0.tex"
 filehandle = file(filename, 'w')
 filehandle.writelines(table0)
 filehandle.close()</string_value>
