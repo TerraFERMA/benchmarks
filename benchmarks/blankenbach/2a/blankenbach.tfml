@@ -614,7 +614,7 @@ aPC = a + invmu*p_t*p_a*dx</string_value>
                     <preconditioned_residual/>
                   </monitors>
                 </iterative_method>
-                <preconditioner name="ilu"/>
+                <preconditioner name="gamg"/>
               </linear_solver>
             </fieldsplit>
           </preconditioner>

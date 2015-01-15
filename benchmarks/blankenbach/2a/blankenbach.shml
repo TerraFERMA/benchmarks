@@ -7,7 +7,7 @@
     <string_value lines="1">cwilson</string_value>
   </owner>
   <description>
-    <string_value lines="1">Blankenbach 1a benchmark.</string_value>
+    <string_value lines="1">Blankenbach 2a benchmark.</string_value>
   </description>
   <simulations>
     <simulation name="Blankenbach">
@@ -18,7 +18,7 @@
       <parameter_sweep>
         <parameter name="ncells">
           <values>
-            <string_value lines="1">16 32 64 128 256</string_value>
+            <string_value lines="1">16 32 64 128</string_value>
           </values>
         </parameter>
       </parameter_sweep>
