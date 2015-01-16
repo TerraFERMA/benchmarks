@@ -14,10 +14,21 @@
         </cell>
       </source>
     </mesh>
+    <mesh name="MeshInit">
+      <source name="File">
+        <file>
+          <string_value lines="1" type="filename">transfinite_square_td</string_value>
+          <comment>mesh for time-dependent initial file</comment>
+        </file>
+        <cell>
+          <string_value>triangle</string_value>
+        </cell>
+      </source>
+    </mesh>
   </geometry>
   <io>
     <output_base_name>
-      <string_value lines="1">rbconvection</string_value>
+      <string_value lines="1">rbconvection_short</string_value>
     </output_base_name>
     <visualization>
       <element name="P2DG">
@@ -57,36 +68,138 @@
       </array>
     </detectors>
   </io>
-  <timestepping>
-    <current_time>
-      <real_value rank="0">.7</real_value>
-    </current_time>
-    <finish_time>
-      <real_value rank="0">1.</real_value>
-    </finish_time>
-    <timestep>
-      <coefficient name="Timestep">
-        <ufl_symbol>
-          <string_value lines="1">dalpha</string_value>
-        </ufl_symbol>
-        <type name="Constant">
-          <rank name="Scalar" rank="0">
-            <value name="WholeMesh">
-              <constant>
-                <real_value rank="0">0.1</real_value>
-              </constant>
-            </value>
-          </rank>
-        </type>
-      </coefficient>
-    </timestep>
-    <steady_state>
-      <tolerance>
-        <real_value rank="0">1.e-9</real_value>
-      </tolerance>
-    </steady_state>
-  </timestepping>
-  <global_parameters/>
+  <global_parameters>
+    <ufl>
+      <string_value lines="20" type="code" language="python"># Constant viscosity
+eta = 1.
+
+#Inverse Ra number 
+recRa = 1./Ra</string_value>
+    </ufl>
+  </global_parameters>
+  <system name="Init">
+    <mesh name="MeshInit"/>
+    <ufl_symbol>
+      <string_value lines="1">ui</string_value>
+    </ufl_symbol>
+    <field name="VelocityInit">
+      <ufl_symbol>
+        <string_value lines="1">vi</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Vector" rank="1">
+          <element name="P2">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">2</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <file>
+              <string_value lines="1">rbconvection_Stokes_0.xml</string_value>
+            </file>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+      </diagnostics>
+    </field>
+    <field name="PressureInit">
+      <ufl_symbol>
+        <string_value lines="1">pi</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Scalar" rank="0">
+          <element name="P1">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">1</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <file>
+              <string_value lines="1">rbconvection_Stokes_0.xml</string_value>
+            </file>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+      </diagnostics>
+    </field>
+    <field name="TemperatureInit">
+      <ufl_symbol>
+        <string_value lines="1">Ti</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Scalar" rank="0">
+          <element name="P2">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">2</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <file>
+              <string_value lines="1">rbconvection_Stokes_0.xml</string_value>
+            </file>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+      </diagnostics>
+    </field>
+    <nonlinear_solver name="Project">
+      <type name="SNES">
+        <form name="Residual" rank="0">
+          <string_value lines="20" type="code" language="python">F = inner(ui_t,(ui_i - ui_n))*dx</string_value>
+          <ufl_symbol>
+            <string_value lines="1">F</string_value>
+          </ufl_symbol>
+        </form>
+        <form name="Jacobian" rank="1">
+          <string_value lines="20" type="code" language="python">J = derivative(F, ui_i, ui_a)</string_value>
+          <ufl_symbol>
+            <string_value lines="1">J</string_value>
+          </ufl_symbol>
+        </form>
+        <quadrature_rule name="default"/>
+        <snes_type name="ksponly"/>
+        <relative_error>
+          <real_value rank="0">1.e-3</real_value>
+        </relative_error>
+        <max_iterations>
+          <integer_value rank="0">10</integer_value>
+        </max_iterations>
+        <monitors/>
+        <linear_solver>
+          <iterative_method name="cg">
+            <relative_error>
+              <real_value rank="0">1.e-6</real_value>
+            </relative_error>
+            <max_iterations>
+              <integer_value rank="0">10</integer_value>
+            </max_iterations>
+            <zero_initial_guess/>
+            <monitors/>
+          </iterative_method>
+          <preconditioner name="sor"/>
+        </linear_solver>
+        <never_ignore_solver_failures/>
+      </type>
+      <comment>Unfortunately,  you seem to need a solver here to return the appropriate function space, even if you don't solve anything.
+Here I'll just do a simple projection</comment>
+    </nonlinear_solver>
+    <solve name="never"/>
+  </system>
   <system name="Stokes">
     <mesh name="Mesh"/>
     <ufl_symbol>
@@ -107,9 +220,24 @@
             </degree>
           </element>
           <initial_condition type="initial_condition" name="WholeMesh">
-            <constant name="dim">
-              <real_value shape="2" dim1="dim" rank="1">0.0 0.0</real_value>
-            </constant>
+            <cpp rank="1">
+              <members>
+                <string_value lines="20" type="code" language="cpp">GenericFunction_ptr Tinit_ptr;
+GenericFunction_ptr vinit_ptr;
+GenericFunction_ptr pinit_ptr;</string_value>
+              </members>
+              <initialization>
+                <string_value lines="20" type="code" language="cpp">// get pointers to the initial Temperature, velocity and pressure
+
+Tinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("TemperatureInit")-&gt;genericfunction_ptr(time());
+vinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("VelocityInit")-&gt;genericfunction_ptr(time());
+pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&gt;genericfunction_ptr(time());</string_value>
+              </initialization>
+              <eval>
+                <string_value lines="20" type="code" language="cpp">printf("x,y=(%g,%g)\n",x[0],x[1]);
+vinit_ptr-&gt;eval(values,x,cell);</string_value>
+              </eval>
+            </cpp>
           </initial_condition>
           <boundary_condition name="LeftX">
             <boundary_ids>
@@ -207,9 +335,23 @@
             </degree>
           </element>
           <initial_condition type="initial_condition" name="WholeMesh">
-            <constant>
-              <real_value rank="0">0.0</real_value>
-            </constant>
+            <cpp rank="0">
+              <members>
+                <string_value lines="20" type="code" language="cpp">GenericFunction_ptr Tinit_ptr;
+GenericFunction_ptr vinit_ptr;
+GenericFunction_ptr pinit_ptr;</string_value>
+              </members>
+              <initialization>
+                <string_value lines="20" type="code" language="cpp">// get pointers to the initial Temperature, velocity and pressure
+
+Tinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("TemperatureInit")-&gt;genericfunction_ptr(time());
+vinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("VelocityInit")-&gt;genericfunction_ptr(time());
+pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&gt;genericfunction_ptr(time());</string_value>
+              </initialization>
+              <eval>
+                <string_value lines="20" type="code" language="cpp">pinit_ptr-&gt;eval(values,x,cell);</string_value>
+              </eval>
+            </cpp>
           </initial_condition>
           <reference_point name="Point">
             <coordinates>
@@ -219,6 +361,7 @@
         </rank>
       </type>
       <diagnostics>
+        <include_in_visualization/>
         <include_in_statistics>
           <functional name="Integral">
             <string_value lines="20" type="code" language="python">int = p*dx</string_value>
@@ -250,11 +393,23 @@
             </degree>
           </element>
           <initial_condition type="initial_condition" name="WholeMesh">
-            <python rank="0">
-              <string_value lines="20" type="code" language="python">def val(x):
-  from math import sin, cos, pi
-  return 1.-x[1] + 0.2*cos(x[0]*pi)*sin(x[1]*pi)</string_value>
-            </python>
+            <cpp rank="0">
+              <members>
+                <string_value lines="20" type="code" language="cpp">GenericFunction_ptr Tinit_ptr;
+GenericFunction_ptr vinit_ptr;
+GenericFunction_ptr pinit_ptr;</string_value>
+              </members>
+              <initialization>
+                <string_value lines="20" type="code" language="cpp">// get pointers to the initial Temperature, velocity and pressure
+
+Tinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("TemperatureInit")-&gt;genericfunction_ptr(time());
+vinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("VelocityInit")-&gt;genericfunction_ptr(time());
+pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&gt;genericfunction_ptr(time());</string_value>
+              </initialization>
+              <eval>
+                <string_value lines="20" type="code" language="cpp">Tinit_ptr-&gt;eval(values,x,cell);</string_value>
+              </eval>
+            </cpp>
           </initial_condition>
           <boundary_condition name="Top">
             <boundary_ids>
@@ -323,126 +478,11 @@
       </type>
       <diagnostics/>
     </coefficient>
-    <coefficient name="alpha">
-      <ufl_symbol>
-        <string_value lines="1">alpha</string_value>
-      </ufl_symbol>
-      <type name="Expression">
-        <rank name="Scalar" rank="0">
-          <element name="P0R">
-            <family>
-              <string_value>R</string_value>
-            </family>
-            <degree>
-              <integer_value rank="0">0</integer_value>
-            </degree>
-          </element>
-          <value type="value" name="WholeMesh">
-            <python rank="0">
-              <string_value lines="20" type="code" language="python">def val(x,t):
-	return min(t,1.0)</string_value>
-            </python>
-          </value>
-        </rank>
-      </type>
-      <diagnostics>
-        <include_in_statistics/>
-      </diagnostics>
-      <comment>Continuation parameter</comment>
-    </coefficient>
-    <nonlinear_solver name="ProjectionStokes">
-      <type name="SNES">
-        <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">rT = T_t*(T_i - T_n)*dx
-rv = (inner(sym(grad(v_t)), 2*sym(grad(v_i))) - div(v_t)*p_i - T_i*v_t[1])*dx
-rp = p_t*div(v_i)*dx
-r = rT + rv + rp</string_value>
-          <ufl_symbol>
-            <string_value lines="1">r</string_value>
-          </ufl_symbol>
-        </form>
-        <form name="Jacobian" rank="1">
-          <string_value lines="20" type="code" language="python">a = derivative(r, us_i, us_a)</string_value>
-          <ufl_symbol>
-            <string_value lines="1">a</string_value>
-          </ufl_symbol>
-        </form>
-        <quadrature_rule name="default"/>
-        <snes_type name="ls">
-          <ls_type name="cubic"/>
-          <convergence_test name="default"/>
-        </snes_type>
-        <relative_error>
-          <real_value rank="0">1.e-7</real_value>
-        </relative_error>
-        <absolute_error>
-          <real_value rank="0">1e-10</real_value>
-        </absolute_error>
-        <max_iterations>
-          <integer_value rank="0">50</integer_value>
-        </max_iterations>
-        <monitors>
-          <residual/>
-          <convergence_file/>
-        </monitors>
-        <linear_solver>
-          <iterative_method name="preonly"/>
-          <preconditioner name="fieldsplit">
-            <composite_type name="multiplicative"/>
-            <fieldsplit name="Temperature">
-              <field name="Temperature"/>
-              <monitors/>
-              <linear_solver>
-                <iterative_method name="cg">
-                  <relative_error>
-                    <real_value rank="0">1.e-6</real_value>
-                  </relative_error>
-                  <max_iterations>
-                    <integer_value rank="0">20</integer_value>
-                  </max_iterations>
-                  <zero_initial_guess/>
-                  <monitors>
-                    <preconditioned_residual/>
-                  </monitors>
-                </iterative_method>
-                <preconditioner name="sor"/>
-              </linear_solver>
-            </fieldsplit>
-            <fieldsplit name="Stokes">
-              <field name="Pressure"/>
-              <field name="Velocity"/>
-              <monitors/>
-              <linear_solver>
-                <iterative_method name="richardson">
-                  <relative_error>
-                    <real_value rank="0">1.e-7</real_value>
-                  </relative_error>
-                  <max_iterations>
-                    <integer_value rank="0">10</integer_value>
-                  </max_iterations>
-                  <zero_initial_guess/>
-                  <monitors>
-                    <preconditioned_residual/>
-                  </monitors>
-                </iterative_method>
-                <preconditioner name="lu">
-                  <factorization_package name="mumps"/>
-                </preconditioner>
-              </linear_solver>
-            </fieldsplit>
-          </preconditioner>
-        </linear_solver>
-        <never_ignore_solver_failures/>
-      </type>
-    </nonlinear_solver>
     <nonlinear_solver name="Newton">
       <type name="SNES">
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">Ra_alpha = Ra**alpha # continuation in Raleigh number
-recRa = 1./Ra_alpha
-
-rT = (T_t*inner(v_i, grad(T_i)) + recRa*inner(grad(T_t), grad(T_i)))*dx
-rv = (inner(sym(grad(v_t)), 2*sym(grad(v_i))) - div(v_t)*p_i - T_i*v_t[1])*dx
+          <string_value lines="20" type="code" language="python">rT = (T_t*inner(v_i, grad(T_i)) + recRa*inner(grad(T_t), grad(T_i)))*dx
+rv = (inner(sym(grad(v_t)), 2.*eta*sym(grad(v_i))) - div(v_t)*p_i - T_i*v_t[1])*dx
 rp = p_t*div(v_i)*dx
 
 
@@ -481,11 +521,8 @@ r = rT + rv + rp</string_value>
               <integer_value rank="0">30</integer_value>
             </restart>
             <relative_error>
-              <real_value rank="0">1.e-6</real_value>
+              <real_value rank="0">1.e-3</real_value>
             </relative_error>
-            <absolute_error>
-              <real_value rank="0">1.e-11</real_value>
-            </absolute_error>
             <max_iterations>
               <integer_value rank="0">100</integer_value>
             </max_iterations>
@@ -496,8 +533,9 @@ r = rT + rv + rp</string_value>
           </iterative_method>
           <preconditioner name="fieldsplit">
             <composite_type name="multiplicative"/>
-            <fieldsplit name="Temperature">
-              <field name="Temperature"/>
+            <fieldsplit name="Stokes">
+              <field name="Pressure"/>
+              <field name="Velocity"/>
               <monitors/>
               <linear_solver>
                 <iterative_method name="preonly"/>
@@ -506,9 +544,8 @@ r = rT + rv + rp</string_value>
                 </preconditioner>
               </linear_solver>
             </fieldsplit>
-            <fieldsplit name="Stokes">
-              <field name="Pressure"/>
-              <field name="Velocity"/>
+            <fieldsplit name="Temperature">
+              <field name="Temperature"/>
               <monitors/>
               <linear_solver>
                 <iterative_method name="preonly"/>

@@ -59,6 +59,11 @@
         </python>
       </array>
     </detectors>
+    <checkpointing>
+      <checkpoint_period>
+        <real_value rank="0">1.e4</real_value>
+      </checkpoint_period>
+    </checkpointing>
   </io>
   <timestepping>
     <current_time>

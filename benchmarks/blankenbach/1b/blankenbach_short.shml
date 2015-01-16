@@ -7,7 +7,14 @@
     <string_value lines="1">mspieg</string_value>
   </owner>
   <description>
-    <string_value lines="1">Blankenbach 1a benchmark using Ra Continuation model to steady state solution.  This version uses fieldsplit direct solvers.</string_value>
+    <string_value lines="1">Blankenbach 1a benchmark using low resolution time-dependent run to get closer to steady state then apply Newton. 
+
+The initial time dependent run uses 
+blankenbach.tfml  
+modified to run to a near steady state tolerance of 5e-5, or a maximum time of 1000.
+on a mesh with size ncells_init (e.g. 16)
+
+The second code provides a newton solver for the exact steady state solution initialized by the interpolation of the output of blankenbach_init onto a new mesh of size ncells</string_value>
   </description>
   <simulations>
     <simulation name="Blankenbach">
@@ -21,8 +28,108 @@
             <string_value lines="1">16 32 64 128 256</string_value>
           </values>
         </parameter>
+        <parameter name="ncells_td">
+          <values>
+            <string_value lines="1">16</string_value>
+          </values>
+        </parameter>
       </parameter_sweep>
       <dependencies>
+        <simulation name="BlankenbachTD">
+          <input_file>
+            <string_value lines="1" type="filename">blankenbach.tfml</string_value>
+          </input_file>
+          <run_when name="input_changed_or_output_missing"/>
+          <parameter_sweep>
+            <parameter name="ncells_td">
+              <update>
+                <string_value lines="20" type="code" language="python">import libspud
+# set the mesh for the time-dependent problem
+libspud.set_option("/geometry/mesh::Mesh/source::File/file","transfinite_square_td")
+
+# set the maximum run time for the time dependent run
+libspud.set_option("/timestepping/finish_time",float(1.e4))
+
+# set the courant number to be time accurate
+libspud.set_option("/timestepping/timestep/adaptive/constraint::Courant/requested_maximum_value",float(.5))
+
+#set the steady state tolerance 
+libspud.set_option("/timestepping/steady_state/tolerance",float(5.e-5))</string_value>
+                <single_build/>
+              </update>
+            </parameter>
+          </parameter_sweep>
+          <required_output>
+            <filenames name="checkpoints">
+              <string>
+                <string_value lines="1" type="filename">rbconvection_Stokes_0.xml</string_value>
+              </string>
+            </filenames>
+          </required_output>
+          <dependencies>
+            <run name="MeshTD">
+              <input_file>
+                <string_value lines="1" type="filename">../../src/transfinite_square.geo</string_value>
+              </input_file>
+              <run_when name="input_changed_or_output_missing"/>
+              <parameter_sweep>
+                <parameter name="ncells_td">
+                  <update>
+                    <string_value lines="20" type="code" language="python">from string import Template as template
+input_file = template(input_file).safe_substitute({'ncells':ncells_td, 'factor':'0.5'})</string_value>
+                  </update>
+                </parameter>
+              </parameter_sweep>
+              <required_output>
+                <filenames name="meshfiles">
+                  <python>
+                    <string_value lines="20" type="code" language="python">meshfiles = ["transfinite_square_td.xml"]</string_value>
+                  </python>
+                </filenames>
+              </required_output>
+              <commands>
+                <command name="GMsh">
+                  <string_value lines="1">gmsh -2 transfinite_square.geo -o transfinite_square_td.msh</string_value>
+                </command>
+                <command name="Convert">
+                  <string_value lines="1">dolfin-convert transfinite_square_td.msh transfinite_square_td.xml</string_value>
+                </command>
+              </commands>
+            </run>
+          </dependencies>
+          <variables>
+            <variable name="vtd">
+              <string_value lines="20" type="code" language="python">import libspud
+from buckettools.statfile import parser
+from math import sqrt
+
+libspud.load_options("blankenbach.tfml")
+ioname = libspud.get_option("/io/output_base_name")
+Ra = libspud.get_option("/system::Stokes/coefficient::RayleighNumber/type::Constant/rank::Scalar/value::WholeMesh/constant")
+libspud.clear_options()
+
+stat = parser(ioname+".stat")
+det  = parser(ioname+".det")
+
+vtd = {}
+vtd["nu"] = -1.0*(stat["Stokes"]["Temperature"]["TopSurfaceIntegral"][-1])
+vtd["v_rms"] = sqrt(stat["Stokes"]["Velocity"]["L2NormSquared"][-1])*Ra
+vtd["q1"] = -det["TemperatureGradient"]["TemperatureGradient"]["TopLeft"][-1][-1]
+vtd["q2"] = -det["TemperatureGradient"]["TemperatureGradient"]["TopRight"][-1][-1]
+vtd["q3"] = -det["TemperatureGradient"]["TemperatureGradient"]["BottomRight"][-1][-1]
+vtd["q4"] = -det["TemperatureGradient"]["TemperatureGradient"]["BottomLeft"][-1][-1]
+detlen = len(det["Stokes"]["Temperature"]["Array"][:,-1])
+expos1 = det["Stokes"]["Temperature"]["Array"][0:detlen/2,-1].argmin()
+vtd["Te1"] = det["Stokes"]["Temperature"]["Array"][0:detlen/2,-1][expos1]
+vtd["ze1"] = det["Array"]["position_1"][0:detlen/2,-1][expos1]
+expos2 = det["Stokes"]["Temperature"]["Array"][detlen/2:,-1].argmax()
+vtd["Te2"] = det["Stokes"]["Temperature"]["Array"][detlen/2:,-1][expos2]
+vtd["ze2"] = det["Array"]["position_1"][detlen/2:,-1][expos2]
+vtd["Walltime"] = stat["ElapsedWallTime"]["value"][-1]</string_value>
+            </variable>
+          </variables>
+          <comment>Time dependent initialization run</comment>
+        </simulation>
         <run name="Mesh">
           <input_file>
             <string_value lines="1" type="filename">../../src/transfinite_square.geo</string_value>
@@ -105,9 +212,9 @@ assert(numpy.all(numpy.array(rerr.values()) &lt; 0.05))
 
 table0 = []
 table0.append("\\begin{tabular}{c|cccccc}\n")
-table0.append("    &amp; $\Nu$ &amp; $v_{rms}$ &amp; $q_1$ &amp; $q_2$ &amp; $T_{e}$ &amp; $z_{e}$ \\\\\n")
+table0.append("    &amp; $\Nu$ &amp; $v_{rms}$ &amp; $q_1$ &amp; $q_2$ &amp;$T_{e1}$ &amp; $z_{e1}$\\\\\n")
 table0.append("\hline\n")
-resultstring = "&amp; {nu:.3f} &amp; {v_rms:.3f} &amp; {q1:.3f} &amp; {q2:.3f} &amp; {Te1:.3f} &amp; {ze1:.3f} \\\\\n"
+resultstring = "&amp; {nu:.3f} &amp; {v_rms:.3f} &amp; {q1:.3f} &amp; {q2:.3f} &amp;{Te1:.3f} &amp; {ze1:.3f} \\\\\n"
 for ncells in v.parameters['ncells']:
   table0.append(("{ncells:2d}$\\times${ncells:2d} "+resultstring).format(ncells=int(ncells), **v[{'ncells':ncells}]))
 table0.append("\hline\n")
@@ -126,6 +233,46 @@ filehandle.close()</string_value>
       <string_value lines="20" type="code" language="python">ncells = v.parameters['ncells']
 slice = {'ncells': ncells}
 print 'walltime =',[ v[slice][i]["Walltime"] for i in range(len(ncells)) ]</string_value>
+    </test>
+    <test name="td_relative_errors_less_than_11_percent">
+      <string_value lines="20" type="code" language="python">import csv
+vb = {}
+filehandle = open("benchmark.csv")
+for key,val in csv.reader(filehandle):
+  vb[key] = float(val)
+filehandle.close()
+
+import numpy
+vfine = vtd[{'ncells': v.parameters['ncells'][-1]}]
+rerr = {}
+for key,val in vb.items():
+  rerr[key] = abs(vfine[key]-val)/abs(val)
+print "relative errors = ", rerr
+assert(numpy.all(numpy.array(rerr.values()) &lt; 0.45))
+
+table0 = []
+table0.append("\\begin{tabular}{c|cccccc}\n")
+table0.append("    &amp; $\Nu$ &amp; $v_{rms}$ &amp; $q_1$ &amp; $q_2$ &amp;$T_{e1}$ &amp; $z_{e1}$\\\\\n")
+table0.append("\hline\n")
+resultstring = "&amp; {nu:.3f} &amp; {v_rms:.3f} &amp; {q1:.3f} &amp; {q2:.3f} &amp;{Te1:.3f} &amp; {ze1:.3f} \\\\\n"
+for ncells in vtd.parameters['ncells_td']:
+  table0.append(("{ncells:2d}$\\times${ncells:2d} "+resultstring).format(ncells=int(ncells), **vtd[{'ncells':ncells}]))
+table0.append("\hline\n")
+table0.append(("Benchmark "+resultstring).format(**vb))
+table0.append("\\end{tabular}\n")
+
+for line in table0:
+  print line[0:-1]
+
+filename = "table0_td.tex"
+filehandle = file(filename, 'w')
+filehandle.writelines(table0)
+filehandle.close()</string_value>
+    </test>
+    <test name="td_Walltime">
+      <string_value lines="20" type="code" language="python">ncells = vtd.parameters['ncells']
+slice = {'ncells': ncells}
+print 'Time dependent walltime =', vtd[slice][0]['Walltime']</string_value>
     </test>
   </tests>
 </harness_options>
