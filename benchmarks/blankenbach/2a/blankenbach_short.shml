@@ -24,7 +24,7 @@ The second code provides a newton solver for the exact steady state solution ini
       <parameter_sweep>
         <parameter name="ncells">
           <values>
-            <string_value lines="1">32</string_value>
+            <string_value lines="1">16 32 64 128</string_value>
           </values>
         </parameter>
         <parameter name="ncells_init">

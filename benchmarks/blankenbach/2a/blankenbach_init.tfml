@@ -5,10 +5,13 @@
       <integer_value rank="0">2</integer_value>
     </dimension>
     <mesh name="Mesh">
-      <source name="File">
-        <file>
-          <string_value lines="1" type="filename">transfinite_square_init</string_value>
-        </file>
+      <source name="UnitSquare">
+        <number_cells>
+          <integer_value shape="2" dim1="2" rank="1">32 32</integer_value>
+        </number_cells>
+        <diagonal>
+          <string_value>right/left</string_value>
+        </diagonal>
         <cell>
           <string_value>triangle</string_value>
         </cell>
