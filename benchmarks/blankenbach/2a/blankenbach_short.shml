@@ -29,7 +29,7 @@ The second code provides a newton solver for the exact steady state solution ini
         </parameter>
         <parameter name="ncells_init">
           <values>
-            <string_value lines="1">32</string_value>
+            <string_value lines="1">16</string_value>
           </values>
           <update>
             <string_value type="code" lines="20" language="python">import libspud
