@@ -1,28 +1,68 @@
 <?xml version='1.0' encoding='utf-8'?>
 <harness_options>
   <length>
-    <string_value>special</string_value>
+    <string_value>short</string_value>
   </length>
   <owner>
-    <string_value lines="1">cwilson</string_value>
+    <string_value lines="1">mspieg</string_value>
   </owner>
   <description>
-    <string_value lines="1">Blankenbach 1a benchmark.</string_value>
+    <string_value lines="1">Blankenbach 2b benchmark using low resolution time-dependent run to get closer to steady state then apply Newton. 
+
+The initial run blankenbach_int.tfml uses a Second order Crank-nicholson scheme to run to a near steady state tolerance of 5e-5, or a maximum time of 1000.
+on a mesh with size ncells_init (e.g. 80x32)
+
+The second code provides a newton solver for the exact steady state solution initialized by the interpolation of the output of blankenbach_init onto a new mesh of size ncells</string_value>
   </description>
   <simulations>
     <simulation name="Blankenbach">
       <input_file>
-        <string_value lines="1" type="filename">blankenbach.tfml</string_value>
+        <string_value lines="1" type="filename">blankenbach_short.tfml</string_value>
       </input_file>
       <run_when name="input_changed_or_output_missing"/>
       <parameter_sweep>
         <parameter name="ncells">
           <values>
+            <string_value lines="1">16 32 64 128</string_value>
+          </values>
+        </parameter>
+        <parameter name="ncells_init">
+          <values>
             <string_value lines="1">16</string_value>
           </values>
+          <update>
+            <string_value lines="20" type="code" language="python">import libspud
+ncellsi = int(ncells_init)
+libspud.set_option("/geometry/mesh::MeshInit/source::Rectangle/number_cells",[5*ncellsi/2,ncellsi])</string_value>
+            <single_build/>
+          </update>
+          <comment>size of mesh for initialization run.  This input file will be interpolated onto the final mesh of size ncells before newton is run</comment>
         </parameter>
       </parameter_sweep>
       <dependencies>
+        <simulation name="BlankenbachInit">
+          <input_file>
+            <string_value lines="1" type="filename">blankenbach_short_init.tfml</string_value>
+          </input_file>
+          <run_when name="input_changed_or_output_missing"/>
+          <parameter_sweep>
+            <parameter name="ncells_init">
+              <update>
+                <string_value lines="20" type="code" language="python">import libspud
+ncellsi = int(ncells_init)
+libspud.set_option("/geometry/mesh::Mesh/source::Rectangle/number_cells",[5*ncellsi/2,ncellsi])</string_value>
+                <single_build/>
+              </update>
+            </parameter>
+          </parameter_sweep>
+          <required_output>
+            <filenames name="checkpoints">
+              <string>
+                <string_value lines="1" type="filename">rbconvection_Stokes_0.xml</string_value>
+              </string>
+            </filenames>
+          </required_output>
+        </simulation>
         <run name="Mesh">
           <input_file>
             <string_value lines="1" type="filename">../../src/transfinite_rectangle.geo</string_value>
@@ -32,14 +72,14 @@
             <parameter name="ncells">
               <update>
                 <string_value lines="20" type="code" language="python">from string import Template as template
-input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.01', 'aspect':'2.5'})</string_value>
+input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.01','aspect':'2.5'})</string_value>
               </update>
             </parameter>
           </parameter_sweep>
           <required_output>
             <filenames name="meshfiles">
               <python>
-                <string_value lines="20" type="code" language="python">meshfiles = ["transfinite_rectangle"+ext for ext in [".xml", "_facet_region.xml"]]</string_value>
+                <string_value lines="20" type="code" language="python">meshfiles = ["transfinite_rectangle.xml"]</string_value>
               </python>
             </filenames>
           </required_output>
@@ -59,7 +99,7 @@ input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.
 from buckettools.statfile import parser
 from math import sqrt
 
-libspud.load_options("blankenbach.tfml")
+libspud.load_options("blankenbach_short.tfml")
 ioname = libspud.get_option("/io/output_base_name")
 Ra = libspud.get_option("/system::Stokes/coefficient::RayleighNumber/type::Constant/rank::Scalar/value::WholeMesh/constant")
 libspud.clear_options()
@@ -80,7 +120,8 @@ v["Te1"] = det["Stokes"]["Temperature"]["Array"][0:detlen/2,-1][expos1]
 v["ze1"] = det["Array"]["position_1"][0:detlen/2,-1][expos1]
 expos2 = det["Stokes"]["Temperature"]["Array"][detlen/2:,-1].argmax()
 v["Te2"] = det["Stokes"]["Temperature"]["Array"][detlen/2:,-1][expos2]
-v["ze2"] = det["Array"]["position_1"][detlen/2:,-1][expos2]</string_value>
+v["ze2"] = det["Array"]["position_1"][detlen/2:,-1][expos2]
+v["Walltime"] = stat["ElapsedWallTime"]["value"][-1]</string_value>
         </variable>
       </variables>
     </simulation>
@@ -103,10 +144,10 @@ print "relative errors = ", rerr
 assert(numpy.all(numpy.array(rerr.values()) &lt; 0.05))
 
 table0 = []
-table0.append("\\begin{tabular}{c|cccccc}\n")
-table0.append("    &amp; $\Nu$ &amp; $v_{rms}$ &amp; $q_1$ &amp; $q_2$ &amp; $T_{e}$ &amp; $z_{e}$ \\\\\n")
+table0.append("\\begin{tabular}{c|cccccccccc}\n")
+table0.append("    &amp; $\Nu$ &amp; $v_{rms}$ &amp; $q_1$ &amp; $q_2$ &amp; $q_3$ &amp; $q_4$ &amp;$T_{e1}$ &amp; $z_{e1}$ $T_{e2}$ &amp; $z_{e2}$\\\\\n")
 table0.append("\hline\n")
-resultstring = "&amp; {nu:.3f} &amp; {v_rms:.3f} &amp; {q1:.3f} &amp; {q2:.3f} &amp; {Te1:.3f} &amp; {ze1:.3f} \\\\\n"
+resultstring = "&amp; {nu:.3f} &amp; {v_rms:.3f} &amp; {q1:.3f} &amp; {q2:.3f} &amp; {q3:.3f} &amp; {q4:.3f} &amp;{Te1:.3f} &amp; {ze1:.3f} &amp; {Te2:.3f} &amp; {ze2:.3f}\\\\\n"
 for ncells in v.parameters['ncells']:
   table0.append(("{ncells:2d}$\\times${ncells:2d} "+resultstring).format(ncells=int(ncells), **v[{'ncells':ncells}]))
 table0.append("\hline\n")
@@ -120,6 +161,11 @@ filename = "table0_short.tex"
 filehandle = file(filename, 'w')
 filehandle.writelines(table0)
 filehandle.close()</string_value>
+    </test>
+    <test name="Walltime">
+      <string_value lines="20" type="code" language="python">ncells = v.parameters['ncells']
+slice = {'ncells': ncells}
+print 'walltime =',[ v[slice][i]["Walltime"] for i in range(len(ncells)) ]</string_value>
     </test>
   </tests>
 </harness_options>
