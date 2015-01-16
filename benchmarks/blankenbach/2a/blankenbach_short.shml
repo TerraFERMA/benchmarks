@@ -43,7 +43,7 @@ libspud.set_option("/geometry/mesh::MeshInit/source::UnitSquare/number_cells",[n
       <dependencies>
         <simulation name="BlankenbachInit">
           <input_file>
-            <string_value lines="1" type="filename">blankenbach_init.tfml</string_value>
+            <string_value lines="1" type="filename">blankenbach_short_init.tfml</string_value>
           </input_file>
           <run_when name="input_changed_or_output_missing"/>
           <parameter_sweep>
@@ -61,11 +61,6 @@ libspud.set_option("/geometry/mesh::Mesh/source::UnitSquare/number_cells",[ncell
             <filenames name="checkpoints">
               <string>
                 <string_value type="filename" lines="1">rbconvection_Stokes_0.xml</string_value>
-              </string>
-            </filenames>
-            <filenames name="init_mesh">
-              <string>
-                <string_value type="filename" lines="1">transfinite_square_init.xml</string_value>
               </string>
             </filenames>
           </required_output>
