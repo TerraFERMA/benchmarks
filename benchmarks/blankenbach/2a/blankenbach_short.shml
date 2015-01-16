@@ -169,10 +169,10 @@ print "relative errors = ", rerr
 assert(numpy.all(numpy.array(rerr.values()) &lt; 0.05))
 
 table0 = []
-table0.append("\\begin{tabular}{c|cccccc}\n")
-table0.append("    &amp; $\Nu$ &amp; $v_{rms}$ &amp; $q_1$ &amp; $q_2$ &amp; $T_{e}$ &amp; $z_{e}$ \\\\\n")
+table0.append("\\begin{tabular}{c|cccccccccc}\n")
+table0.append("    &amp; $\Nu$ &amp; $v_{rms}$ &amp; $q_1$ &amp; $q_2$ &amp; $q_3$ &amp; $q_4$ &amp;$T_{e1}$ &amp; $z_{e1}$ $T_{e2}$ &amp; $z_{e2}$\\\\\n")
 table0.append("\hline\n")
-resultstring = "&amp; {nu:.3f} &amp; {v_rms:.3f} &amp; {q1:.3f} &amp; {q2:.3f} &amp; {Te1:.3f} &amp; {ze1:.3f} \\\\\n"
+resultstring = "&amp; {nu:.3f} &amp; {v_rms:.3f} &amp; {q1:.3f} &amp; {q2:.3f} &amp; {q3:.3f} &amp; {q4:.3f} &amp;{Te1:.3f} &amp; {ze1:.3f} &amp; {Te2:.3f} &amp; {ze2:.3f}\\\\\n"
 for ncells in v.parameters['ncells']:
   table0.append(("{ncells:2d}$\\times${ncells:2d} "+resultstring).format(ncells=int(ncells), **v[{'ncells':ncells}]))
 table0.append("\hline\n")
@@ -189,7 +189,6 @@ filehandle.close()</string_value>
     </test>
     <test name="Walltime">
       <string_value lines="20" type="code" language="python">ncells = v.parameters['ncells']
-print ncells
 slice = {'ncells': ncells}
 print 'walltime =',[ v[slice][i]["Walltime"] for i in range(len(ncells)) ]</string_value>
     </test>
