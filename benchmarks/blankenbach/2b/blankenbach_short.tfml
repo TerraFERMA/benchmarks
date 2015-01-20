@@ -15,19 +15,11 @@
       </source>
     </mesh>
     <mesh name="MeshInit">
-      <source name="Rectangle">
-        <lower_left>
-          <real_value shape="2" dim1="2" rank="1">0.0 0.0</real_value>
-        </lower_left>
-        <upper_right>
-          <real_value shape="2" dim1="2" rank="1">2.5 1.</real_value>
-        </upper_right>
-        <number_cells>
-          <integer_value shape="2" dim1="2" rank="1">80 32</integer_value>
-        </number_cells>
-        <diagonal>
-          <string_value>right/left</string_value>
-        </diagonal>
+      <source name="File">
+        <file>
+          <string_value lines="1" type="filename">transfinite_rectangle_td</string_value>
+          <comment>mesh for time-dependent initial file</comment>
+        </file>
         <cell>
           <string_value>triangle</string_value>
         </cell>
@@ -36,7 +28,7 @@
   </geometry>
   <io>
     <output_base_name>
-      <string_value lines="1">rbconvection</string_value>
+      <string_value lines="1">rbconvection_short</string_value>
     </output_base_name>
     <visualization>
       <element name="P2DG">
