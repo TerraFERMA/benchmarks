@@ -15,13 +15,11 @@
       </source>
     </mesh>
     <mesh name="MeshInit">
-      <source name="UnitSquare">
-        <number_cells>
-          <integer_value shape="2" dim1="2" rank="1">32 32</integer_value>
-        </number_cells>
-        <diagonal>
-          <string_value>right/left</string_value>
-        </diagonal>
+      <source name="File">
+        <file>
+          <string_value lines="1" type="filename">transfinite_square_td</string_value>
+          <comment>mesh for time-dependent initial file</comment>
+        </file>
         <cell>
           <string_value>triangle</string_value>
         </cell>
@@ -30,7 +28,7 @@
   </geometry>
   <io>
     <output_base_name>
-      <string_value lines="1">rbconvection</string_value>
+      <string_value lines="1">rbconvection_short</string_value>
     </output_base_name>
     <visualization>
       <element name="P2DG">
@@ -75,7 +73,7 @@
       <string_value lines="20" type="code" language="python"># Temperature dependent Shear viscosity, continuation in b
 eta = exp(-b*T_i)
 
-#Current Ra number for use in continuations
+#Inverse Ra number 
 recRa = 1./Ra</string_value>
     </ufl>
   </global_parameters>
@@ -233,8 +231,7 @@ GenericFunction_ptr pinit_ptr;</string_value>
 
 Tinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("TemperatureInit")-&gt;genericfunction_ptr(time());
 vinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("VelocityInit")-&gt;genericfunction_ptr(time());
-pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&gt;genericfunction_ptr(time());
-</string_value>
+pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&gt;genericfunction_ptr(time());</string_value>
               </initialization>
               <eval>
                 <string_value type="code" lines="20" language="cpp">printf("x,y=(%g,%g)\n",x[0],x[1]);
