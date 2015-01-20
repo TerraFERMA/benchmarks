@@ -216,7 +216,7 @@ table0.append("    &amp; $\Nu$ &amp; $v_{rms}$ &amp; $q_1$ &amp; $q_2$ &amp; $q_
 table0.append("\hline\n")
 resultstring = "&amp; {nu:.3f} &amp; {v_rms:.3f} &amp; {q1:.3f} &amp; {q2:.3f} &amp; {q3:.3f} &amp; {q4:.3f} &amp;{Te1:.3f} &amp; {ze1:.3f} &amp; {Te2:.3f} &amp; {ze2:.3f}\\\\\n"
 for ncells in v.parameters['ncells']:
-  table0.append(("{ncells:2d}$\\times${ncells:2d} "+resultstring).format(ncells=int(ncells), **v[{'ncells':ncells}]))
+  table0.append(("{ncellsx:2d}$\\times${ncells:2d} "+resultstring).format(ncellsx=int(ncells)*5/2,ncells=int(ncells), **v[{'ncells':ncells}]))
 table0.append("\hline\n")
 table0.append(("Benchmark "+resultstring).format(**vb))
 table0.append("\\end{tabular}\n")
@@ -257,7 +257,7 @@ table0.append("\hline\n")
 resultstring = "&amp; {nu:.3f} &amp; {v_rms:.3f} &amp; {q1:.3f} &amp; {q2:.3f} &amp; {q3:.3f} &amp; {q4:.3f} &amp;{Te1:.3f} &amp; {ze1:.3f} &amp; {Te1:.3f} &amp; {ze1:.3f} \\\\\n"
 ncells_max = vtd.parameters['ncells'][-1]
 for ncells in vtd.parameters['ncells_td']:
-  table0.append(("{ncells:2d}$\\times${ncells:2d} "+resultstring).format(ncells=int(ncells), **vtd[{'ncells':ncells_max}]))
+  table0.append(("{ncellsx:2d}$\\times${ncells:2d} "+resultstring).format(ncellsx=int(ncells)*5/2,ncells = int(ncells), **vtd[{'ncells':ncells_max}]))
 table0.append("\hline\n")
 table0.append(("Benchmark "+resultstring).format(**vb))
 table0.append("\\end{tabular}\n")
