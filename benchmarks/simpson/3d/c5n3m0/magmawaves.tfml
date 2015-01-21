@@ -56,7 +56,7 @@
     </finish_time>
     <timestep>
       <coefficient name="Timestep">
-        <ufl_symbol>
+        <ufl_symbol name="global">
           <string_value lines="1">dt</string_value>
         </ufl_symbol>
         <type name="Constant">
@@ -108,11 +108,11 @@ fn = FacetNormal(f_e.cell())</string_value>
   </global_parameters>
   <system name="magma">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">us</string_value>
     </ufl_symbol>
     <field name="Pressure">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">p</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -146,20 +146,12 @@ fn = FacetNormal(f_e.cell())</string_value>
       </type>
       <diagnostics>
         <include_in_visualization/>
-        <include_in_statistics>
-          <functional name="IntegralPressure">
-            <string_value lines="20" type="code" language="python">int = p*dx</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-        </include_in_statistics>
+        <include_in_statistics/>
         <include_in_detectors/>
       </diagnostics>
     </field>
     <field name="Porosity">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">f</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -224,19 +216,11 @@ def val(x):
       </type>
       <diagnostics>
         <include_in_visualization/>
-        <include_in_statistics>
-          <functional name="Integral">
-            <string_value lines="20" type="code" language="python">int = f*dx</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-        </include_in_statistics>
+        <include_in_statistics/>
       </diagnostics>
     </field>
     <coefficient name="W">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">W</string_value>
       </ufl_symbol>
       <type name="Constant">
@@ -251,7 +235,7 @@ def val(x):
       <diagnostics/>
     </coefficient>
     <coefficient name="phi_analytic">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">phi</string_value>
       </ufl_symbol>
       <type name="Expression">
@@ -288,7 +272,7 @@ def val(x,t):
       <diagnostics/>
     </coefficient>
     <coefficient name="CourantNumber">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">ac</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -322,15 +306,7 @@ values[0] = (v_max*bucket()-&gt;timestep())/dcell.diameter();</string_value>
         </rank>
       </type>
       <diagnostics>
-        <include_in_statistics>
-          <functional name="Integral">
-            <string_value lines="20" type="code" language="python">int = ac*dx</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-        </include_in_statistics>
+        <include_in_statistics/>
       </diagnostics>
     </coefficient>
     <nonlinear_solver name="Solver">
@@ -341,13 +317,13 @@ rp = (K*inner(grad(p_t),grad(p_i)) + p_t*Xi*p_i - K*p_t.dx(2))*dx + p_t*K*fn[2]*
 rf = f_t*(f_i - f_n  + dt*inner(W,grad(f_i)) - 0.5*dt*(Xi*p_i + Xi*p_n))*dx 
 
 r = rp + rf</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">r</string_value>
           </ufl_symbol>
         </form>
         <form name="Jacobian" rank="1">
           <string_value lines="20" type="code" language="python">a = derivative(r, us_i, us_a)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
@@ -424,7 +400,31 @@ r = rp + rf</string_value>
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="in_timeloop"/>
     </nonlinear_solver>
-    <solve name="in_timeloop"/>
+    <functional name="PressureIntegralPressure">
+      <string_value lines="20" type="code" language="python">int = p*dx</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="PorosityIntegral">
+      <string_value lines="20" type="code" language="python">int = f*dx</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="CourantNumberIntegral">
+      <string_value lines="20" type="code" language="python">int = ac*dx</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
   </system>
 </terraferma_options>

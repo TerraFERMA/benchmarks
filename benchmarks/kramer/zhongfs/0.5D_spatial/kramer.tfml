@@ -74,7 +74,7 @@
     </finish_time>
     <timestep>
       <coefficient name="Timestep">
-        <ufl_symbol>
+        <ufl_symbol name="global">
           <string_value lines="1">dt</string_value>
         </ufl_symbol>
         <type name="Constant">
@@ -105,11 +105,11 @@ ds_internal = dS(5)</string_value>
   </global_parameters>
   <system name="Stokes">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">us</string_value>
     </ufl_symbol>
     <field name="Velocity">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">v</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -181,7 +181,7 @@ ds_internal = dS(5)</string_value>
       </diagnostics>
     </field>
     <field name="Pressure">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">p</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -212,7 +212,7 @@ ds_internal = dS(5)</string_value>
       </diagnostics>
     </field>
     <field name="ScaledFreeSurface">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">etatilde</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -253,7 +253,7 @@ ds_internal = dS(5)</string_value>
       </diagnostics>
     </field>
     <coefficient name="ScaleFactor">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">s</string_value>
       </ufl_symbol>
       <type name="Constant">
@@ -269,7 +269,7 @@ ds_internal = dS(5)</string_value>
       <diagnostics/>
     </coefficient>
     <coefficient name="Up">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">k</string_value>
       </ufl_symbol>
       <type name="Constant">
@@ -284,7 +284,7 @@ ds_internal = dS(5)</string_value>
       <diagnostics/>
     </coefficient>
     <coefficient name="AnalyticalFreeSurface">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">etabar</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -314,28 +314,12 @@ ds_internal = dS(5)</string_value>
       </type>
       <diagnostics>
         <include_in_visualization/>
-        <include_in_statistics>
-          <functional name="L2ErrorSquaredTop">
-            <string_value lines="20" type="code" language="python">err = (etatilde/s-etabar)*(etatilde/s-etabar)*ds_topfs</string_value>
-            <ufl_symbol>
-              <string_value lines="1">err</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-          <functional name="L2ErrorSquaredBottom">
-            <string_value lines="20" type="code" language="python">err = (-etatilde/s-etabar)*(-etatilde/s-etabar)*ds_bottomfs</string_value>
-            <comment>minus sign because \Delta\rho is negative</comment>
-            <ufl_symbol>
-              <string_value lines="1">err</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-        </include_in_statistics>
+        <include_in_statistics/>
         <include_in_detectors/>
       </diagnostics>
     </coefficient>
     <coefficient name="FreeSurfaceAbsoluteDifference">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">etaabsdiff</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -381,27 +365,12 @@ else
       </type>
       <diagnostics>
         <include_in_visualization/>
-        <include_in_statistics>
-          <functional name="L2ErrorSquaredTop">
-            <string_value lines="20" type="code" language="python">err = etaabsdiff*etaabsdiff*ds_topfs</string_value>
-            <ufl_symbol>
-              <string_value lines="1">err</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-          <functional name="L2ErrorSquaredBottom">
-            <string_value lines="20" type="code" language="python">err = etaabsdiff*etaabsdiff*ds_bottomfs</string_value>
-            <ufl_symbol>
-              <string_value lines="1">err</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-        </include_in_statistics>
+        <include_in_statistics/>
         <include_in_detectors/>
       </diagnostics>
     </coefficient>
     <coefficient name="InternalFlux">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">rhoprime</string_value>
       </ufl_symbol>
       <type name="Expression">
@@ -445,19 +414,19 @@ reta = etatilde_t*theta*((etatilde_i - etatilde_n)*inner(k, n)/(s*dt) - inner(v_
        + etatilde_t*theta*((etatilde_i - etatilde_n)*inner(k, n)/(-s*dt) - inner(v_i, n))*ds_bottomfs # -s here because \Delta\rho is negative
 
 r = rv + rp + reta</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">r</string_value>
           </ufl_symbol>
         </form>
         <form name="Jacobian" rank="1">
           <string_value lines="20" type="code" language="python">a = derivative(r, us_i, us_a)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="JacobianPC" rank="1">
           <string_value lines="20" type="code" language="python">aPC = a + p_t*p_a*dx</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">aPC</string_value>
           </ufl_symbol>
         </form>
@@ -588,16 +557,49 @@ r = rv + rp + reta</string_value>
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="in_timeloop"/>
     </nonlinear_solver>
-    <solve name="in_timeloop"/>
+    <functional name="AnalyticalFreeSurfaceL2ErrorSquaredTop">
+      <string_value lines="20" type="code" language="python">err = (etatilde/s-etabar)*(etatilde/s-etabar)*ds_topfs</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">err</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="AnalyticalFreeSurfaceL2ErrorSquaredBottom">
+      <string_value lines="20" type="code" language="python">err = (-etatilde/s-etabar)*(-etatilde/s-etabar)*ds_bottomfs</string_value>
+      <comment>minus sign because \Delta\rho is negative</comment>
+      <ufl_symbol name="functional">
+        <string_value lines="1">err</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="FreeSurfaceAbsoluteDifferenceL2ErrorSquaredTop">
+      <string_value lines="20" type="code" language="python">err = etaabsdiff*etaabsdiff*ds_topfs</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">err</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="FreeSurfaceAbsoluteDifferenceL2ErrorSquaredBottom">
+      <string_value lines="20" type="code" language="python">err = etaabsdiff*etaabsdiff*ds_bottomfs</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">err</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
   </system>
   <system name="Divergence">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">ud</string_value>
     </ufl_symbol>
     <field name="Divergence">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">d</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -633,19 +635,19 @@ r = d_t*d_a*dx + inner(grad(d_t), v_i)*dx \
         </preamble>
         <form name="Bilinear" rank="1">
           <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
           <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
           <string_value lines="20" type="code" language="python">res = action(a, ud_i) - L</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
@@ -678,7 +680,7 @@ r = d_t*d_a*dx + inner(grad(d_t), v_i)*dx \
         </linear_solver>
         <ignore_all_solver_failures/>
       </type>
+      <solve name="with_diagnostics"/>
     </nonlinear_solver>
-    <solve name="with_diagnostics"/>
   </system>
 </terraferma_options>

@@ -57,7 +57,7 @@
     </finish_time>
     <timestep>
       <coefficient name="Timestep">
-        <ufl_symbol>
+        <ufl_symbol name="global">
           <string_value lines="1">dt</string_value>
         </ufl_symbol>
         <type name="Constant">
@@ -117,11 +117,11 @@ def stress(v):
   </global_parameters>
   <system name="Stokes">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">us</string_value>
     </ufl_symbol>
     <field name="Velocity">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">v</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -203,22 +203,7 @@ def stress(v):
       </type>
       <diagnostics>
         <include_in_visualization/>
-        <include_in_statistics>
-          <functional name="L2NormSquared">
-            <string_value lines="20" type="code" language="python">int = inner(v,v)*dx</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-          <functional name="TopSurfaceIntegral">
-            <string_value lines="20" type="code" language="python">int = v[0]*ds(4)</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-        </include_in_statistics>
+        <include_in_statistics/>
         <include_in_steady_state>
           <norm>
             <string_value>linf</string_value>
@@ -228,7 +213,7 @@ def stress(v):
       </diagnostics>
     </field>
     <field name="Pressure">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">p</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -249,15 +234,7 @@ def stress(v):
         </rank>
       </type>
       <diagnostics>
-        <include_in_statistics>
-          <functional name="Integral">
-            <string_value lines="20" type="code" language="python">int = p*dx</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-        </include_in_statistics>
+        <include_in_statistics/>
         <include_in_steady_state>
           <norm>
             <string_value>linf</string_value>
@@ -266,7 +243,7 @@ def stress(v):
       </diagnostics>
     </field>
     <field name="Temperature">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">T</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -343,44 +320,7 @@ range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
       </type>
       <diagnostics>
         <include_in_visualization/>
-        <include_in_statistics>
-          <functional name="TopSurfaceIntegral">
-            <string_value lines="20" type="code" language="python">int = T.dx(1)*ds(4)</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-          <functional name="BottomSurfaceIntegral">
-            <string_value lines="20" type="code" language="python">int = T.dx(1)*ds(3)</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-          <functional name="Integral">
-            <string_value lines="20" type="code" language="python">int = T*dx</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-          <functional name="FullIntegral">
-            <string_value lines="20" type="code" language="python">int = (T + Tbar)*dx</string_value>
-            <comment>to ensure full T lies between 0 and 1 we subtract off non-dimensionalized Tsurf here</comment>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-          <functional name="FullTopSurfaceIntegral">
-            <string_value lines="20" type="code" language="python">int = (T+Tbar).dx(1)*ds(4)</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-        </include_in_statistics>
+        <include_in_statistics/>
         <include_in_steady_state>
           <norm>
             <string_value>linf</string_value>
@@ -389,7 +329,7 @@ range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
       </diagnostics>
     </field>
     <coefficient name="RayleighNumber">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">Ra</string_value>
       </ufl_symbol>
       <type name="Constant">
@@ -404,7 +344,7 @@ range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
       <diagnostics/>
     </coefficient>
     <coefficient name="DissipationNumber">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">Di</string_value>
       </ufl_symbol>
       <type name="Constant">
@@ -419,7 +359,7 @@ range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
       <diagnostics/>
     </coefficient>
     <coefficient name="ReferenceGruneisenParameter">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">gammar</string_value>
       </ufl_symbol>
       <type name="Constant">
@@ -434,7 +374,7 @@ range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
       <diagnostics/>
     </coefficient>
     <coefficient name="Gravity">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">gravity</string_value>
       </ufl_symbol>
       <type name="Constant">
@@ -449,7 +389,7 @@ range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
       <diagnostics/>
     </coefficient>
     <coefficient name="ReferenceIsobaricSpecificHeatCapacity">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">cpr</string_value>
       </ufl_symbol>
       <type name="Constant">
@@ -464,7 +404,7 @@ range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
       <diagnostics/>
     </coefficient>
     <coefficient name="ReferenceIsovolumetricSpecificHeatCapacity">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">cvr</string_value>
       </ufl_symbol>
       <type name="Constant">
@@ -479,7 +419,7 @@ range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
       <diagnostics/>
     </coefficient>
     <coefficient name="SurfaceTemperature">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">Tsurf</string_value>
       </ufl_symbol>
       <type name="Constant">
@@ -509,13 +449,13 @@ rT = (T_t*(rhobar*cpbar*((T_i - T_n) \
      )*dx
 
 r = rv + rp + rT</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">r</string_value>
           </ufl_symbol>
         </form>
         <form name="Jacobian" rank="1">
           <string_value lines="20" type="code" language="python">a = derivative(r, us_i, us_a)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
@@ -589,6 +529,7 @@ r = rv + rp + rT</string_value>
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="in_timeloop"/>
     </nonlinear_solver>
     <nonlinear_solver name="Solver">
       <type name="SNES">
@@ -608,13 +549,13 @@ rT = (T_t*(rhobar*cpbar*((T_i - T_n) \
      )*dx
 
 r = rv + rp + rT</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">r</string_value>
           </ufl_symbol>
         </form>
         <form name="Jacobian" rank="1">
           <string_value lines="20" type="code" language="python">a = derivative(r, us_i, us_a)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
@@ -622,7 +563,7 @@ r = rv + rp + rT</string_value>
           <string_value lines="20" type="code" language="python">invmu = 1./mu
 
 aPC = a + invmu*p_t*p_a*dx</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">aPC</string_value>
           </ufl_symbol>
         </form>
@@ -789,16 +730,81 @@ aPC = a + invmu*p_t*p_a*dx</string_value>
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="in_timeloop"/>
     </nonlinear_solver>
-    <solve name="in_timeloop"/>
+    <functional name="VelocityL2NormSquared">
+      <string_value lines="20" type="code" language="python">int = inner(v,v)*dx</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="VelocityTopSurfaceIntegral">
+      <string_value lines="20" type="code" language="python">int = v[0]*ds(4)</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="PressureIntegral">
+      <string_value lines="20" type="code" language="python">int = p*dx</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="TemperatureTopSurfaceIntegral">
+      <string_value lines="20" type="code" language="python">int = T.dx(1)*ds(4)</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="TemperatureBottomSurfaceIntegral">
+      <string_value lines="20" type="code" language="python">int = T.dx(1)*ds(3)</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="TemperatureIntegral">
+      <string_value lines="20" type="code" language="python">int = T*dx</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="TemperatureFullIntegral">
+      <string_value lines="20" type="code" language="python">int = (T + Tbar)*dx</string_value>
+      <comment>to ensure full T lies between 0 and 1 we subtract off non-dimensionalized Tsurf here</comment>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="TemperatureFullTopSurfaceIntegral">
+      <string_value lines="20" type="code" language="python">int = (T+Tbar).dx(1)*ds(4)</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
   </system>
   <system name="Divergence">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">ud</string_value>
     </ufl_symbol>
     <field name="Divergence">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">d</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -830,19 +836,19 @@ aPC = a + invmu*p_t*p_a*dx</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
           <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
           <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
           <string_value lines="20" type="code" language="python">res = action(a, ud_i) - L</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
@@ -875,16 +881,16 @@ aPC = a + invmu*p_t*p_a*dx</string_value>
         </linear_solver>
         <ignore_all_solver_failures/>
       </type>
+      <solve name="with_diagnostics"/>
     </nonlinear_solver>
-    <solve name="with_diagnostics"/>
   </system>
   <system name="CourantNumber">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">uc</string_value>
     </ufl_symbol>
     <field name="CourantNumber">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">c</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -920,19 +926,19 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
         </preamble>
         <form name="Bilinear" rank="1">
           <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
           <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
           <string_value lines="20" type="code" language="python">res = action(a, uc_i) - L</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
@@ -954,16 +960,16 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="with_diagnostics"/>
     </nonlinear_solver>
-    <solve name="with_diagnostics"/>
   </system>
   <system name="ViscousDissipation">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">uphi</string_value>
     </ufl_symbol>
     <field name="ViscousDissipation">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">phi</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -985,15 +991,7 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
       </type>
       <diagnostics>
         <include_in_visualization/>
-        <include_in_statistics>
-          <functional name="Integral">
-            <string_value lines="20" type="code" language="python">int = phi*dx</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-        </include_in_statistics>
+        <include_in_statistics/>
         <include_in_detectors/>
       </diagnostics>
     </field>
@@ -1004,19 +1002,19 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
         </preamble>
         <form name="Bilinear" rank="1">
           <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
           <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
           <string_value lines="20" type="code" language="python">res = action(a, uphi_i) - L</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
@@ -1047,16 +1045,24 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="with_diagnostics"/>
     </nonlinear_solver>
-    <solve name="with_diagnostics"/>
+    <functional name="ViscousDissipationIntegral">
+      <string_value lines="20" type="code" language="python">int = phi*dx</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
   </system>
   <system name="WorkDone">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">uwork</string_value>
     </ufl_symbol>
     <field name="WorkDone">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">work</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -1078,15 +1084,7 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
       </type>
       <diagnostics>
         <include_in_visualization/>
-        <include_in_statistics>
-          <functional name="Integral">
-            <string_value lines="20" type="code" language="python">int = work*dx</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-        </include_in_statistics>
+        <include_in_statistics/>
         <include_in_detectors/>
       </diagnostics>
     </field>
@@ -1097,19 +1095,19 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
         </preamble>
         <form name="Bilinear" rank="1">
           <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
           <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
           <string_value lines="20" type="code" language="python">res = action(a, uwork_i) - L</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
@@ -1140,7 +1138,15 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="with_diagnostics"/>
     </nonlinear_solver>
-    <solve name="with_diagnostics"/>
+    <functional name="WorkDoneIntegral">
+      <string_value lines="20" type="code" language="python">int = work*dx</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
   </system>
 </terraferma_options>

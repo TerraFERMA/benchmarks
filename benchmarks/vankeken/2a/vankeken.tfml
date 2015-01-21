@@ -106,11 +106,11 @@ dS_transdb = dS(107)</string_value>
   </global_parameters>
   <system name="Solid">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">us</string_value>
     </ufl_symbol>
     <field name="Temperature">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">T</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -197,7 +197,7 @@ dS_transdb = dS(107)</string_value>
       </diagnostics>
     </field>
     <field name="Velocity">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">v</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -288,7 +288,7 @@ dS_transdb = dS(107)</string_value>
       </diagnostics>
     </field>
     <field name="Pressure">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">p</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -314,7 +314,7 @@ dS_transdb = dS(107)</string_value>
       </diagnostics>
     </field>
     <coefficient name="SlabVelocity">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">vp</string_value>
       </ufl_symbol>
       <type name="Expression">
@@ -339,7 +339,7 @@ dS_transdb = dS(107)</string_value>
       </diagnostics>
     </coefficient>
     <coefficient name="ZeroRHS">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">z</string_value>
       </ufl_symbol>
       <type name="Constant">
@@ -382,20 +382,20 @@ F += bp*dx_wedge</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
           <string_value lines="20" type="code" language="python">a = lhs(F)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
           <ident_zeros/>
         </form>
         <form name="Linear" rank="0">
           <string_value lines="20" type="code" language="python">L = rhs(F)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
           <string_value lines="20" type="code" language="python">res = action(a, us_i) - L</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
@@ -461,6 +461,7 @@ F += bp*dx_wedge</string_value>
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="in_timeloop"/>
     </nonlinear_solver>
     <nonlinear_solver name="Solver">
       <type name="Picard">
@@ -491,20 +492,20 @@ F += bp_wedge*dx_wedge</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
           <string_value lines="20" type="code" language="python">a = lhs(F)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
           <ident_zeros/>
         </form>
         <form name="Linear" rank="0">
           <string_value lines="20" type="code" language="python">L = rhs(F)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
           <string_value lines="20" type="code" language="python">res = action(a, us_i) - L</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
@@ -612,16 +613,16 @@ F += bp_wedge*dx_wedge</string_value>
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="in_timeloop"/>
     </nonlinear_solver>
-    <solve name="in_timeloop"/>
   </system>
   <system name="Divergence">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">ud</string_value>
     </ufl_symbol>
     <field name="Divergence">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">d</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -655,20 +656,20 @@ r += b*dx_wedge</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
           <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
           <ident_zeros/>
         </form>
         <form name="Linear" rank="0">
           <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
           <string_value lines="20" type="code" language="python">res = action(a, ud_i) - L</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
@@ -723,16 +724,16 @@ r += b*dx_wedge</string_value>
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="with_diagnostics"/>
     </nonlinear_solver>
-    <solve name="with_diagnostics"/>
   </system>
   <system name="Viscosity">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">uvisc</string_value>
     </ufl_symbol>
     <field name="Viscosity">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">visc</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -769,19 +770,19 @@ F += bvisc*dx_mantle</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
           <string_value lines="20" type="code" language="python">a = lhs(F)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
           <string_value lines="20" type="code" language="python">L = rhs(F)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
           <string_value lines="20" type="code" language="python">res = action(a, uvisc_i) - L</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
@@ -800,7 +801,7 @@ F += bvisc*dx_mantle</string_value>
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="with_diagnostics"/>
     </nonlinear_solver>
-    <solve name="with_diagnostics"/>
   </system>
 </terraferma_options>

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <harness_options>
   <length>
     <string_value>short</string_value>
@@ -112,8 +112,8 @@ stat = parser(ioname+".stat")
 det  = parser(ioname+".det")
 
 vtd = {}
-vtd["nu"] = -1.0*(stat["Stokes"]["Temperature"]["TopSurfaceIntegral"][-1])
-vtd["v_rms"] = sqrt(stat["Stokes"]["Velocity"]["L2NormSquared"][-1])*Ra
+vtd["nu"] = -1.0*(stat["Stokes"]["TemperatureTopSurfaceIntegral"]["functional_value"][-1])
+vtd["v_rms"] = sqrt(stat["Stokes"]["VelocityL2NormSquared"]["functional_value"][-1])*Ra
 vtd["q1"] = -det["TemperatureGradient"]["TemperatureGradient"]["TopLeft"][-1][-1]
 vtd["q2"] = -det["TemperatureGradient"]["TemperatureGradient"]["TopRight"][-1][-1]
 vtd["q3"] = -det["TemperatureGradient"]["TemperatureGradient"]["BottomRight"][-1][-1]
@@ -175,8 +175,8 @@ stat = parser(ioname+".stat")
 det  = parser(ioname+".det")
 
 v = {}
-v["nu"] = -1.0*(stat["Stokes"]["Temperature"]["TopSurfaceIntegral"][-1])
-v["v_rms"] = sqrt(stat["Stokes"]["Velocity"]["L2NormSquared"][-1])*Ra
+v["nu"] = -1.0*(stat["Stokes"]["TemperatureTopSurfaceIntegral"]["functional_value"][-1])
+v["v_rms"] = sqrt(stat["Stokes"]["VelocityL2NormSquared"]["functional_value"][-1])*Ra
 v["q1"] = -det["TemperatureGradient"]["TemperatureGradient"]["TopLeft"][-1][-1]
 v["q2"] = -det["TemperatureGradient"]["TemperatureGradient"]["TopRight"][-1][-1]
 v["q3"] = -det["TemperatureGradient"]["TemperatureGradient"]["BottomRight"][-1][-1]
@@ -272,7 +272,7 @@ filehandle.close()</string_value>
     <test name="td_Walltime">
       <string_value lines="20" type="code" language="python">ncells = vtd.parameters['ncells']
 slice = {'ncells': ncells}
-print 'Time dependent walltime =', vtd[slice][0]['Walltime'] </string_value>
+print 'Time dependent walltime =', vtd[slice][0]['Walltime']</string_value>
     </test>
   </tests>
 </harness_options>

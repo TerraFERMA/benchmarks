@@ -77,18 +77,16 @@ recRa = 1./Ra
 b = 9.704060527839234
 c = 4.1588830833596715
 z = SpatialCoordinate(us.cell())[1]
-eta = exp(-b*T_i + c*(1.0-z))
-
-</string_value>
+eta = exp(-b*T_i + c*(1.0-z))</string_value>
     </ufl>
   </global_parameters>
   <system name="Init">
     <mesh name="MeshInit"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">ui</string_value>
     </ufl_symbol>
     <field name="VelocityInit">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">vi</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -113,7 +111,7 @@ eta = exp(-b*T_i + c*(1.0-z))
       </diagnostics>
     </field>
     <field name="PressureInit">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">pi</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -138,7 +136,7 @@ eta = exp(-b*T_i + c*(1.0-z))
       </diagnostics>
     </field>
     <field name="TemperatureInit">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">Ti</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -166,13 +164,13 @@ eta = exp(-b*T_i + c*(1.0-z))
       <type name="SNES">
         <form name="Residual" rank="0">
           <string_value lines="20" type="code" language="python">F = inner(ui_t,(ui_i - ui_n))*dx</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">F</string_value>
           </ufl_symbol>
         </form>
         <form name="Jacobian" rank="1">
           <string_value lines="20" type="code" language="python">J = derivative(F, ui_i, ui_a)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">J</string_value>
           </ufl_symbol>
         </form>
@@ -200,18 +198,18 @@ eta = exp(-b*T_i + c*(1.0-z))
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="never"/>
       <comment>Unfortunately,  you seem to need a solver here to return the appropriate function space, even if you don't solve anything.
 Here I'll just do a simple projection</comment>
     </nonlinear_solver>
-    <solve name="never"/>
   </system>
   <system name="Stokes">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">us</string_value>
     </ufl_symbol>
     <field name="Velocity">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">v</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -308,15 +306,7 @@ vinit_ptr-&gt;eval(values,x,cell);</string_value>
       </type>
       <diagnostics>
         <include_in_visualization/>
-        <include_in_statistics>
-          <functional name="L2NormSquared">
-            <string_value lines="20" type="code" language="python">int = inner(v,v)*dx</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-        </include_in_statistics>
+        <include_in_statistics/>
         <include_in_steady_state>
           <norm>
             <string_value>linf</string_value>
@@ -326,7 +316,7 @@ vinit_ptr-&gt;eval(values,x,cell);</string_value>
       </diagnostics>
     </field>
     <field name="Pressure">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">p</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -367,15 +357,7 @@ pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&g
       </type>
       <diagnostics>
         <include_in_visualization/>
-        <include_in_statistics>
-          <functional name="Integral">
-            <string_value lines="20" type="code" language="python">int = p*dx</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-        </include_in_statistics>
+        <include_in_statistics/>
         <include_in_steady_state>
           <norm>
             <string_value>linf</string_value>
@@ -384,7 +366,7 @@ pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&g
       </diagnostics>
     </field>
     <field name="Temperature">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">T</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -444,22 +426,7 @@ pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&g
       </type>
       <diagnostics>
         <include_in_visualization/>
-        <include_in_statistics>
-          <functional name="TopSurfaceIntegral">
-            <string_value lines="20" type="code" language="python">int = T.dx(1)*ds(4)</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-          <functional name="BottomSurfaceIntegral">
-            <string_value lines="20" type="code" language="python">int = T.dx(1)*ds(3)</string_value>
-            <ufl_symbol>
-              <string_value lines="1">int</string_value>
-            </ufl_symbol>
-            <quadrature_rule name="default"/>
-          </functional>
-        </include_in_statistics>
+        <include_in_statistics/>
         <include_in_steady_state>
           <norm>
             <string_value>linf</string_value>
@@ -469,7 +436,7 @@ pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&g
       </diagnostics>
     </field>
     <coefficient name="RayleighNumber">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">Ra</string_value>
       </ufl_symbol>
       <type name="Constant">
@@ -492,13 +459,13 @@ rp = p_t*div(v_i)*dx
 
 
 r = rT + rv + rp</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">r</string_value>
           </ufl_symbol>
         </form>
         <form name="Jacobian" rank="1">
           <string_value lines="20" type="code" language="python">a = derivative(r, us_i, us_a)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
@@ -564,16 +531,48 @@ r = rT + rv + rp</string_value>
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="in_timeloop"/>
     </nonlinear_solver>
-    <solve name="in_timeloop"/>
+    <functional name="VelocityL2NormSquared">
+      <string_value lines="20" type="code" language="python">int = inner(v,v)*dx</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="PressureIntegral">
+      <string_value lines="20" type="code" language="python">int = p*dx</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="TemperatureTopSurfaceIntegral">
+      <string_value lines="20" type="code" language="python">int = T.dx(1)*ds(4)</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="TemperatureBottomSurfaceIntegral">
+      <string_value lines="20" type="code" language="python">int = T.dx(1)*ds(3)</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
   </system>
   <system name="Divergence">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">ud</string_value>
     </ufl_symbol>
     <field name="Divergence">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">d</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -605,19 +604,19 @@ r = rT + rv + rp</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
           <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
           <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
           <string_value lines="20" type="code" language="python">res = action(a, ud_i) - L</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
@@ -650,16 +649,16 @@ r = rT + rv + rp</string_value>
         </linear_solver>
         <ignore_all_solver_failures/>
       </type>
+      <solve name="with_diagnostics"/>
     </nonlinear_solver>
-    <solve name="with_diagnostics"/>
   </system>
   <system name="TemperatureGradient">
     <mesh name="Mesh"/>
-    <ufl_symbol>
+    <ufl_symbol name="global">
       <string_value lines="1">uq</string_value>
     </ufl_symbol>
     <field name="TemperatureGradient">
-      <ufl_symbol>
+      <ufl_symbol name="global">
         <string_value lines="1">q</string_value>
       </ufl_symbol>
       <type name="Function">
@@ -692,19 +691,19 @@ r = rT + rv + rp</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
           <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
           <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
           <string_value lines="20" type="code" language="python">res = action(a, uq_i) - L</string_value>
-          <ufl_symbol>
+          <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
@@ -737,7 +736,7 @@ r = rT + rv + rp</string_value>
         </linear_solver>
         <never_ignore_solver_failures/>
       </type>
+      <solve name="with_diagnostics"/>
     </nonlinear_solver>
-    <solve name="with_diagnostics"/>
   </system>
 </terraferma_options>
