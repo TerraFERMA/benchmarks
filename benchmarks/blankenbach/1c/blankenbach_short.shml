@@ -33,6 +33,13 @@ The second code provides a newton solver for the exact steady state solution ini
             <string_value lines="1">20</string_value>
           </values>
         </parameter>
+        <parameter name="factor_td">
+          <values>
+            <string_value lines="1">0.5</string_value>
+          </values>
+          <comment>mesh stretching factor for mesh for timedependent runs
+factor = 1 means no distortion, uniform triangulation.  smaller factors are more refined towards the edges.</comment>
+        </parameter>
       </parameter_sweep>
       <dependencies>
         <simulation name="BlankenbachTD">
@@ -61,6 +68,7 @@ libspud.set_option("/timestepping/steady_state/tolerance",float(5.e-5))</string_
                 <single_build/>
               </update>
             </parameter>
+            <parameter name="factor_td"/>
           </parameter_sweep>
           <required_output>
             <filenames name="checkpoints">
@@ -76,10 +84,11 @@ libspud.set_option("/timestepping/steady_state/tolerance",float(5.e-5))</string_
               </input_file>
               <run_when name="input_changed_or_output_missing"/>
               <parameter_sweep>
-                <parameter name="ncells_td">
+                <parameter name="ncells_td"/>
+                <parameter name="factor_td">
                   <update>
                     <string_value lines="20" type="code" language="python">from string import Template as template
-input_file = template(input_file).safe_substitute({'ncells':ncells_td, 'factor':'0.5'})</string_value>
+input_file = template(input_file).safe_substitute({'ncells':ncells_td, 'factor':factor_td})</string_value>
                   </update>
                 </parameter>
               </parameter_sweep>
@@ -231,8 +240,7 @@ filehandle = file(filename, 'w')
 filehandle.writelines(table0)
 filehandle.close()
 
-assert(numpy.all(numpy.array(rerr.values()) &lt; 0.05))
-</string_value>
+assert(numpy.all(numpy.array(rerr.values()) &lt; 0.05))</string_value>
     </test>
     <test name="Walltime">
       <string_value lines="20" type="code" language="python">ncells = v.parameters['ncells']
@@ -274,8 +282,7 @@ filehandle = file(filename, 'w')
 filehandle.writelines(table0)
 filehandle.close()
 
-assert(numpy.all(numpy.array(rerr.values()) &lt; 0.87))
-</string_value>
+assert(numpy.all(numpy.array(rerr.values()) &lt; 0.87))</string_value>
     </test>
     <test name="td_Walltime">
       <string_value lines="20" type="code" language="python">ncells = vtd.parameters['ncells']
