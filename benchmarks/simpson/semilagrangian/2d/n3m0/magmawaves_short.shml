@@ -18,7 +18,7 @@
       <parameter_sweep>
         <parameter name="ncells">
           <values>
-            <string_value lines="1">32</string_value>
+            <string_value lines="1">16 32</string_value>
           </values>
           <update>
             <string_value lines="20" type="code" language="python">import libspud
@@ -33,15 +33,14 @@ libspud.set_option("/geometry/mesh::Mesh/source::UnitSquare/number_cells", [int(
           <update>
             <string_value lines="20" type="code" language="python">import libspud
 
-libspud.set_option("/system::magma/coefficient::h_squared/type::Constant/rank::Scalar/value::WholeMesh/constant",float(h_on_delta)**2)
-</string_value>
+libspud.set_option("/system::magma/coefficient::h_squared/type::Constant/rank::Scalar/value::WholeMesh/constant",float(h_on_delta)**2)</string_value>
             <single_build/>
           </update>
           <comment>height of computational box in compaction lengths</comment>
         </parameter>
         <parameter name="cfl_delta">
           <values>
-            <string_value lines="1">1.</string_value>
+            <string_value lines="1">0.5 1. 2.</string_value>
           </values>
           <update>
             <string_value lines="20" type="code" language="python">import libspud
@@ -69,7 +68,7 @@ libspud.set_option("/system::magma/coefficient::c/type::Constant/rank::Scalar/va
       </parameter_sweep>
       <variables>
         <variable name="errors">
-          <string_value type="code" lines="20" language="python">from pysolwave.tfsolitarywave import TFSolitaryWave
+          <string_value lines="20" type="code" language="python">from pysolwave.tfsolitarywave import TFSolitaryWave
 from glob import glob
 
 input = glob("../*.tfml")[0]
@@ -80,16 +79,65 @@ nfiles = len(checkpoints)
 lastfile = checkpoints[0].replace("_0.tfml","_{0}.tfml".format(nfiles-1))
 print lastfile
 
-errors = tf.geterrors(lastfile)
-
-  </string_value>
+errors = tf.geterrors(lastfile)</string_value>
         </variable>
       </variables>
     </simulation>
   </simulations>
   <tests>
-    <test name="shape_errors">
-      <string_value type="code" lines="20" language="python">print errors</string_value>
+    <test name="errors">
+      <string_value lines="20" type="code" language="python">import operator
+import pylab as pl
+import numpy as np
+
+#print errors.parameters
+ncells = errors.parameters['ncells']
+cfl_delta = errors.parameters['cfl_delta']
+c = errors.parameters['c'][0]
+h_on_delta = errors.parameters['h_on_delta'][0]
+print "ncells={0} cfl_delta={1} c={2} h={3}".format(ncells,cfl_delta,c,h_on_delta)
+slice0 = {'c':c, 'h_on_delta':h_on_delta}
+
+# collect data for plotting and assertion
+relerrors = []
+for n in ncells:
+  h = float(h_on_delta)/float(n)
+  print "ncells = {0}, h={1} ".format(n,h)
+  for cfl in cfl_delta:
+    slice = slice0.copy()
+    slice.update({'ncells':n,'cfl_delta':cfl})
+    dt = errors[slice][1]
+    rel_err_shape = errors[slice][4]
+    rel_err_c = errors[slice][5][1]
+    print "cfl={0}: dt={1}, rel_err_shape={2}, rel_err_c={3}".format(cfl,dt,rel_err_shape,rel_err_c)
+    relerrors.append([h, dt, rel_err_shape, rel_err_c])
+
+relerrors=np.array(relerrors)
+print relerrors
+ind = np.lexsort((relerrors[:,1],relerrors[:,0]))
+relerrors = relerrors[ind]
+print relerrors
+# now make some pretty plots 
+# shape error
+pl.figure()
+for n in ncells:
+  h = float(h_on_delta)/float(n)
+  index = relerrors[:,0] == h
+  rn = relerrors[index]
+  print rn
+  pl.loglog(rn[:,1],rn[:,2],'o-',label="h={0}".format(h))
+  pl.hold(True)
+  
+pl.grid()
+pl.xlabel('dt')
+pl.ylabel('$||e||_2/||f||_2$')
+pl.legend(loc='best')
+pl.title("Shape Errors: c={0}".format(c))
+pl.savefig('ShapeErrors.pdf')
+
+
+    
+    </string_value>
     </test>
   </tests>
 </harness_options>
