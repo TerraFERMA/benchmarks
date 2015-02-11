@@ -113,10 +113,8 @@ for n in ncells:
     relerrors.append([h, dt, rel_err_shape, rel_err_c])
 
 relerrors=np.array(relerrors)
-print relerrors
-ind = np.lexsort((relerrors[:,1],relerrors[:,0]))
-relerrors = relerrors[ind]
-print relerrors
+#print relerrors
+
 # now make some pretty plots 
 # shape error
 pl.figure()
@@ -124,7 +122,6 @@ for n in ncells:
   h = float(h_on_delta)/float(n)
   index = relerrors[:,0] == h
   rn = relerrors[index]
-  print rn
   pl.loglog(rn[:,1],rn[:,2],'o-',label="h={0}".format(h))
   pl.hold(True)
   
@@ -133,10 +130,30 @@ pl.xlabel('dt')
 pl.ylabel('$||e||_2/||f||_2$')
 pl.legend(loc='best')
 pl.title("Shape Errors: c={0}".format(c))
-pl.savefig('ShapeErrors.pdf')
+pl.savefig("ShapeErrors_c{0}.pdf".format(c))
+
+# velocity error
+pl.figure()
+for n in ncells:
+  h = float(h_on_delta)/float(n)
+  index = relerrors[:,0] == h
+  rn = relerrors[index]
+  pl.loglog(rn[:,1],abs(rn[:,3]),'o-',label="h={0}".format(h))
+  pl.hold(True)
+  
+pl.grid()
+pl.xlabel('dt')
+pl.ylabel('$|\Delta c|/c$')
+pl.legend(loc='best')
+pl.title("relative velocity errors: c={0}".format(c))
+pl.savefig("VelocityErrors_c{0}.pdf".format(c))
 
 
-    
+# and assert on smallest relative errors
+min_rel_err_shape = min(relerrors[:,2])
+min_rel_err_c = min(abs(relerrors[:,3]))
+print "min_rel_err_shape = {0}, min_rel_err_c ={1}".format(min_rel_err_shape,min_rel_err_c)
+assert (min_rel_err_shape &lt; 6.7e-4 and min_rel_err_c &lt; 2.4e-4)   
     </string_value>
     </test>
   </tests>
