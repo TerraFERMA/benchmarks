@@ -113,6 +113,9 @@ ds_bottom = ds(3)
 ds_left  = ds(1)
 ds_right = ds(2)</string_value>
     </ufl>
+    <dolfin>
+      <ghost_mode name="shared_facet"/>
+    </dolfin>
   </global_parameters>
   <system name="magma">
     <mesh name="Mesh"/>
@@ -479,11 +482,16 @@ r = rp + rf</string_value>
             <relative_error>
               <real_value rank="0">1.e-7</real_value>
             </relative_error>
+            <absolute_error>
+              <real_value rank="0">1.e-12</real_value>
+            </absolute_error>
             <max_iterations>
               <integer_value rank="0">20</integer_value>
             </max_iterations>
             <zero_initial_guess/>
-            <monitors/>
+            <monitors>
+              <preconditioned_residual/>
+            </monitors>
           </iterative_method>
           <preconditioner name="fieldsplit">
             <composite_type name="multiplicative"/>
