@@ -26,7 +26,7 @@ libspud.set_option("/geometry/mesh::Mesh/source::UnitSquare/number_cells", [int(
             <single_build/>
           </update>
           <process_scale>
-            <integer_value shape="4" rank="1">1 1 1 4</integer_value>
+            <integer_value shape="4" rank="1">1 1 2 4</integer_value>
           </process_scale>
         </parameter>
         <parameter name="h_on_delta">
@@ -80,7 +80,8 @@ tf = TFSolitaryWave(input)
 
 checkpoints = glob("*_checkpoint*.tfml")
 nfiles = len(checkpoints)
-lastfile = checkpoints[0].replace("_0.tfml","_{0}.tfml".format(nfiles-1))
+firstfileend = checkpoints[0].split('_')[-1]
+lastfile = checkpoints[0].replace(firstfileend,"{0}.tfml".format(nfiles-1))
 print lastfile
 
 errors = tf.geterrors(lastfile)</string_value>

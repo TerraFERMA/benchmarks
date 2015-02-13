@@ -77,7 +77,8 @@ tf = TFSolitaryWave(input)
 
 checkpoints = glob("*_checkpoint*.tfml")
 nfiles = len(checkpoints)
-lastfile = checkpoints[0].replace("_0.tfml","_{0}.tfml".format(nfiles-1))
+firstfileend = checkpoints[0].split('_')[-1]
+lastfile = checkpoints[0].replace(firstfileend,"{0}.tfml".format(nfiles-1))
 print lastfile
 
 errors = tf.geterrors(lastfile)</string_value>
