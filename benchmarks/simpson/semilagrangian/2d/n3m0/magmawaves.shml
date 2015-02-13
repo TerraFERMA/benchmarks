@@ -166,5 +166,47 @@ print "velocity error slopes={0}".format(ph_velocity)
 assert (np.all(np.array(ph_shape)&gt; 1.9))
 assert (np.all(np.array(ph_velocity)&gt; .9))</string_value>
     </test>
+    <test name="Tables">
+      <string_value lines="20" type="code" language="python">import numpy as np
+
+#print errors.parameters
+ncells = errors.parameters['ncells']
+cfl_delta = errors.parameters['cfl_delta']
+c = errors.parameters['c'][0]
+h_on_delta = errors.parameters['h_on_delta'][0]
+slice0 = {'c':c, 'h_on_delta':h_on_delta}
+
+# collect data for plotting and assertion
+relerrors = []
+for n in ncells:
+  h = float(h_on_delta)/float(n)
+  for cfl in cfl_delta:
+    slice = slice0.copy()
+    slice.update({'ncells':n,'cfl_delta':cfl})
+    cdt_on_del = float(c)*errors[slice][1]*float(h_on_delta)
+    rel_err_shape = errors[slice][4]
+    rel_err_c = errors[slice][5][1]
+    print "cfl={0}: dt={1}, rel_err_shape={2}, rel_err_c={3}".format(cfl,cdt_on_del,rel_err_shape,rel_err_c)
+    relerrors.append([int(n), h, cdt_on_del, rel_err_shape, rel_err_c])
+    
+nlines =len(relerrors)
+table0 = []
+table0.append("\\begin{tabular}{c|cccc}\n")
+table0.append("\hline\n")
+table0.append(" $N$ &amp; $h_{cell}/\delta$ &amp; $c\Delta t/\delta$ &amp; $||e||_2/||\phi_c||_2$ &amp;$\Delta c/c$\\\\\n")
+table0.append("\hline\n")
+for n in range(nlines):
+  table0.append(" {0} &amp; {1:g} &amp; {2:.2f} &amp; {3:.5e} &amp; {4:.5e} \\\\\n".format(relerrors[n][0],relerrors[n][1],relerrors[n][2],relerrors[n][3],relerrors[n][4]))  
+table0.append("\hline\n")
+table0.append("\\end{tabular}\n")
+
+for line in table0:
+  print line[0:-1]
+
+filename = "table0.tex"
+filehandle = file(filename, 'w')
+filehandle.writelines(table0)
+filehandle.close()</string_value>
+    </test>
   </tests>
 </harness_options>
