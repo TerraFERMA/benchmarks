@@ -459,6 +459,9 @@ r = rp + rf</string_value>
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
+        <quadrature_degree>
+          <integer_value rank="0">5</integer_value>
+        </quadrature_degree>
         <quadrature_rule name="default"/>
         <snes_type name="ls">
           <ls_type name="cubic"/>
