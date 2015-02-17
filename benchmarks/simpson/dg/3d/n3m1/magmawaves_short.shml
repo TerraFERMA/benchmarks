@@ -86,6 +86,11 @@ print lastfile
 
 errors = tf.geterrors(lastfile)</string_value>
         </variable>
+        <variable name="walltime">
+          <string_value lines="20" type="code" language="python">from buckettools.statfile import parser
+stat = parser("magmawaves.stat")
+walltime= stat["ElapsedWallTime"]["value"][-1]</string_value>
+        </variable>
       </variables>
     </simulation>
   </simulations>
@@ -294,6 +299,11 @@ filename = "table0_short.tex"
 filehandle = file(filename, 'w')
 filehandle.writelines(table0)
 filehandle.close()</string_value>
+    </test>
+    <test name="walltime">
+      <string_value lines="20" type="code" language="python">import numpy
+print walltime
+</string_value>
     </test>
   </tests>
 </harness_options>
