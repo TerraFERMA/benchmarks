@@ -18,7 +18,7 @@
       <parameter_sweep>
         <parameter name="ncells">
           <values>
-            <string_value lines="1">16 32 64</string_value>
+            <string_value lines="1">32 64</string_value>
           </values>
           <update>
             <string_value lines="20" type="code" language="python">import libspud
@@ -121,7 +121,7 @@ for n in ncells:
     dt = errors[slice][1]
     cdt_on_del = float(c)*dt*float(h_on_delta)
     rel_err_shape = errors[slice][4]
-    rel_err_c = errors[slice][5][1]
+    rel_err_c = errors[slice][5][-1]
     print "cfl_delta={0}: dt={1}, rel_err_shape={2}, rel_err_c={3}".format(cfl,dt,rel_err_shape,rel_err_c)
     relerrors.append([h, cdt_on_del, rel_err_shape, rel_err_c])
 
@@ -202,7 +202,7 @@ for n in ncells:
     dt = errors[slice][1]
     cdt_on_del = float(c)*dt*float(h_on_delta)
     rel_err_shape = errors[slice][4]
-    rel_err_c = errors[slice][5][1]
+    rel_err_c = errors[slice][5][-1]
     relerrors.append([h, cdt_on_del, rel_err_shape, rel_err_c])
 
 relerrors=np.array(relerrors)
@@ -275,7 +275,7 @@ for n in ncells:
     slice.update({'ncells':n,'cfl_delta':cfl})
     cdt_on_del = float(c)*errors[slice][1]*float(h_on_delta)
     rel_err_shape = errors[slice][4]
-    rel_err_c = errors[slice][5][1]
+    rel_err_c = errors[slice][5][-1]
     print "cfl={0}: dt={1}, rel_err_shape={2}, rel_err_c={3}".format(cfl,cdt_on_del,rel_err_shape,rel_err_c)
     relerrors.append([int(n), h, cdt_on_del, rel_err_shape, rel_err_c])
     
