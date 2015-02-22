@@ -21,7 +21,7 @@
             <string_value lines="1">8 16</string_value>
           </values>
           <process_scale>
-            <integer_value shape="1" rank="1">2</integer_value>
+            <integer_value shape="2" rank="1">2 16</integer_value>
           </process_scale>
         </parameter>
       </parameter_sweep>
