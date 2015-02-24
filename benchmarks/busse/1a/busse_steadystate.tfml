@@ -296,48 +296,21 @@ r = rT + rv + rp</string_value>
               <integer_value rank="0">30</integer_value>
             </restart>
             <relative_error>
-              <real_value rank="0">1.e-7</real_value>
+              <real_value rank="0">1.e-5</real_value>
             </relative_error>
             <absolute_error>
-              <real_value rank="0">1.e-10</real_value>
+              <real_value rank="0">1.e-9</real_value>
             </absolute_error>
             <max_iterations>
               <integer_value rank="0">500</integer_value>
             </max_iterations>
             <zero_initial_guess/>
             <monitors>
-              <preconditioned_residual/>
+              <true_residual/>
             </monitors>
           </iterative_method>
           <preconditioner name="fieldsplit">
             <composite_type name="multiplicative"/>
-            <fieldsplit name="Temperature">
-              <field name="Temperature"/>
-              <monitors/>
-              <linear_solver>
-                <iterative_method name="fgmres">
-                  <restart>
-                    <integer_value rank="0">30</integer_value>
-                  </restart>
-                  <relative_error>
-                    <real_value rank="0">1.e-8</real_value>
-                  </relative_error>
-                  <absolute_error>
-                    <real_value rank="0">1.e-10</real_value>
-                  </absolute_error>
-                  <max_iterations>
-                    <integer_value rank="0">500</integer_value>
-                  </max_iterations>
-                  <zero_initial_guess/>
-                  <monitors>
-                    <preconditioned_residual/>
-                  </monitors>
-                </iterative_method>
-                <preconditioner name="hypre">
-                  <hypre_type name="boomeramg"/>
-                </preconditioner>
-              </linear_solver>
-            </fieldsplit>
             <fieldsplit name="Stokes">
               <field name="Pressure"/>
               <field name="Velocity"/>
@@ -357,9 +330,7 @@ r = rT + rv + rp</string_value>
                     <integer_value rank="0">100</integer_value>
                   </max_iterations>
                   <zero_initial_guess/>
-                  <monitors>
-                    <preconditioned_residual/>
-                  </monitors>
+                  <monitors/>
                 </iterative_method>
                 <preconditioner name="fieldsplit">
                   <composite_type name="multiplicative"/>
@@ -435,6 +406,42 @@ r = rT + rv + rp</string_value>
                       </preconditioner>
                     </linear_solver>
                   </fieldsplit>
+                </preconditioner>
+                <remove_null_space>
+                  <null_space name="Pressure">
+                    <field name="Pressure">
+                      <constant>
+                        <real_value rank="0">1.0</real_value>
+                      </constant>
+                    </field>
+                    <monitors/>
+                  </null_space>
+                  <monitors/>
+                </remove_null_space>
+              </linear_solver>
+            </fieldsplit>
+            <fieldsplit name="Temperature">
+              <field name="Temperature"/>
+              <monitors/>
+              <linear_solver>
+                <iterative_method name="fgmres">
+                  <restart>
+                    <integer_value rank="0">30</integer_value>
+                  </restart>
+                  <relative_error>
+                    <real_value rank="0">1.e-8</real_value>
+                  </relative_error>
+                  <absolute_error>
+                    <real_value rank="0">1.e-10</real_value>
+                  </absolute_error>
+                  <max_iterations>
+                    <integer_value rank="0">500</integer_value>
+                  </max_iterations>
+                  <zero_initial_guess/>
+                  <monitors/>
+                </iterative_method>
+                <preconditioner name="hypre">
+                  <hypre_type name="boomeramg"/>
                 </preconditioner>
               </linear_solver>
             </fieldsplit>
