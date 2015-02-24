@@ -17,7 +17,7 @@
   </geometry>
   <io>
     <output_base_name>
-      <string_value lines="1">rbconvection</string_value>
+      <string_value lines="1">rbconvection_ss</string_value>
     </output_base_name>
     <visualization>
       <element name="P2">
@@ -29,20 +29,7 @@
         </degree>
       </element>
     </visualization>
-    <dump_periods>
-      <visualization_period>
-        <real_value rank="0">1.e3</real_value>
-      </visualization_period>
-      <statistics_period_in_timesteps>
-        <integer_value rank="0">5</integer_value>
-      </statistics_period_in_timesteps>
-      <steady_state_period_in_timesteps>
-        <integer_value rank="0">5</integer_value>
-      </steady_state_period_in_timesteps>
-      <detectors_period_in_timesteps>
-        <integer_value rank="0">5</integer_value>
-      </detectors_period_in_timesteps>
-    </dump_periods>
+    <dump_periods/>
     <detectors>
       <point name="Top00">
         <real_value shape="3" dim1="dim" rank="1">0. 0. 1.</real_value>
@@ -69,57 +56,14 @@
         <real_value shape="3" dim1="dim" rank="1">1.0079 0.6283 0.5</real_value>
       </point>
     </detectors>
-    <checkpointing>
-      <checkpoint_period>
-        <real_value rank="0">1.e6</real_value>
-      </checkpoint_period>
-    </checkpointing>
   </io>
-  <timestepping>
-    <current_time>
-      <real_value rank="0">0.0</real_value>
-    </current_time>
-    <finish_time>
-      <real_value rank="0">1e6</real_value>
-    </finish_time>
-    <timestep>
-      <coefficient name="Timestep">
-        <ufl_symbol name="global">
-          <string_value lines="1">dt</string_value>
-        </ufl_symbol>
-        <type name="Constant">
-          <rank name="Scalar" rank="0">
-            <value name="WholeMesh">
-              <constant>
-                <real_value rank="0">0.0</real_value>
-              </constant>
-            </value>
-          </rank>
-        </type>
-      </coefficient>
-      <adaptive>
-        <constraint name="Courant">
-          <system name="CourantNumber"/>
-          <field name="CourantNumber"/>
-          <requested_maximum_value>
-            <real_value rank="0">2.5</real_value>
-          </requested_maximum_value>
-        </constraint>
-        <increase_tolerance>
-          <real_value rank="0">1.1</real_value>
-        </increase_tolerance>
-      </adaptive>
-    </timestep>
-    <steady_state>
-      <tolerance>
-        <real_value rank="0">1.e-10</real_value>
-      </tolerance>
-    </steady_state>
-  </timestepping>
   <global_parameters>
     <ufl>
-      <string_value lines="20" type="code" language="python">theta = 0.5
-theta_v = 0.5</string_value>
+      <string_value lines="20" type="code" language="python"># Constant viscosity
+eta = 1.
+
+#Inverse Ra number 
+recRa = 1./Ra</string_value>
     </ufl>
   </global_parameters>
   <system name="Stokes">
@@ -142,9 +86,9 @@ theta_v = 0.5</string_value>
             </degree>
           </element>
           <initial_condition type="initial_condition" name="WholeMesh">
-            <constant name="dim">
-              <real_value shape="3" dim1="dim" rank="1">0.0 0.0 0.0</real_value>
-            </constant>
+            <file>
+              <string_value lines="1">rbconvection_StokesProject_0.xml</string_value>
+            </file>
           </initial_condition>
           <boundary_condition name="LeftRightX">
             <boundary_ids>
@@ -216,9 +160,9 @@ theta_v = 0.5</string_value>
             </degree>
           </element>
           <initial_condition type="initial_condition" name="WholeMesh">
-            <constant>
-              <real_value rank="0">0.0</real_value>
-            </constant>
+            <file>
+              <string_value lines="1">rbconvection_StokesProject_0.xml</string_value>
+            </file>
           </initial_condition>
         </rank>
       </type>
@@ -247,11 +191,9 @@ theta_v = 0.5</string_value>
             </degree>
           </element>
           <initial_condition type="initial_condition" name="WholeMesh">
-            <python rank="0">
-              <string_value lines="20" type="code" language="python">def val(x):
-  from math import sin, cos, pi
-  return 1.-x[2] + 0.1*(cos(x[0]*pi/1.0079)+cos(x[1]*pi/0.6283))*sin(x[2]*pi)</string_value>
-            </python>
+            <file>
+              <string_value lines="1">rbconvection_StokesProject_0.xml</string_value>
+            </file>
           </initial_condition>
           <boundary_condition name="Top">
             <boundary_ids>
@@ -308,15 +250,12 @@ theta_v = 0.5</string_value>
     <nonlinear_solver name="Solver">
       <type name="SNES">
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">v_theta = theta_v*v_i + (1.-theta_v)*v_n
-T_theta = theta*T_i + (1. - theta)*T_n
-recRa = 1./Ra
-
-rv = (inner(sym(grad(v_t)), 2.*sym(grad(v_i))) - div(v_t)*p_i - T_i*v_t[2])*dx
+          <string_value lines="20" type="code" language="python">rT = (T_t*inner(v_i, grad(T_i)) + recRa*inner(grad(T_t), grad(T_i)))*dx
+rv = (inner(sym(grad(v_t)), 2.*eta*sym(grad(v_i))) - div(v_t)*p_i - T_i*v_t[2])*dx
 rp = p_t*div(v_i)*dx
-rT = (T_t*((T_i - T_n) + dt*theta*inner(v_theta, grad(T_i)) + dt*(1.-theta)*inner(v_theta, grad(T_n))) + dt*recRa*theta*inner(grad(T_t), grad(T_i)) + dt*recRa*(1.-theta)*inner(grad(T_t), grad(T_n)))*dx
 
-r = rv + rp + rT</string_value>
+
+r = rT + rv + rp</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">r</string_value>
           </ufl_symbol>
@@ -339,7 +278,7 @@ r = rv + rp + rT</string_value>
           <convergence_test name="default"/>
         </snes_type>
         <relative_error>
-          <real_value rank="0">1.e-6</real_value>
+          <real_value rank="0">1.e-8</real_value>
         </relative_error>
         <absolute_error>
           <real_value rank="0">1.e-10</real_value>
@@ -381,8 +320,11 @@ r = rv + rp + rT</string_value>
                     <integer_value rank="0">30</integer_value>
                   </restart>
                   <relative_error>
-                    <real_value rank="0">1.e-6</real_value>
+                    <real_value rank="0">1.e-8</real_value>
                   </relative_error>
+                  <absolute_error>
+                    <real_value rank="0">1.e-5</real_value>
+                  </absolute_error>
                   <max_iterations>
                     <integer_value rank="0">1000</integer_value>
                   </max_iterations>
@@ -626,85 +568,6 @@ r = rv + rp + rT</string_value>
           <monitors/>
         </linear_solver>
         <ignore_all_solver_failures/>
-      </type>
-      <solve name="with_diagnostics"/>
-    </nonlinear_solver>
-  </system>
-  <system name="CourantNumber">
-    <mesh name="Mesh"/>
-    <ufl_symbol name="global">
-      <string_value lines="1">uc</string_value>
-    </ufl_symbol>
-    <field name="CourantNumber">
-      <ufl_symbol name="global">
-        <string_value lines="1">c</string_value>
-      </ufl_symbol>
-      <type name="Function">
-        <rank name="Scalar" rank="0">
-          <element name="P0">
-            <family>
-              <string_value>DG</string_value>
-            </family>
-            <degree>
-              <integer_value rank="0">0</integer_value>
-            </degree>
-          </element>
-          <initial_condition type="initial_condition" name="WholeMesh">
-            <constant>
-              <real_value rank="0">0.0</real_value>
-            </constant>
-          </initial_condition>
-        </rank>
-      </type>
-      <diagnostics>
-        <include_in_visualization/>
-        <include_in_statistics/>
-      </diagnostics>
-    </field>
-    <nonlinear_solver name="Solver">
-      <type name="Picard">
-        <preamble>
-          <string_value lines="20" type="code" language="python">n = FacetNormal(c_e.cell())
-vn = dot(v_i, n)
-vout = 0.5*(vn + abs(vn))
-
-r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS - c_t*vout*dt*ds(1) - c_t*vout*dt*ds(2) - c_t*vout*dt*ds(3) - c_t*vout*dt*ds(4) - c_t*vout*dt*ds(5) - c_t*vout*dt*ds(6)</string_value>
-        </preamble>
-        <form name="Bilinear" rank="1">
-          <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
-          <ufl_symbol name="solver">
-            <string_value lines="1">a</string_value>
-          </ufl_symbol>
-        </form>
-        <form name="Linear" rank="0">
-          <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
-          <ufl_symbol name="solver">
-            <string_value lines="1">L</string_value>
-          </ufl_symbol>
-        </form>
-        <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">res = action(a, uc_i) - L</string_value>
-          <ufl_symbol name="solver">
-            <string_value lines="1">res</string_value>
-          </ufl_symbol>
-        </form>
-        <quadrature_rule name="default"/>
-        <relative_error>
-          <real_value rank="0">1.e-6</real_value>
-        </relative_error>
-        <absolute_error>
-          <real_value rank="0">1.e-16</real_value>
-        </absolute_error>
-        <max_iterations>
-          <integer_value rank="0">1</integer_value>
-        </max_iterations>
-        <monitors/>
-        <linear_solver>
-          <iterative_method name="preonly"/>
-          <preconditioner name="jacobi"/>
-          <monitors/>
-        </linear_solver>
-        <never_ignore_solver_failures/>
       </type>
       <solve name="with_diagnostics"/>
     </nonlinear_solver>

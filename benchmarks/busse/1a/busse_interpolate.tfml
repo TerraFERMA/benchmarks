@@ -1,0 +1,359 @@
+<?xml version='1.0' encoding='utf-8'?>
+<terraferma_options>
+  <geometry>
+    <dimension>
+      <integer_value rank="0">3</integer_value>
+    </dimension>
+    <mesh name="Mesh">
+      <source name="File">
+        <file>
+          <string_value lines="1" type="filename">transfinite_box</string_value>
+        </file>
+        <cell>
+          <string_value>tetrahedron</string_value>
+        </cell>
+      </source>
+    </mesh>
+    <mesh name="MeshInit">
+      <source name="File">
+        <file>
+          <string_value lines="1" type="filename">transfinite_box_td</string_value>
+        </file>
+        <cell>
+          <string_value>tetrahedron</string_value>
+        </cell>
+      </source>
+    </mesh>
+  </geometry>
+  <io>
+    <output_base_name>
+      <string_value lines="1">rbconvection</string_value>
+    </output_base_name>
+    <visualization>
+      <element name="P2">
+        <family>
+          <string_value>CG</string_value>
+        </family>
+        <degree>
+          <integer_value rank="0">2</integer_value>
+        </degree>
+      </element>
+    </visualization>
+    <dump_periods/>
+    <detectors/>
+    <checkpointing>
+      <checkpoint_period>
+        <real_value rank="0">0.</real_value>
+      </checkpoint_period>
+    </checkpointing>
+  </io>
+  <global_parameters>
+    <dolfin>
+      <allow_extrapolation/>
+    </dolfin>
+  </global_parameters>
+  <system name="Init">
+    <mesh name="MeshInit"/>
+    <ufl_symbol name="global">
+      <string_value lines="1">ui</string_value>
+    </ufl_symbol>
+    <field name="VelocityInit">
+      <ufl_symbol name="global">
+        <string_value lines="1">vi</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Vector" rank="1">
+          <element name="P2">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">2</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <file>
+              <string_value lines="1">rbconvection_Stokes_0.xml</string_value>
+            </file>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+      </diagnostics>
+    </field>
+    <field name="PressureInit">
+      <ufl_symbol name="global">
+        <string_value lines="1">pi</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Scalar" rank="0">
+          <element name="P1">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">1</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <file>
+              <string_value lines="1">rbconvection_Stokes_0.xml</string_value>
+            </file>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+      </diagnostics>
+    </field>
+    <field name="TemperatureInit">
+      <ufl_symbol name="global">
+        <string_value lines="1">Ti</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Scalar" rank="0">
+          <element name="P2">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">2</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <file>
+              <string_value lines="1">rbconvection_Stokes_0.xml</string_value>
+            </file>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+      </diagnostics>
+    </field>
+    <nonlinear_solver name="Project">
+      <type name="SNES">
+        <form name="Residual" rank="0">
+          <string_value lines="20" type="code" language="python">F = inner(ui_t,(ui_i - ui_n))*dx</string_value>
+          <ufl_symbol name="solver">
+            <string_value lines="1">F</string_value>
+          </ufl_symbol>
+        </form>
+        <form name="Jacobian" rank="1">
+          <string_value lines="20" type="code" language="python">J = derivative(F, ui_i, ui_a)</string_value>
+          <ufl_symbol name="solver">
+            <string_value lines="1">J</string_value>
+          </ufl_symbol>
+        </form>
+        <quadrature_rule name="default"/>
+        <snes_type name="ksponly"/>
+        <relative_error>
+          <real_value rank="0">1.e-3</real_value>
+        </relative_error>
+        <max_iterations>
+          <integer_value rank="0">10</integer_value>
+        </max_iterations>
+        <monitors/>
+        <linear_solver>
+          <iterative_method name="cg">
+            <relative_error>
+              <real_value rank="0">1.e-6</real_value>
+            </relative_error>
+            <max_iterations>
+              <integer_value rank="0">10</integer_value>
+            </max_iterations>
+            <zero_initial_guess/>
+            <monitors/>
+          </iterative_method>
+          <preconditioner name="sor"/>
+        </linear_solver>
+        <never_ignore_solver_failures/>
+      </type>
+      <solve name="never"/>
+      <comment>Unfortunately,  you seem to need a solver here to return the appropriate function space, even if you don't solve anything.
+Here I'll just do a simple projection</comment>
+    </nonlinear_solver>
+  </system>
+  <system name="StokesProject">
+    <mesh name="Mesh"/>
+    <ufl_symbol name="global">
+      <string_value lines="1">us</string_value>
+    </ufl_symbol>
+    <field name="Velocity">
+      <ufl_symbol name="global">
+        <string_value lines="1">v</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Vector" rank="1">
+          <element name="P2">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">2</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <cpp rank="1">
+              <members>
+                <string_value lines="20" type="code" language="cpp">GenericFunction_ptr Tinit_ptr;
+GenericFunction_ptr vinit_ptr;
+GenericFunction_ptr pinit_ptr;</string_value>
+              </members>
+              <initialization>
+                <string_value lines="20" type="code" language="cpp">// get pointers to the initial Temperature, velocity and pressure
+
+Tinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("TemperatureInit")-&gt;genericfunction_ptr(time());
+vinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("VelocityInit")-&gt;genericfunction_ptr(time());
+pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&gt;genericfunction_ptr(time());</string_value>
+              </initialization>
+              <eval>
+                <string_value lines="20" type="code" language="cpp">//printf("x,y=(%g,%g)\n",x[0],x[1]);
+vinit_ptr-&gt;eval(values,x,cell);</string_value>
+              </eval>
+            </cpp>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+      </diagnostics>
+    </field>
+    <field name="Pressure">
+      <ufl_symbol name="global">
+        <string_value lines="1">p</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Scalar" rank="0">
+          <element name="P1">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">1</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <cpp rank="0">
+              <members>
+                <string_value lines="20" type="code" language="cpp">GenericFunction_ptr Tinit_ptr;
+GenericFunction_ptr vinit_ptr;
+GenericFunction_ptr pinit_ptr;</string_value>
+              </members>
+              <initialization>
+                <string_value lines="20" type="code" language="cpp">// get pointers to the initial Temperature, velocity and pressure
+
+Tinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("TemperatureInit")-&gt;genericfunction_ptr(time());
+vinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("VelocityInit")-&gt;genericfunction_ptr(time());
+pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&gt;genericfunction_ptr(time());</string_value>
+              </initialization>
+              <eval>
+                <string_value lines="20" type="code" language="cpp">pinit_ptr-&gt;eval(values,x,cell);</string_value>
+              </eval>
+            </cpp>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+        <include_in_statistics/>
+        <include_in_steady_state>
+          <norm>
+            <string_value>linf</string_value>
+          </norm>
+        </include_in_steady_state>
+      </diagnostics>
+    </field>
+    <field name="Temperature">
+      <ufl_symbol name="global">
+        <string_value lines="1">T</string_value>
+      </ufl_symbol>
+      <type name="Function">
+        <rank name="Scalar" rank="0">
+          <element name="P2">
+            <family>
+              <string_value>CG</string_value>
+            </family>
+            <degree>
+              <integer_value rank="0">2</integer_value>
+            </degree>
+          </element>
+          <initial_condition type="initial_condition" name="WholeMesh">
+            <cpp rank="0">
+              <members>
+                <string_value lines="20" type="code" language="cpp">GenericFunction_ptr Tinit_ptr;
+GenericFunction_ptr vinit_ptr;
+GenericFunction_ptr pinit_ptr;</string_value>
+              </members>
+              <initialization>
+                <string_value lines="20" type="code" language="cpp">// get pointers to the initial Temperature, velocity and pressure
+
+Tinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("TemperatureInit")-&gt;genericfunction_ptr(time());
+vinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("VelocityInit")-&gt;genericfunction_ptr(time());
+pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&gt;genericfunction_ptr(time());</string_value>
+              </initialization>
+              <eval>
+                <string_value lines="20" type="code" language="cpp">Tinit_ptr-&gt;eval(values,x,cell);</string_value>
+              </eval>
+            </cpp>
+          </initial_condition>
+        </rank>
+      </type>
+      <diagnostics>
+        <include_in_visualization/>
+        <include_in_statistics/>
+        <include_in_steady_state>
+          <norm>
+            <string_value>linf</string_value>
+          </norm>
+        </include_in_steady_state>
+        <include_in_detectors/>
+      </diagnostics>
+    </field>
+    <nonlinear_solver name="Project">
+      <type name="SNES">
+        <form name="Residual" rank="0">
+          <string_value lines="20" type="code" language="python">F = inner(us_t,(us_i - ui_n))*dx</string_value>
+          <ufl_symbol name="solver">
+            <string_value lines="1">F</string_value>
+          </ufl_symbol>
+        </form>
+        <form name="Jacobian" rank="1">
+          <string_value lines="20" type="code" language="python">J = derivative(F, us_i, us_a)</string_value>
+          <ufl_symbol name="solver">
+            <string_value lines="1">J</string_value>
+          </ufl_symbol>
+        </form>
+        <quadrature_rule name="default"/>
+        <snes_type name="ksponly"/>
+        <relative_error>
+          <real_value rank="0">1.e-3</real_value>
+        </relative_error>
+        <max_iterations>
+          <integer_value rank="0">10</integer_value>
+        </max_iterations>
+        <monitors/>
+        <linear_solver>
+          <iterative_method name="cg">
+            <relative_error>
+              <real_value rank="0">1.e-8</real_value>
+            </relative_error>
+            <max_iterations>
+              <integer_value rank="0">100</integer_value>
+            </max_iterations>
+            <zero_initial_guess/>
+            <monitors>
+              <preconditioned_residual/>
+            </monitors>
+          </iterative_method>
+          <preconditioner name="sor"/>
+        </linear_solver>
+        <never_ignore_solver_failures/>
+      </type>
+      <solve name="at_start"/>
+      <comment>Unfortunately,  you seem to need a solver here to return the appropriate function space, even if you don't solve anything.
+Here I'll just do a simple projection</comment>
+    </nonlinear_solver>
+  </system>
+</terraferma_options>
