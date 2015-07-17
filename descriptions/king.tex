@@ -1,0 +1,395 @@
+% Copyright (C) 2013 Columbia University in the City of New York and others.
+%
+% Please see the AUTHORS file in the main source directory for a full list
+% of contributors.
+%
+% This file is part of TerraFERMA.
+%
+% TerraFERMA is free software: you can redistribute it and/or modify
+% it under the terms of the GNU Lesser General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% TerraFERMA is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU Lesser General Public License for more details.
+%
+% You should have received a copy of the GNU Lesser General Public License
+% along with TerraFERMA. If not, see <http://www.gnu.org/licenses/>.
+
+\chapter{Compressible Two-Dimensional Convection: \citeauthor{KingGJI2010}} \label{sec:king}
+
+\citet{KingGJI2010} defined a series of convection benchmarks similar to
+those of 
+\citet{BlankenbachGJI1989} 
+but with a linearized
+compressible equation of state.  Solutions are sought for velocity,
+%PvK: you're using bold v in the main text for velocity.
+$\vec{v}$, and perturbations in the temperature, $T$, and pressure $p$,
+from prescribed reference states, $\bar{T}$ and $\bar{p}$
+respectively, corresponding to a reference density $\bar{\rho}$.
+% PvK: above is not strictly true - some of the participating codes used full T
+% not just perturbation.
+The importance of compressibility is indicated by the non-dimensional dissipation number 
+$Di$.
+%Several other parameters are also introduced leading to an enlarged
+%parameter space involving both the Rayleigh, $\Ra$, and dissipation,
+%$\Di$, numbers.  
+Full details of the derivation can be found in
+\citet{KingGJI2010} and \citet{SchubertCUP2001}.  A reduced subset of these
+parameters is considered here for benchmarking purposes.  In all cases
+the domain is a two-dimensional square of unit dimensions with
+free-slip boundary conditions % and no normal flow boundary conditions specified on the
+for the Stokes equations at all boundaries.  The side walls are insulating
+(homogeneous Neumann, $\partial_x T = 0$) for temperature while $T=0$
+is specified at the top surface.
+
+\paragraph{Extended Boussinesq Approximation (EBA)}
+In the extended Boussinesq approximation the velocity field remains
+divergence free and  only the temperature equation sees the addition of terms that scale with the dissipation number.
+% $r_T$, of the residual, $r$, is significantly modified:
+% \begin{equation}
+% r = r_{\dvv} + r_{p} + r_{T}
+% \end{equation}
+% where:
+% \begin{align}
+%   r_{\dvv} =& \int_\Omega \left(\frac{\nabla\dvv_t + \nabla\dvv_t^T}{2}\right) : 2
+% \left(\frac{\nabla\dvv_i+\nabla\dvv_i^T}{2}\right) \nonumber \\
+% &- \int_\Omega \nabla\cdot\dvv_t p_i - \int_{\Omega}(\dvv_t)_z T_i, \\
+%   r_{p} =& \int_\Omega p_t\nabla\cdot \dvv_i, \\
+%   r_{T} =& \int_\Omega T_t\left((T_i - T_n) + \Delta t\theta\dvv_\theta\cdot\nabla T_i + \Delta t(1-\theta)\dvv_\theta\cdot\nabla T_n\right)
+% \nonumber \\
+% &+\int_\Omega T_t\left(\Delta t\theta\Di(\dvv_\theta)_z T_i + \Delta t(1-\theta)\Di(\dvv_\theta)_z T_n \right)  \nonumber \\
+% &+\int_\Omega T_t\left(\Delta t\Di(\dvv_\theta)_z T_0  - 2\Delta t\Di \left(\frac{\nabla\dvv_\theta + \nabla\dvv_\theta^T}{2}\right) : \nabla\dvv_\theta \right)  \nonumber \\
+%  &+\int_\Omega \left(\frac{\Delta t\theta}{\Ra}\nabla T_t \nabla T_i + \frac{\Delta t(1-\theta)}{\Ra}\nabla T_t \nabla T_n\right),
+% \end{align}
+% and:
+% \begin{equation}
+% \dvv_\theta = \theta_{\dvv}\dvv_i + (1-\theta_{\dvv})\dvv_n
+% \end{equation}
+% and $T_0$ is the non-dimensionalized surface temperature.  
+% The corresponding ufl code is given by:
+% \begin{lstlisting}[language=Python]
+% v_theta = theta_v*v_i + (1.-theta_v)*v_n
+% recRa   = 1./Ra
+%
+% rv = (inner(sym(grad(v_t)), 2*sym(grad(v_i))) \
+%       - div(v_t)*p_i - T_i*v_t[1] \
+%      )*dx
+% rp = p_t*div(v_i)*dx
+% rT = (T_t*((T_i - T_n) \
+%            + dt*theta*inner(v_theta, grad(T_i)) \
+%            + dt*(1.-theta)*inner(v_theta, grad(T_n)) \
+%            + dt*theta*Di*v_theta[1]*T_i \
+%            + dt*(1.-theta)*Di*v_theta[1]*T_n \
+%            + dt*Di*v_theta[1]*T0 \
+%            - dt*Di*inner(2*sym(grad(v_theta)), grad(v_theta))) \
+%       + dt*recRa*theta*inner(grad(T_t), grad(T_i)) \
+%       + dt*recRa*(1.-theta)*inner(grad(T_t), grad(T_n)) \
+%      )*dx
+%
+% r = rv + rp + rT
+% \end{lstlisting}
+An additional boundary condition for temperature, $T=1$ is applied at
+the base of the domain.  Simulations are run at a variety of
+resolutions, all structured but with refinement at the boundaries.
+Convergence results for EBA and a range of $\Ra$ and $\Di$
+can be found in Tables \ref{tab:KingEBARa1.e4}--\ref{tab:KingEBARa1.e5}.
+
+
+
+\paragraph{Truncated Anelastic Liquid Approximation (TALA)}
+A first approximation that includes the effects of compressibility in the 
+Stokes equations, but ignoring the pressure effect on buoyancy is the
+%Introducing a pressure dependence on density but ignoring the
+%contribution this makes to buoyancy leads to the 
+truncated anelastic liquid approximation (TALA).  
+The velocity field now has a non-zero
+divergence. % leading to a more substantial modification of the residual.
+% $r$:
+% \begin{equation}
+% r = r_{\dvv} + r_{p} + r_{T}
+% \end{equation}
+% where:
+% \begin{align}
+%   r_{\dvv} =& \int_\Omega \left(\frac{\nabla\dvv_t + \nabla\dvv_t^T}{2}\right) : \left(2
+% \left(\frac{\nabla\dvv_i+\nabla\dvv_i^T}{2}\right) - \frac{2}{3}\nabla\cdot\dvv_i\right) \nonumber \\
+% &- \int_\Omega \nabla\cdot\dvv_t p_i + \int_{\Omega}\dvv_t\cdot\hat{\dvg}\bar{\rho}\bar{\alpha} T_i, \\
+%   r_{p} =& \int_\Omega p_t\nabla\cdot\left(\bar{\rho}\dvv_i\right), \\
+%   r_{T} =& \int_\Omega T_t\bar{\rho}\bar{c_p}\left((T_i - T_n) + \Delta t\theta\dvv_\theta\cdot\nabla T_i + \Delta t(1-\theta)\dvv_\theta\cdot\nabla T_n\right)
+% \nonumber \\
+% &-\int_\Omega T_t\left(\Delta t\theta\Di\dvv_\theta\cdot\hat{\dvg} T_i + \Delta t(1-\theta)\Di\dvv_\theta\cdot\hat{\dvg} T_n \right)  \nonumber \\
+% &-\int_\Omega T_t\Delta t\Di \left(2\frac{\nabla\dvv_\theta + \nabla\dvv_\theta^T}{2} - \frac{2}{3}\nabla\cdot\dvv_\theta\right) : \nabla\dvv_\theta  \nonumber \\
+%  &+\int_\Omega \left(\frac{\Delta t\theta}{\Ra}\nabla T_t \nabla T_i + \frac{\Delta t(1-\theta)}{\Ra}\nabla T_t \nabla T_n + \frac{\Delta
+% t}{\Ra}\nabla T_t \nabla \bar{T}\right),
+% \end{align}
+% and:
+% \begin{align}
+% \bar{\rho} =& \exp\left(\frac{(1-z)\Di}{\gamma_r}\right) \\
+% \bar{T} =& T_\text{surf}\exp\left((1-z)\Di\right) - T_\text{surf} \\
+% \bar{\alpha} =& 1 \\
+% \bar{c_p} =& 1 \\
+% \bar{\chi} =& 1 \\
+% \dvv_\theta =& \theta_{\dvv}\dvv_i + (1-\theta_{\dvv})\dvv_n.
+% \end{align}
+% The corresponding ufl code is given by:
+% \begin{lstlisting}[language=Python]
+% rhobar   = exp(depth*Di/gammar) 
+% Tbar     = Tsurf*exp(Di*depth) - Tsurf 
+% alphabar = 1.0
+% cpbar    = 1.0
+% Chibar   = 1.0
+%
+% v_theta  = theta_v*v_i + (1.-theta_v)*v_n
+% recRa    = 1./Ra
+%
+% I = Identity(dim)
+% def stress(v):
+%   return 2*sym(grad(v))-0.666666666666666*I*div(v)
+%
+% rv = (inner(sym(grad(v_t)), stress(v_i)) - div(v_t)*p_i \
+%       + inner(v_t, gravity)*rhobar*alphabar*T_i \
+%      )*dx
+% rp = p_t*div(rhobar*v_i)*dx
+% rT = (T_t*(rhobar*cpbar*((T_i - T_n) \
+%                          + dt*theta*inner(v_theta, grad(T_i)) \
+%                          + dt*(1.-theta)*inner(v_theta, grad(T_n))) \
+%            - dt*theta*Di*inner(v_theta, gravity)*alphabar*rhobar*T_i \
+%            - dt*(1.-theta)*Di*inner(v_theta, gravity)*alphabar*rhobar*T_n \
+%            - dt*Di*inner(stress(v_theta), grad(v_theta))) \
+%       + dt*recRa*theta*inner(grad(T_t), grad(T_i)) \
+%       + dt*recRa*(1.-theta)*inner(grad(T_t), grad(T_n)) \
+%       + dt*recRa*inner(grad(T_t), grad(Tbar))\
+%      )*dx
+%
+% r = rv + rp + rT
+% \end{lstlisting}
+Since we solve our equations in potential temperature we use a modified 
+temperature condition at the lower boundary, which is now given 
+%At the base of the domain the temperature boundary condition is given
+by $T = 1 + T_0\left(1 - \exp(\Di)\right)$.  Simulations are run at a
+variety of resolutions, all structured but with refinement at the
+boundaries.  Convergence results for TALA for a range of
+$\Ra$, and $\Di$  can be found in Tables \ref{tab:KingTALARa1.e4}--\ref{tab:KingTALARa1.e5}.
+
+
+\paragraph{Anelastic Liquid Approximation (ALA)}
+In the anelastic liquid approximation (ALA) the effects of the
+pressure on buoyancy are now included. % in the velocity residual.
+% , $r_{\dvv}$:
+% \begin{align}
+%   r_{\dvv} =& \int_\Omega \left(\frac{\nabla\dvv_t + \nabla\dvv_t^T}{2}\right) : \left(2
+% \left(\frac{\nabla\dvv_i+\nabla\dvv_i^T}{2}\right) - \frac{2}{3}\nabla\cdot\dvv_i\right) \nonumber \\
+% &- \int_\Omega \nabla\cdot\dvv_t p_i + \int_{\Omega}\dvv_t\cdot\hat{\dvg}\left(\bar{\rho}\bar{\alpha} T_i -
+% \frac{\Di}{\gamma_r}\frac{c_{p_r}}{c_{v_r}}\bar{\rho}\bar{\chi}p_i\right) 
+% \end{align}
+% leading only to a small modification of the ufl code:
+% \begin{lstlisting}[language=Python]
+% rv = (inner(sym(grad(v_t)), stress(v_i)) - div(v_t)*p_i \
+%       + inner(v_t, gravity)*(rhobar*alphabar*T_i  \
+%                              - (Di/gammar)*(cpr/cvr)*rhobar*Chibar*p_i)\
+%      )*dx
+% \end{lstlisting}
+As in TALA the temperature at the base of the domain is given by $T =
+1 + T_0\left(1 - \exp(\Di)\right)$.  Simulations are run at a variety
+of resolutions, all structured but with refinement at the boundaries.
+Convergence results for ALA for a range of
+$\Ra$, and $\Di$  can be found in Tables \ref{tab:KingALARa1.e4}--\ref{tab:kingalaRa5.e5Di0.25}.
+
+
+
+\paragraph{Temperature Dependent Viscosity ALA}
+One set of benchmarks uses the same temperature-dependence of
+viscosity as in the \citet{BlankenbachGJI1989} case 2a.
+%Introducing a temperature dependent viscosity also only modifies the velocity residual, $r_v$, such that:
+%\begin{align}
+%  r_{\dvv} =& \int_\Omega \left(\frac{\nabla\dvv_t + \nabla\dvv_t^T}{2}\right) : \left(2\mu
+%\left(\frac{\nabla\dvv_i+\nabla\dvv_i^T}{2}\right) - \frac{2}{3}\nabla\cdot\dvv_i\right) \nonumber \\
+%&- \int_\Omega \nabla\cdot\dvv_t p_i + \int_{\Omega}\dvv_t\cdot\hat{\dvg}\left(\bar{\rho}\bar{\alpha} T_i -
+%\frac{\Di}{\gamma_r}\frac{c_{p_r}}{c_{v_r}}\bar{\rho}\bar{\chi}p_i\right)
+%\end{align}
+%where:
+%\begin{equation}
+% \mu = \exp\left(-bT_i\right).
+%\end{equation}
+% Leading to a small modification of the underlying ufl code:
+% \begin{lstlisting}[language=Python]
+% b = 6.9077552789821368
+% mu = exp(-b*T_i)
+%
+% def stress(v):
+%   return 2*mu*sym(grad(v))-0.666666666666666*I*mu*div(v)
+% \end{lstlisting}
+Simulations are run at a variety of resolutions, all structured but
+with refinement at the boundaries.  Convergence results for  a range
+of $\Ra$, and $\Di$  can be found in Table \ref{tab:KingTdepALARa1.e4}.
+
+\begin{table*}[h]
+\caption{Results from 2D, isoviscous square convection benchmark
+  cases using the extended Bousinesq approximation (EBA) at
+  $\Ra = 10^{4}$ \citep{KingGJI2010}}  
+\begin{center}
+  \begin{tabular}{ll}
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 0.25$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/eba/Ra1.e4/Di0.25/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 0.5$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/eba/Ra1.e4/Di0.5/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 1.0$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/eba/Ra1.e4/Di1.0/table0.tex}\end{minipage}}
+  \end{tabular}
+\end{center}
+  \label{tab:KingEBARa1.e4}
+\end{table*}
+
+\begin{table*}[h]
+\caption{Results from 2D, isoviscous square convection benchmark
+  cases using the extended Bousinesq approximation (EBA) at
+  $\Ra = 10^{5}$ \citep{KingGJI2010}}  
+\begin{center}
+  \begin{tabular}{ll}
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 0.25$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/eba/Ra1.e5/Di0.25/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 0.5$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/eba/Ra1.e5/Di0.5/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 1.0$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/eba/Ra1.e5/Di1.0/table0.tex}\end{minipage}}
+  \end{tabular}
+\end{center}
+  \label{tab:KingEBARa1.e5}
+\end{table*}
+
+
+
+\begin{table*}[h]
+\caption{Results from 2D, isoviscous square convection benchmark
+  cases using the truncated anelastic approximation (TALA) at $\Ra = 10^{4}$  \citep{KingGJI2010}}  
+\begin{center}
+  \begin{tabular}{ll}
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 0.25$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/tala/Ra1.e4/Di0.25/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 1.0$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/tala/Ra1.e4/Di1.0/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 1.5$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/tala/Ra1.e4/Di1.5/table0.tex}\end{minipage}}
+  \end{tabular}
+\end{center}
+  \label{tab:KingTALARa1.e4}
+\end{table*}
+
+\begin{table*}[h]
+\caption{Results from 2D, isoviscous square convection benchmark
+  cases using the truncated anelastic approximation (TALA) at $\Ra = 10^{5}$ \citep{KingGJI2010}}  
+\begin{center}
+  \begin{tabular}{ll}
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 0.25$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/tala/Ra1.e5/Di0.25/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 1.0$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/tala/Ra1.e5/Di1.0/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 1.5$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/tala/Ra1.e5/Di1.5/table0.tex}\end{minipage}}
+  \end{tabular}
+\end{center}
+  \label{tab:KingTALARa1.e5}
+\end{table*}
+
+\begin{table*}[h]
+\caption{Results from 2D, isoviscous square convection benchmark
+  cases using the anelastic liquid approximation (ALA) at $\Ra = 10^{4}$  \citep{KingGJI2010}}  
+\begin{center}
+  \begin{tabular}{ll}
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 0.25$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/ala/Ra1.e4/Di0.25/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 1.0$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/ala/Ra1.e4/Di1.0/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 1.5$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/ala/Ra1.e4/Di1.5/table0.tex}\end{minipage}}
+  \end{tabular}
+\end{center}
+  \label{tab:KingALARa1.e4}
+\end{table*}
+
+\begin{table*}[h]
+\caption{Results from 2D, isoviscous square convection benchmark
+  cases using the anelastic liquid approximation (ALA) at $\Ra = 10^{5}$  \citep{KingGJI2010}}  
+\begin{center}
+  \begin{tabular}{ll}
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 0.25$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/ala/Ra1.e5/Di0.25/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 1.0$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/ala/Ra1.e5/Di1.0/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 1.5$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/ala/Ra1.e5/Di1.5/table0.tex}\end{minipage}}
+  \end{tabular}
+\end{center}
+  \label{tab:KingALARa1.e5}
+\end{table*}
+
+\begin{table*}[h]
+\caption{Results from 2D, isoviscous square convection benchmark
+  cases using the anelastic approximation (ALA) at $\Ra = 5
+\times 10^{5}$ \citep{KingGJI2010}.} 
+\begin{center}
+  \begin{tabular}{ll}
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 0.25$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.925\textwidth}\input{data/king/ala/Ra5.e5/Di0.25/table0.tex}\end{minipage}}
+  \end{tabular}
+\end{center}
+\label{tab:kingalaRa5.e5Di0.25}
+\end{table*}
+
+
+\begin{table*}[h]
+\caption{Results from 2D  
+square convection benchmark
+  cases with temperature-dependent rheology 
+using the anelastic liquid approximation ($T$
+    dependent  ALA) at $\Ra = 10^{4}$  \citep{KingGJI2010}}  
+\begin{center}
+  \begin{tabular}{ll}
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 0.25$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/ala_Tdep/Ra1.e4/Di0.25/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$\Di = 1.0$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.915\textwidth}\input{data/king/ala_Tdep/Ra1.e4/Di1.0/table0.tex}\end{minipage}} 
+  \end{tabular}
+\end{center}
+  \label{tab:KingTdepALARa1.e4}
+\end{table*}
+
+% \paragraph{Time Dependent ALA}
+\clearpage
+

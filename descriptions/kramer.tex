@@ -1,0 +1,193 @@
+% Copyright (C) 2013 Columbia University in the City of New York and others.
+%
+% Please see the AUTHORS file in the main source directory for a full list
+% of contributors.
+%
+% This file is part of TerraFERMA.
+%
+% TerraFERMA is free software: you can redistribute it and/or modify
+% it under the terms of the GNU Lesser General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% TerraFERMA is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU Lesser General Public License for more details.
+%
+% You should have received a copy of the GNU Lesser General Public License
+% along with TerraFERMA. If not, see <http://www.gnu.org/licenses/>.
+
+
+\chapter{Linearized Free Surface Flows: \citeauthor{KramerPEPI2012}} \label{sec:kramer} 
+A set of benchmarks to explore efficient implicit methods for Stokes flow  with
+free surfaces is provided in \cite{KramerPEPI2012}. 
+The use of a free surface is challenging for many codes due to the short relaxation
+time of topography in mantle convection settings.
+%These models add an additional variable $\eta$ for the % PvK: you might have chosen somethign
+% different than the symbol for viscosity!
+%displacement of the free surface.  
+Three different cases are presented for an aspect ratio 1 geometry and reflective side
+boundary conditions. The first case models the relaxation of the topography on a 
+free surface only at the top of the model. The second provides a free surface also at the base of the model (simulating the core-mantle boundary). 
+The third case is similar to the second one except that a buoyancy force due to a
+prescribed density anomaly is included as in \citet{Zhong1996}.
+Convergence results for are given in Tables \ref{tab:Kramerfs1}--\ref{tab:Kramerfs3}
+
+%\paragraph{Single free surface}
+%\begin{equation}
+%r = r_{\dvv} + r_{p} + r_{\eta}
+%\end{equation}
+%where:
+%\begin{align}
+%  r_{\dvv} =& \int_\Omega \left(\frac{\nabla\dvv_t + \nabla\dvv_t^T}{2}\right) : 2\mu
+%\left(\frac{\nabla\dvv_i+\nabla\dvv_i^T}{2}\right) \nonumber \\
+%&+ \int_\Omega \dvv_t\cdot\nabla p_i - \int_{\Gamma_{z=0}}\dvv_t\cdot\dvn p_i \nonumber \\
+%&+\int_{\Gamma_{z=0}}\dvv_t\cdot\dvn\left(\theta\tilde{\eta}_i + (1-\theta)\tilde{\eta}_n\right), \\
+%  r_{p} =& \int_{\Gamma_{z=0}} p_t\dvv_i\cdot\dvn - \int_\Omega \nabla p_t\cdot \dvv_i, \\
+%  r_{\eta} =& \int_{\Gamma_{z=0}}\tilde{\eta}_t\theta\left(\frac{\left(\tilde{\eta}_i -
+%\tilde{\eta}_n\right)\dvk\cdot\dvn}{s\Delta t} - \dvv_i\cdot\dvn\right).
+%\end{align}
+%
+%% \begin{lstlisting}[language=Python]
+%% rv   = inner(sym(grad(v_t)), 2*sym(grad(v_i)))*dx \
+%%        + inner(v_t, grad(p_i))*dx - inner(v_t, n)*p_i*ds_topfs \
+%%        + inner(v_t, n)*(theta*etatilde_i \
+%%                         + (1.-theta)*etatilde_n)*ds_topfs
+%% rp   = p_t*inner(v_i, n)*ds_topfs - inner(grad(p_t), v_i)*dx
+% reta = etatilde_t*theta*((etatilde_i - etatilde_n)*inner(k, n)/(s*dt) \
+%                          - inner(v_i, n))*ds_topfs
+
+% r = rv + rp + reta
+% \end{lstlisting}
+
+%\paragraph{Two free surfaces}
+%\begin{align}
+%  r_{\dvv} =& \int_\Omega \left(\frac{\nabla\dvv_t + \nabla\dvv_t^T}{2}\right) : 2\mu \left(\frac{\nabla\dvv_i +
+%\nabla\dvv_i^T}{2}\right) \nonumber \\
+%&+ \int_\Omega \dvv_t\cdot\nabla p_i - \int_{\Gamma_{z=0}}\dvv_t\cdot\dvn p_i - \int_{\Gamma_{z=-D}}\dvv_t\cdot\dvn p_i \nonumber \\
+%&+ \int_{\Gamma_{z=0}}\dvv_t\cdot\dvn\left(\theta\tilde{\eta}_i + (1-\theta)\tilde{\eta}_n\right) \nonumber \\
+%&+ \int_{\Gamma_{z=-D}}\dvv_t\cdot\dvn\left(\theta\tilde{\eta}_i + (1-\theta)\tilde{\eta}_n\right), \\
+%  r_{p} =& \int_{\Gamma_{z=0}} p_t\dvv_i\cdot\dvn + \int_{\Gamma_{z=-D}} p_t\dvv_i\cdot\dvn  - \int_\Omega \nabla p_t\cdot \dvv_i, \\
+%  r_{\eta} =& \int_{\Gamma_{z=0}}\tilde{\eta}_t\theta\left(\frac{\left(\tilde{\eta}_i -
+%\tilde{\eta}_n\right)\dvk\cdot\dvn}{s\Delta t} - \dvv_i\cdot\dvn\right) \nonumber \\
+% &+\int_{\Gamma_{z=-D}}\tilde{\eta}_t\theta\left(\frac{\left(\tilde{\eta}_i -
+%\tilde{\eta}_n\right)\dvk\cdot\dvn}{-s\Delta t} - \dvv_i\cdot\dvn\right).
+%\end{align}
+%
+% \begin{lstlisting}[language=Python]
+% rv   = inner(sym(grad(v_t)), 2*sym(grad(v_i)))*dx \
+%        + inner(v_t, grad(p_i))*dx \
+%        - inner(v_t, n)*p_i*ds_topfs - inner(v_t, n)*p_i*ds_bottomfs \
+%        + inner(v_t, n)*(theta*etatilde_i \
+%                       + (1.-theta)*etatilde_n)*ds_topfs \
+%        + inner(v_t, n)*(theta*etatilde_i \
+%                       + (1.-theta)*etatilde_n)*ds_bottomfs
+% rp   = p_t*inner(v_i, n)*ds_topfs \
+%        + p_t*inner(v_i, n)*ds_bottomfs \
+%        - inner(grad(p_t), v_i)*dx
+% reta = etatilde_t*theta*((etatilde_i - etatilde_n)*inner(k, n)/(s*dt) \
+%                          - inner(v_i, n))*ds_topfs \
+%        + etatilde_t*theta*((etatilde_i - etatilde_n)*inner(k, n)/(-s*dt) \
+%                            - inner(v_i, n))*ds_bottomfs 
+
+% r = rv + rp + reta
+% \end{lstlisting}
+
+%\paragraph{Two free surfaces with density anomaly}
+%\begin{align}
+%  r_{\dvv} =& \int_\Omega \left(\frac{\nabla\dvv_t + \nabla\dvv_t^T}{2}\right) : 2\mu \left(\frac{\nabla\dvv_i +
+%\nabla\dvv_i^T}{2}\right) \nonumber \\
+%&+ \int_\Omega \dvv_t\cdot\nabla p_i - \int_{\Gamma_{z=0}}\dvv_t\cdot\dvn p_i - \int_{\Gamma_{z=-D}}\dvv_t\cdot\dvn p_i \nonumber \\
+%&+ \int_{\Gamma_{z=0}}\dvv_t\cdot\dvn\left(\theta\tilde{\eta}_i + (1-\theta)\tilde{\eta}_n\right) \nonumber \\
+%&+ \int_{\Gamma_{z=-D}}\dvv_t\cdot\dvn\left(\theta\tilde{\eta}_i + (1-\theta)\tilde{\eta}_n\right) \nonumber \\
+%&- \int_{\Gamma_{z=-d}}(\dvv_{t})_z\rho'
+%\end{align}
+%% \begin{lstlisting}[language=Python]
+%% rv   = inner(sym(grad(v_t)), 2*sym(grad(v_i)))*dx \
+%%        + inner(v_t, grad(p_i))*dx \
+%        - inner(v_t, n)*p_i*ds_topfs - inner(v_t, n)*p_i*ds_bottomfs \
+%        + inner(v_t, n)*(theta*etatilde_i \
+%                         + (1.-theta)*etatilde_n)*ds_topfs \
+%        + inner(v_t, n)*(theta*etatilde_i \
+%                         + (1.-theta)*etatilde_n)*ds_bottomfs \
+%        - v_t[1]('+')*rhoprime('+')*ds_internal
+% \end{lstlisting}
+%\clearpage
+
+\begin{table*}[h!]
+\caption{Error between the numerical, $\eta$, and analytical, $\eta^*$, free surface elevations versus time-step
+size, $\Delta t$ \citep{KramerPEPI2012}}
+\begin{center}
+  \begin{tabular}{ll}
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}1 free surface\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.895\textwidth}\input{data/kramer/1fs/1.0D/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}2 free surface (top)\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.895\textwidth}\input{data/kramer/2fs/1.0D/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}2 free surface (bottom)\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.895\textwidth}\input{data/kramer/2fs/1.0D/table1.tex}\end{minipage}} 
+  \end{tabular}
+\end{center}
+  \label{tab:Kramerfs1}
+\end{table*}
+
+
+\begin{table*}[h!]
+\caption{Error between the numerical, $\eta$, and analytical, $\eta^*$, free surface elevations versus time-step
+size, $\Delta t$ for two free surfaces and a density anomaly at depth
+$d$ \citep{KramerPEPI2012}}
+\begin{center}
+  \begin{tabular}{ll}
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$z=0$, $d=D/2$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.895\textwidth}\input{data/kramer/zhongfs/0.5D/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$z=-D$, $d=D/2$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.895\textwidth}\input{data/kramer/zhongfs/0.5D/table1.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$z=0$, $d=D/4$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.895\textwidth}\input{data/kramer/zhongfs/0.25D/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$z=-D$, $d=D/4$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.895\textwidth}\input{data/kramer/zhongfs/0.25D/table1.tex}\end{minipage}} 
+  \end{tabular}
+\end{center}
+  \label{tab:Kramerfs2}
+\end{table*}
+
+
+
+\begin{sidewaystable*}[h!]
+\caption{Error between the numerical, $\eta$, and analytical,
+  $\eta^*$, free surface elevations versus grid-size
+  for two free surfaces and a density anomaly at depth $d$ \citep{KramerPEPI2012}}
+\begin{center}
+  \begin{tabular}{ll}
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$z=0$, $d=D/2$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.75\textwidth}\input{data/kramer/zhongfs/0.5D_spatial/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$z=-D$, $d=D/2$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.75\textwidth}\input{data/kramer/zhongfs/0.5D_spatial/table1.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$z=0$, $d=D/4$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.75\textwidth}\input{data/kramer/zhongfs/0.25D_spatial/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.025\textwidth}\begin{sideways}$z=-D$, $d=D/4$\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.75\textwidth}\input{data/kramer/zhongfs/0.25D_spatial/table1.tex}\end{minipage}} 
+  \end{tabular}
+\end{center}
+  \label{tab:Kramerfs3}
+\end{sidewaystable*}
+

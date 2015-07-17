@@ -1,0 +1,194 @@
+% Copyright (C) 2013 Columbia University in the City of New York and others.
+%
+% Please see the AUTHORS file in the main source directory for a full list
+% of contributors.
+%
+% This file is part of TerraFERMA.
+%
+% TerraFERMA is free software: you can redistribute it and/or modify
+% it under the terms of the GNU Lesser General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% TerraFERMA is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU Lesser General Public License for more details.
+%
+% You should have received a copy of the GNU Lesser General Public License
+% along with TerraFERMA. If not, see <http://www.gnu.org/licenses/>.
+
+
+\chapter{Idealized Kinematic Subduction Zones: \citeauthor{VanKekenPEPI2008}} \label{sec:vankeken}
+
+\citet{VanKekenPEPI2008} defines a series of benchmarks for subduction
+zone thermal structure using a kinematic slab and dynamic wedge. In
+the simplest case (1a, Table \ref{tab:vanKeken1a-c}) of isoviscous rheology the velocity can be
+described analytically and only the heat equation needs to be
+solved. Subsequent cases explore the solution of the Stokes equations
+for isoviscous flow (cases 1b and 1c, Table \ref{tab:vanKeken1a-c}) and the effects of
+temperature-dependent (case 2a, Table \ref{tab:vanKeken2a-b}) and temperature- and stress-dependent
+rheology (case 2b, Table \ref{tab:vanKeken2a-b}).
+
+% \begin{equation}
+%   r = \int_\Omega T_t\dvv_i\cdot\nabla T_i + \int_\Omega \nabla T_t \kappa' \nabla T_i,
+% \end{equation}
+% where:
+% \begin{align}
+% \kappa' =& \frac{\kappa}{d v_0}, \\
+% \kappa =& 0.7272\times10^{-6}, \\
+% d =& 1000, \\
+% v_0 =& \frac{0.05}{365\times24\times60\times60}
+% \end{align}
+
+% \begin{lstlisting}[language=Python]
+% d     = 1000.0
+% v0    = 0.05/(365.*24.*60.*60.)
+% kappa = 0.7272e-6
+% kappaprime = kappa/(d*v0)
+
+% bT = T_t*inner(v_i, grad(T_i)) \
+%      + inner(grad(T_t), kappaprime*grad(T_i))
+
+% r  = bT*dx_crust
+% r += bT*dx_wedge
+% r += bT*dx_mantle
+% \end{lstlisting}
+
+%\paragraph{Case 1b--c} Full isoviscous stokes solution in the wedge
+%plus advection-diffusion of temperature. Case 1b has dirichlet
+%velocity conditions on the wedge inflow boundary set to the analytic
+%corner flow solution.  Case 1c, has a natural inflow boundary
+%condition on the left.
+
+% \begin{equation}
+% r = r_{\dvv} + r_{p} + r_{T}
+% \end{equation}
+% where:
+% \begin{align}
+%   r_{\dvv} =& \int_{\Omega_{\text{wedge}}} \left(\frac{\nabla\dvv_t + \nabla\dvv_t^T}{2}\right) : 2
+% \mu'\left(\frac{\nabla\dvv_i+\nabla\dvv_i^T}{2}\right) - \int_{\Omega_{\text{wedge}}} \nabla\cdot\dvv_t p_i, \\
+%   r_{p} =& \int_{\Omega_{\text{wedge}}} p_t\nabla\cdot \dvv_i, \\
+%   r_{T} =& \int_\Omega T_t\dvv_i\cdot\nabla T_i + \int_\Omega \nabla T_t \kappa' \nabla T_i,
+% \end{align}
+% and:
+% \begin{equation}
+% \mu' = 1
+% \end{equation}
+
+% \begin{lstlisting}[language=Python]
+% d     = 1000.0
+% v0    = 0.05/(365.*24.*60.*60.)
+% kappa = 0.7272e-6
+% kappaprime = kappa/(d*v0)
+
+% muprime = 1.0
+
+% rv  = (inner(sym(grad(v_t)), 2*muprime*sym(grad(v_i))) \
+%       - div(v_t)*p_i)*dx_wedge
+
+% rp  = p_t*div(v_i)*dx_wedge
+
+% rT  = inner(grad(T_t), kappaprime*grad(T_i))*dx_crust
+% rT += (T_t*inner(v_i,  grad(T_i)) \
+%        + inner(grad(T_t), kappaprime*grad(T_i)))*dx_wedge
+% rT += (T_t*inner(vp_i, grad(T_i)) \
+%        + inner(grad(T_t), kappaprime*grad(T_i)))*dx_mantle
+
+% r = rv + rp + rT
+% \end{lstlisting}
+
+%\paragraph{Case 2a} Temperature dependent viscosity stokes
+%solution in the wedge with effective viscosity
+%\begin{equation}
+%\mu' = \frac{\mu_{\text{eff}}}{\mu_{\text{scale}}} 
+%\end{equation}
+%where:
+%\begin{align}
+%\mu_{\text{scale}} =& 1\times10^{21}, \\
+%\mu_{\text{eff}} =& \frac{\mu_{\text{max}}\mu_{\text{diff}}}{\mu_{\text{max}} + \mu_{\text{diff}}}, \\
+%\mu_{\text{diff}} =& A_{\text{diff}}\exp\left(\frac{E_{\text{diff}}}{RT_i}\right), \\
+%R =& 8.3145, \\
+%E_{\text{diff}} =& 335\times10^3, \\
+%A_{\text{diff}} =& 1.32043\times10^9, \\
+%\mu_{\text{max}} =& 1\times10^{26}
+%\end{align}
+%% \begin{lstlisting}[language=Python]
+%% mumax = 1.e26
+%% Adiff = 1.32043e9
+%% Ediff = 335.e3
+%% R     = 8.3145
+%% mudiff = Adiff*exp(Ediff/(R*T_i))
+%% mueff  = (mumax*mudiff)/(mumax + mudiff)
+%% muscale = 1.e21
+%% muprime = mueff/muscale
+%% \end{lstlisting}
+%
+%
+%
+%\paragraph{Case 2b} Temperature and stress dependent effective
+%viscosity in the wedge with
+%\begin{equation}
+%\mu_{\text{eff}} = \frac{\mu_{\text{max}}\mu_{\text{disl}}}{\mu_{\text{max}} + \mu_{\text{disl}}}
+%\end{equation}
+%where:
+%\begin{align}
+%\mu_{\text{disl}} =& A_{\text{disl}}\exp\left(\frac{E_{\text{disl}}}{nRT_i}\right)\dot{\epsilon}^{\frac{1-n}{n}}, \\
+%E_{\text{disl}} =& 540\times10^3, \\
+%A_{\text{disl}} =& 28968.6, \\
+%\strt =& \left(\frac{\etens:\etens}{2}\right)^{\frac{1}{2}}, \\
+%\etens =& \frac{\nabla\dvv_i+\nabla\dvv_i^T}{2}, \\
+%n =& 3.5
+%\end{align}
+%% \begin{lstlisting}[language=Python]
+%% mumax = 1.e26
+% Adisl = 28968.6
+% Edisl = 540.e3
+% n = 3.5
+% R = 8.3145
+% nexp = (1.-n)/n
+% edot = sym(grad(v_i))
+% eII = sqrt(0.5*inner(edot, edot))
+% mudisl = Adisl*exp(Edisl/(n*R*T_i))*(eII**nexp)
+% mueff  = (mumax*mudisl)/(mumax + mudisl)
+% muscale = 1.e21
+% muprime = mueff/muscale
+% \end{lstlisting}
+
+\begin{table*}[h]
+\caption{Results from 2D, kinematic subduction model \citep{VanKekenPEPI2008}}
+\begin{center}
+  \begin{tabular}{ll}
+\fbox{\begin{minipage}[c]{0.075\textwidth}\begin{sideways}\parbox{3.5cm}{\begin{center}Case 1a:\\analytic corner flow\end{center}}\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.575\textwidth}\input{data/vankeken/1a/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.075\textwidth}\begin{sideways}\parbox{3.25cm}{\begin{center}Case 1b:\\isoviscous wedge,\\prescribed BCs\end{center}}\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.575\textwidth}\input{data/vankeken/1b/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.075\textwidth}\begin{sideways}\parbox{3.25cm}{\begin{center}Case 1c:\\isoviscous wedge,\\free stress BCs\end{center}}\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.575\textwidth}\input{data/vankeken/1c/table0.tex}\end{minipage}}
+  \end{tabular}
+\end{center}
+  \label{tab:vanKeken1a-c}
+\end{table*}
+\pagebreak{}
+
+\begin{table*}[h]
+\caption{Results from 2D, kinematic subduction model \citep{VanKekenPEPI2008}}
+\begin{center}
+  \begin{tabular}{ll}
+\fbox{\begin{minipage}[c]{0.05\textwidth}\begin{sideways}\parbox{2.5cm}{\begin{center}Case 2a:\\wedge $\eta(T)$\end{center}}\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.575\textwidth}\input{data/vankeken/2a/table0.tex}\end{minipage}} \\
+\\
+\fbox{\begin{minipage}[c]{0.05\textwidth}\begin{sideways}\parbox{2.25cm}{\begin{center}Case 2b:\\wedge $\eta(T,\dot\epsilon)$\end{center}}\end{sideways}\end{minipage}} 
+&
+\fbox{\begin{minipage}[c]{0.575\textwidth}\input{data/vankeken/2b/table0.tex}\end{minipage}} 
+  \end{tabular}
+\end{center}
+  \label{tab:vanKeken2a-b}
+\end{table*}
+
