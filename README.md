@@ -1,13 +1,11 @@
-# *TerraFERMA* Benchmarks
+# *TerraFERMA* Benchmarks (repository deprecated)
 
-TerraFERMA is the *Transparent Finite Element Rapid Model Assembler*, a software system for the  rapid and reproducible construction and exploration of  coupled  multi-physics models.  
+**PLEASE VISIT [https://github.com/TerraFERMA/benchmarks)**
 
-This repository contains several benchmarks that are used to verify and validate TerraFERMA as well as brief descriptions of the
-benchmarks and their results.
+From July 2015 this repository of benchmarks for TerraFERMA, the *Transparent Finite Element Rapid Model Assembler*, has been deprecated.  To find
+out more about the ongoing TerraFERMA project please visit our new website at
+[http://terraferma.github.io/](http://terraferma.github.io) or go directly to the new benchmarks repository at
+[https://github.com/TerraFERMA/benchmarks](https://github.com/TerraFERMA/benchmarks).
 
-## License
-TerraFERMA is free software: you can redistribute it and/or modify it under the terms of the as
-published by the [Free Software Foundation](http://www.fsf.org), either version 3 of the License, or (at your option) any later version.
-
-TerraFERMA is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the [GNU Lesser General Public License](http://www.gnu.org/licenses/) for more details.
+Many thanks for your interest in TerraFERMA!
 
