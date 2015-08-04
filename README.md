@@ -1,6 +1,6 @@
 # *TerraFERMA* Benchmarks (repository deprecated)
 
-**PLEASE VISIT [https://github.com/TerraFERMA/benchmarks)**
+**PLEASE VISIT [https://github.com/TerraFERMA/benchmarks](https://github.com/TerraFERMA/benchmarks)**
 
 From July 2015 this repository of benchmarks for TerraFERMA, the *Transparent Finite Element Rapid Model Assembler*, has been deprecated.  To find
 out more about the ongoing TerraFERMA project please visit our new website at
