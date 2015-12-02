@@ -10,7 +10,7 @@
           <string_value lines="1" type="filename">transfinite_square</string_value>
         </file>
         <cell>
-          <string_value>triangle</string_value>
+          <string_value lines="1">triangle</string_value>
         </cell>
       </source>
     </mesh>
@@ -21,7 +21,7 @@
           <comment>mesh for time-dependent initial file</comment>
         </file>
         <cell>
-          <string_value>triangle</string_value>
+          <string_value lines="1">triangle</string_value>
         </cell>
       </source>
     </mesh>
@@ -33,7 +33,7 @@
     <visualization>
       <element name="P2DG">
         <family>
-          <string_value>DG</string_value>
+          <string_value lines="1">DG</string_value>
         </family>
         <degree>
           <integer_value rank="0">2</integer_value>
@@ -90,7 +90,7 @@ recRa = 1./Ra</string_value>
         <rank name="Vector" rank="1">
           <element name="P2">
             <family>
-              <string_value>CG</string_value>
+              <string_value lines="1">CG</string_value>
             </family>
             <degree>
               <integer_value rank="0">2</integer_value>
@@ -115,7 +115,7 @@ recRa = 1./Ra</string_value>
         <rank name="Scalar" rank="0">
           <element name="P1">
             <family>
-              <string_value>CG</string_value>
+              <string_value lines="1">CG</string_value>
             </family>
             <degree>
               <integer_value rank="0">1</integer_value>
@@ -140,7 +140,7 @@ recRa = 1./Ra</string_value>
         <rank name="Scalar" rank="0">
           <element name="P2">
             <family>
-              <string_value>CG</string_value>
+              <string_value lines="1">CG</string_value>
             </family>
             <degree>
               <integer_value rank="0">2</integer_value>
@@ -213,7 +213,7 @@ Here I'll just do a simple projection</comment>
         <rank name="Vector" rank="1">
           <element name="P2">
             <family>
-              <string_value>CG</string_value>
+              <string_value lines="1">CG</string_value>
             </family>
             <degree>
               <integer_value rank="0">2</integer_value>
@@ -306,7 +306,7 @@ vinit_ptr-&gt;eval(values,x,cell);</string_value>
         <include_in_statistics/>
         <include_in_steady_state>
           <norm>
-            <string_value>linf</string_value>
+            <string_value lines="1">linf</string_value>
           </norm>
         </include_in_steady_state>
         <include_in_detectors/>
@@ -320,7 +320,7 @@ vinit_ptr-&gt;eval(values,x,cell);</string_value>
         <rank name="Scalar" rank="0">
           <element name="P1">
             <family>
-              <string_value>CG</string_value>
+              <string_value lines="1">CG</string_value>
             </family>
             <degree>
               <integer_value rank="0">1</integer_value>
@@ -357,7 +357,7 @@ pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&g
         <include_in_statistics/>
         <include_in_steady_state>
           <norm>
-            <string_value>linf</string_value>
+            <string_value lines="1">linf</string_value>
           </norm>
         </include_in_steady_state>
       </diagnostics>
@@ -370,7 +370,7 @@ pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&g
         <rank name="Scalar" rank="0">
           <element name="P2">
             <family>
-              <string_value>CG</string_value>
+              <string_value lines="1">CG</string_value>
             </family>
             <degree>
               <integer_value rank="0">2</integer_value>
@@ -426,7 +426,7 @@ pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&g
         <include_in_statistics/>
         <include_in_steady_state>
           <norm>
-            <string_value>linf</string_value>
+            <string_value lines="1">linf</string_value>
           </norm>
         </include_in_steady_state>
         <include_in_detectors/>
@@ -575,7 +575,7 @@ r = rT + rv + rp</string_value>
         <rank name="Scalar" rank="0">
           <element name="P1">
             <family>
-              <string_value>CG</string_value>
+              <string_value lines="1">CG</string_value>
             </family>
             <degree>
               <integer_value rank="0">1</integer_value>
@@ -661,7 +661,7 @@ r = rT + rv + rp</string_value>
         <rank name="Scalar" rank="0">
           <element name="P1DG">
             <family>
-              <string_value>DG</string_value>
+              <string_value lines="1">DG</string_value>
             </family>
             <degree>
               <integer_value rank="0">1</integer_value>
