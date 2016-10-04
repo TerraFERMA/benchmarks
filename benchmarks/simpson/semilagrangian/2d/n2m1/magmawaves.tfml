@@ -253,7 +253,7 @@ def val(x):
 dolfin::Array&lt;double&gt; v_values(2);
 v-&gt;eval(v_values, x, cell);
 double v_max = std::max(std::abs(v_values[0]),std::abs(v_values[1]));
-values[0] = (v_max*bucket()-&gt;timestep())/dcell.diameter();</string_value>
+values[0] = (v_max*bucket()-&gt;timestep())/2/dcell.circumradius();</string_value>
               </eval>
             </cpp>
           </value>
@@ -336,6 +336,7 @@ values[0] =  phi + 0.5*dt*p*xi;</string_value>
             <degree>
               <integer_value rank="0">6</integer_value>
             </degree>
+            <quadrature_rule name="canonical"/>
           </element>
           <value type="value" name="WholeMesh">
             <internal rank="0">
@@ -501,6 +502,9 @@ values[0] =  phi + 0.5*dt*p*xi;</string_value>
           </ufl_symbol>
           <ident_zeros/>
         </form>
+        <quadrature_degree>
+          <integer_value rank="0">6</integer_value>
+        </quadrature_degree>
         <quadrature_rule name="canonical"/>
         <snes_type name="ls">
           <ls_type name="cubic"/>
@@ -555,6 +559,9 @@ r = rp + rf</string_value>
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
+        <quadrature_degree>
+          <integer_value rank="0">6</integer_value>
+        </quadrature_degree>
         <quadrature_rule name="canonical"/>
         <snes_type name="ls">
           <ls_type name="cubic"/>
