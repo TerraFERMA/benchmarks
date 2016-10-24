@@ -35,25 +35,25 @@
         <real_value shape="3" dim1="dim" rank="1">0. 0. 1.</real_value>
       </point>
       <point name="Topa0">
-        <real_value shape="3" dim1="dim" rank="1">1.0079 0. 1.</real_value>
+        <real_value shape="3" dim1="dim" rank="1">1. 0. 1.</real_value>
       </point>
       <point name="Top0b">
-        <real_value shape="3" dim1="dim" rank="1">0. 0.6283 1.</real_value>
+        <real_value shape="3" dim1="dim" rank="1">0. 1. 1.</real_value>
       </point>
       <point name="Topab">
-        <real_value shape="3" dim1="dim" rank="1">1.0079 0.6283 1.</real_value>
+        <real_value shape="3" dim1="dim" rank="1">1. 1. 1.</real_value>
       </point>
       <point name="Mid00">
         <real_value shape="3" dim1="dim" rank="1">0. 0. 0.5</real_value>
       </point>
       <point name="Mida0">
-        <real_value shape="3" dim1="dim" rank="1">1.0079 0. 0.5</real_value>
+        <real_value shape="3" dim1="dim" rank="1">1. 0. 0.5</real_value>
       </point>
       <point name="Mid0b">
-        <real_value shape="3" dim1="dim" rank="1">0. 0.6283 0.5</real_value>
+        <real_value shape="3" dim1="dim" rank="1">0. 1. 0.5</real_value>
       </point>
       <point name="Midab">
-        <real_value shape="3" dim1="dim" rank="1">1.0079 0.6283 0.5</real_value>
+        <real_value shape="3" dim1="dim" rank="1">1. 1. 0.5</real_value>
       </point>
     </detectors>
   </io>
@@ -244,7 +244,10 @@
         <form name="Residual" rank="0">
           <string_value lines="20" type="code" language="python">recRa = 1./Ra
 
-eta = 1.
+lnr = 2.995732273553991
+Q   = 255/lnr - 0.25*lnr
+G   = 15/lnr - 0.5
+eta = exp(Q/(T+G) - Q/(0.5+G))
 
 rT = (T_t*inner(v_i, grad(T_i)) + recRa*inner(grad(T_t), grad(T_i)))*dx
 rv = (inner(sym(grad(v_t)), 2.*eta*sym(grad(v_i))) - div(v_t)*p_i - T_i*v_t[2])*dx

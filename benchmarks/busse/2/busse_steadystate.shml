@@ -104,7 +104,7 @@ libspud.set_option("/timestepping/steady_state/tolerance",float(5.e-5))</string_
               <dependencies>
                 <run name="MeshTD">
                   <input_file>
-                    <string_value lines="1" type="filename">../../src/transfinite_box.geo</string_value>
+                    <string_value lines="1" type="filename">../../src/transfinite_eqbox.geo</string_value>
                   </input_file>
                   <run_when name="input_changed_or_output_missing"/>
                   <parameter_sweep>
@@ -112,8 +112,7 @@ libspud.set_option("/timestepping/steady_state/tolerance",float(5.e-5))</string_
                     <parameter name="factor_td">
                       <update>
                         <string_value lines="20" type="code" language="python">from string import Template as template
-input_file = template(input_file).safe_substitute({'ncells':ncells_td, 'factor':factor_td,
-'xaspect':'1.0079','yaspect':'0.6283'})</string_value>
+input_file = template(input_file).safe_substitute({'ncells':ncells_td, 'factor':factor_td})</string_value>
                       </update>
                     </parameter>
                   </parameter_sweep>
@@ -126,7 +125,7 @@ input_file = template(input_file).safe_substitute({'ncells':ncells_td, 'factor':
                   </required_output>
                   <commands>
                     <command name="GMsh">
-                      <string_value lines="1">gmsh -3 transfinite_box.geo -o transfinite_box_td.msh</string_value>
+                      <string_value lines="1">gmsh -3 transfinite_eqbox.geo -o transfinite_box_td.msh</string_value>
                     </command>
                     <command name="Convert">
                       <string_value lines="1">dolfin-convert transfinite_box_td.msh transfinite_box_td.xml</string_value>
@@ -138,15 +137,14 @@ input_file = template(input_file).safe_substitute({'ncells':ncells_td, 'factor':
             </simulation>
             <run name="Mesh">
               <input_file>
-                <string_value lines="1" type="filename">../../src/transfinite_box.geo</string_value>
+                <string_value lines="1" type="filename">../../src/transfinite_eqbox.geo</string_value>
               </input_file>
               <run_when name="input_changed_or_output_missing"/>
               <parameter_sweep>
                 <parameter name="ncells">
                   <update>
                     <string_value lines="20" type="code" language="python">from string import Template as template
-input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.05',
-'xaspect':'1.0079','yaspect':'0.6283'})</string_value>
+input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.05'})</string_value>
                   </update>
                 </parameter>
               </parameter_sweep>
@@ -159,7 +157,7 @@ input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.
               </required_output>
               <commands>
                 <command name="GMsh">
-                  <string_value lines="1">gmsh -3 transfinite_box.geo</string_value>
+                  <string_value lines="1">gmsh -3 transfinite_eqbox.geo -o transfinite_box.msh</string_value>
                 </command>
                 <command name="Convert">
                   <string_value lines="1">dolfin-convert transfinite_box.msh transfinite_box.xml</string_value>
