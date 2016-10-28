@@ -222,7 +222,7 @@ print "relative errors = ", rerr
 
 table0 = []
 table0.append("\\begin{tabular}{c|cccccccccc}\n")
-table0.append("    &amp; $\Nu$ &amp; $v_{rms}$ &amp; $q_{00}$ &amp; $q_{a0}$ &amp;  $q_{0b}$ &amp;$q_{ab}$ &amp; $T_{00}$ &amp; $T_{0b}$ &amp; $w_{00}$ &amp; w_{0b} \\\\\n")
+table0.append("    &amp; $\Nu$ &amp; $v_{rms}$ &amp; $q_{00}$ &amp; $q_{a0}$ &amp;  $q_{0b}$ &amp;$q_{ab}$ &amp; $T_{00}$ &amp; $T_{0b}$ &amp; $w_{00}$ &amp; $w_{0b}$ \\\\\n")
 table0.append("\hline\n")
 resultstring = "&amp; {nu:.3f} &amp; {v_rms:.3f} &amp; {q00:.3f} &amp; {qa0:.3f} &amp; {q0b:.3f} &amp; {qab:.3f} &amp;{T00:.3f} &amp; {T0b:.3f} &amp;{w00:.3f} &amp; {w0b:.3f} \\\\\n"
 for ncells in v.parameters['ncells']:
