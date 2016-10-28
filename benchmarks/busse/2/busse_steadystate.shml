@@ -25,10 +25,10 @@ The second code provides a newton solver for the exact steady state solution ini
       <parameter_sweep>
         <parameter name="ncells">
           <values>
-            <string_value lines="1">16 32</string_value>
+            <string_value lines="1">8</string_value>
           </values>
           <process_scale>
-            <integer_value shape="2" rank="1">2 16</integer_value>
+            <integer_value shape="2" rank="1">2</integer_value>
           </process_scale>
         </parameter>
         <parameter name="ncells_td">
@@ -85,7 +85,7 @@ libspud.set_option("/timestepping/finish_time",float(50000.))
 libspud.set_option("/timestepping/timestep/adaptive/constraint::Courant/requested_maximum_value",float(1.))
 
 #set the steady state tolerance 
-libspud.set_option("/timestepping/steady_state/tolerance",float(5.e-5))</string_value>
+libspud.set_option("/timestepping/steady_state/tolerance",float(5.e-6))</string_value>
                     <single_build/>
                   </update>
                   <process_scale>
