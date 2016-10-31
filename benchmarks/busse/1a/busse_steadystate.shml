@@ -25,10 +25,10 @@ The second code provides a newton solver for the exact steady state solution ini
       <parameter_sweep>
         <parameter name="ncells">
           <values>
-            <string_value lines="1">16 32</string_value>
+            <string_value lines="1">16 32 64</string_value>
           </values>
           <process_scale>
-            <integer_value shape="2" rank="1">2 16</integer_value>
+            <integer_value shape="2" rank="1">2 16 20</integer_value>
           </process_scale>
         </parameter>
         <parameter name="ncells_td">
