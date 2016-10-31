@@ -226,7 +226,7 @@ table0.append("    &amp; $\Nu$ &amp; $v_{rms}$ &amp; $q_{00}$ &amp; $q_{a0}$ &am
 table0.append("\hline\n")
 resultstring = "&amp; {nu:.3f} &amp; {v_rms:.3f} &amp; {q00:.3f} &amp; {qa0:.3f} &amp; {q0b:.3f} &amp; {qab:.3f} &amp;{T00:.3f} &amp; {T0b:.3f} &amp;{w00:.3f} &amp; {w0b:.3f} \\\\\n"
 for ncells in v.parameters['ncells']:
-  table0.append(("{ncellsx:2d}$\\times${ncellsy:2d}$\\times${ncellsz:2d} "+resultstring).format(ncellsx=int(ncells), ncellsy=int(int(ncells)*1.0079), ncellsz=int(int(ncells)*0.6283), **v[{'ncells':ncells}]))
+  table0.append(("{ncellsx:2d}$\\times${ncellsy:2d}$\\times${ncellsz:2d} "+resultstring).format(ncellsx=int(int(ncells)*1.0079), ncellsy=int(int(ncells)*0.6283), ncellsz=int(int(ncells)), **v[{'ncells':ncells}]))
 table0.append("\hline\n")
 table0.append(("Benchmark "+resultstring).format(**vb))
 table0.append("\\end{tabular}\n")
