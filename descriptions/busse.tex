@@ -1,0 +1,66 @@
+% Copyright (C) 2013 Columbia University in the City of New York and others.
+%
+% Please see the AUTHORS file in the main source directory for a full list
+% of contributors.
+%
+% This file is part of TerraFERMA.
+%
+% TerraFERMA is free software: you can redistribute it and/or modify
+% it under the terms of the GNU Lesser General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% TerraFERMA is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU Lesser General Public License for more details.
+%
+% You should have received a copy of the GNU Lesser General Public License
+% along with TerraFERMA. If not, see <http://www.gnu.org/licenses/>.
+
+\chapter{Incompressible Three-Dimensional Convection: \citeauthor{Busse1993}} \label{sec:busse}
+
+\citet{Busse1993} described several benchmarks for
+incompressible convection in a three-dimensional domain of unit height
+and aspect ratio in the horizontal dimensions of $a$ and $b$.  The prognostic variables are velocity, $\vec{v}$,
+pressure $p$, and temperature, $T$.
+
+For the steady-state cases considered (1a and 2) boundary conditions for temperature are $T=0$ at the top surface, $z=1$, $T=1$ at the base, $z=0$,
+with insulating (homogeneous Neumann, $\nabla T\cdot\vec{n} = 0$) side-walls.  For velocity the top surface and base have no-slip
+boundary conditions applied while all vertical sides impose free-slip conditions.
+Simulations are run using full time-dependence on a coarse mesh until the solution reaches an approximate steady state.  This
+solution is then interpolated to a variety of higher resolutions and used as an initial guess to solve the true steady state
+problem.
+
+\paragraph{Case 1a}
+Isoviscous steady-state cases are defined in a domain with aspect ratio, $a=1.0079$, $b=0.6283$,
+with a Rayleigh number of $3\times10^4$ (Table \ref{tab:busse1a}).
+
+\begin{table*}[th!]
+\caption{Results from 3D, isoviscous convection benchmark case 1a \citep{Busse1993}.}
+\begin{center}
+\input{data/busse/1a/table0.tex}
+\end{center}
+  \label{tab:busse1a}
+\end{table*}
+%
+%\paragraph{Case 2}
+%
+%In the variable viscosity case, the
+%viscosity is temperature dependent with 
+%\begin{equation}
+% \mu = \exp\left[Q/(T+G) - Q/(0.5+G)\right]
+%\end{equation}
+%where
+%\begin{gather}
+%Q = [255/\log{r}] - 0.25\log{r} \\
+%G = [15/\log{r}] - 0.5
+%\end{gather}
+%with $r = \eta(T=0)/\eta(T=1) = 20$.
+%Convergence results are given in Table \ref{tab:busse2} for
+%$\Ra=2\times10^4$, aspect ratio $a=b=1$.
+%
+%\begin{table*}[th!]
+%\caption{Results from 3D, variable viscosity convection benchmark case 2 \citep{Busse1993}.}
+%  \label{tab:busse2}
+%\end{table*}
