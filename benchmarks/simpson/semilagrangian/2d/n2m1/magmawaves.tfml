@@ -502,6 +502,7 @@ values[0] =  phi + 0.5*dt*p*xi;</string_value>
           </ufl_symbol>
           <ident_zeros/>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_degree>
           <integer_value rank="0">6</integer_value>
         </quadrature_degree>
@@ -559,6 +560,7 @@ r = rp + rf</string_value>
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_degree>
           <integer_value rank="0">6</integer_value>
         </quadrature_degree>
@@ -637,6 +639,7 @@ r = rp + rf</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
+      <form_representation name="quadrature"/>
       <quadrature_rule name="default"/>
       <include_in_statistics/>
     </functional>
@@ -645,6 +648,7 @@ r = rp + rf</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
+      <form_representation name="quadrature"/>
       <quadrature_rule name="default"/>
       <include_in_statistics/>
     </functional>
@@ -653,6 +657,7 @@ r = rp + rf</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
+      <form_representation name="quadrature"/>
       <quadrature_rule name="default"/>
       <include_in_statistics/>
     </functional>

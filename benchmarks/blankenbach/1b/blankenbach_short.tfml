@@ -171,6 +171,7 @@ recRa = 1./Ra</string_value>
             <string_value lines="1">J</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_rule name="default"/>
         <snes_type name="ksponly"/>
         <relative_error>
@@ -466,6 +467,7 @@ r = rT + rv + rp</string_value>
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_rule name="default"/>
         <snes_type name="ls">
           <ls_type name="cubic"/>
@@ -534,6 +536,7 @@ r = rT + rv + rp</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
+      <form_representation name="quadrature"/>
       <quadrature_rule name="default"/>
       <include_in_statistics/>
     </functional>
@@ -542,6 +545,7 @@ r = rT + rv + rp</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
+      <form_representation name="quadrature"/>
       <quadrature_rule name="default"/>
       <include_in_statistics/>
     </functional>
@@ -550,6 +554,7 @@ r = rT + rv + rp</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
+      <form_representation name="quadrature"/>
       <quadrature_rule name="default"/>
       <include_in_statistics/>
     </functional>
@@ -558,6 +563,7 @@ r = rT + rv + rp</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
+      <form_representation name="quadrature"/>
       <quadrature_rule name="default"/>
       <include_in_statistics/>
     </functional>
@@ -616,6 +622,7 @@ r = rT + rv + rp</string_value>
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_rule name="default"/>
         <relative_error>
           <real_value rank="0">1.e-6</real_value>
@@ -703,6 +710,7 @@ r = rT + rv + rp</string_value>
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_rule name="default"/>
         <relative_error>
           <real_value rank="0">1.e-6</real_value>

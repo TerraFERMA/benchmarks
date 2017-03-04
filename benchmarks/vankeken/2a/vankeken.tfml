@@ -399,6 +399,7 @@ F += bp*dx_wedge</string_value>
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_rule name="default"/>
         <relative_error>
           <real_value rank="0">1.e-6</real_value>
@@ -509,6 +510,7 @@ F += bp_wedge*dx_wedge</string_value>
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_rule name="default"/>
         <relative_error>
           <real_value rank="0">1.e-6</real_value>
@@ -673,6 +675,7 @@ r += b*dx_wedge</string_value>
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_rule name="default"/>
         <relative_error>
           <real_value rank="0">1.e-6</real_value>
@@ -786,6 +789,7 @@ F += bvisc*dx_mantle</string_value>
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_rule name="default"/>
         <relative_error>
           <real_value rank="0">1.e-6</real_value>

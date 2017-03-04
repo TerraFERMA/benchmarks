@@ -311,6 +311,7 @@ r = rv + rp + rT</string_value>
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_rule name="default"/>
         <snes_type name="ls">
           <ls_type name="cubic"/>
@@ -416,6 +417,7 @@ aPC = a + invmu*p_t*p_a*radius*dx</string_value>
             <string_value lines="1">aPC</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_degree>
           <integer_value rank="0">6</integer_value>
         </quadrature_degree>
@@ -643,6 +645,7 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_rule name="default"/>
         <relative_error>
           <real_value rank="0">1.e-6</real_value>
@@ -718,6 +721,7 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_rule name="default"/>
         <relative_error>
           <real_value rank="0">1.e-6</real_value>
@@ -805,6 +809,7 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
             <string_value lines="1">res</string_value>
           </ufl_symbol>
         </form>
+        <form_representation name="quadrature"/>
         <quadrature_rule name="default"/>
         <relative_error>
           <real_value rank="0">1.e-6</real_value>
