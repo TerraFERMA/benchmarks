@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <harness_options>
   <length>
     <string_value lines="1">long</string_value>
@@ -32,15 +32,17 @@
           <parameter_sweep>
             <parameter name="scale">
               <update>
-                <string_value lines="20" type="code" language="python">import libspud
-libspud.set_option("/mesh/resolution_scale", float(scale))</string_value>
+                <string_value lines="20" type="code" language="python3">import libspud
+libspud.set_option("/mesh/resolution_scale", float(scale))
+</string_value>
               </update>
             </parameter>
           </parameter_sweep>
           <required_output>
             <filenames name="meshfiles">
               <python>
-                <string_value lines="20" type="code" language="python">meshfiles = ["subduction"+ext for ext in [".xml", "_physical_region.xml", "_facet_region.xml"]]</string_value>
+                <string_value lines="20" type="code" language="python3">meshfiles = ["subduction"+ext for ext in [".xml", "_physical_region.xml", "_facet_region.xml"]]
+</string_value>
               </python>
             </filenames>
           </required_output>

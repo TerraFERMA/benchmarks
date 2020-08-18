@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <harness_options>
   <length>
     <string_value lines="1">long</string_value>
@@ -34,16 +34,18 @@
           <parameter_sweep>
             <parameter name="ncells">
               <update>
-                <string_value lines="20" type="code" language="python">from string import Template as template
+                <string_value lines="20" type="code" language="python3">from string import Template as template
 input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.01',
-'xaspect':'1.0079','yaspect':'0.6283'})</string_value>
+'xaspect':'1.0079','yaspect':'0.6283'})
+</string_value>
               </update>
             </parameter>
           </parameter_sweep>
           <required_output>
             <filenames name="meshfiles">
               <python>
-                <string_value lines="20" type="code" language="python">meshfiles = ["transfinite_box.xml"]</string_value>
+                <string_value lines="20" type="code" language="python3">meshfiles = ["transfinite_box.xml"]
+</string_value>
               </python>
             </filenames>
           </required_output>
@@ -59,7 +61,7 @@ input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.
       </dependencies>
       <variables>
         <variable name="v">
-          <string_value lines="20" type="code" language="python">import libspud
+          <string_value lines="20" type="code" language="python3">import libspud
 from buckettools.statfile import parser
 from math import sqrt
 
@@ -82,28 +84,29 @@ v["w00"] =  det["Stokes"]["Velocity_2"]["Mid00"][-1][-1]*Ra
 v["w0b"] =  det["Stokes"]["Velocity_2"]["Mid0b"][-1][-1]*Ra
 v["T00"] =  det["Stokes"]["Temperature"]["Mid00"][-1][-1]
 v["T0b"] =  det["Stokes"]["Temperature"]["Mid0b"][-1][-1]
-v["Walltime"] = stat["ElapsedWallTime"]["value"][-1]</string_value>
+v["Walltime"] = stat["ElapsedWallTime"]["value"][-1]
+</string_value>
         </variable>
       </variables>
     </simulation>
   </simulations>
   <tests>
     <test name="relative_errors_less_than_10_percent">
-      <string_value lines="20" type="code" language="python">import csv
+      <string_value lines="20" type="code" language="python3">import csv
 vb = {}
 filehandle = open("benchmark.csv")
 for key,val in csv.reader(filehandle):
   vb[key] = float(val)
 filehandle.close()
 
-print vb
+print(vb)
 
 import numpy
 vfine = v[{'ncells': v.parameters['ncells'][-1]}]
 rerr = {}
-for key,val in vb.items():
+for key,val in list(vb.items()):
   rerr[key] = abs(vfine[key]-val)/abs(val)
-print "relative errors = ", rerr
+print("relative errors = ", rerr)
 
 
 table0 = []
@@ -118,18 +121,20 @@ table0.append(("Benchmark "+resultstring).format(**vb))
 table0.append("\\end{tabular}\n")
 
 for line in table0:
-  print line[0:-1]
+  print(line[0:-1])
 
 filename = "table0.tex"
 filehandle = file(filename, 'w')
 filehandle.writelines(table0)
 filehandle.close()
-assert(numpy.all(numpy.array(rerr.values()) &lt; 0.1))</string_value>
+assert(numpy.all(numpy.array(list(rerr.values())) &lt; 0.1))
+</string_value>
     </test>
     <test name="walltime">
-      <string_value lines="20" type="code" language="python">ncells = v.parameters['ncells']
+      <string_value lines="20" type="code" language="python3">ncells = v.parameters['ncells']
 slice = {'ncells': ncells}
-print 'walltime =',[ v[slice][i]["Walltime"] for i in range(len(ncells)) ]</string_value>
+print('walltime =',[ v[slice][i]["Walltime"] for i in range(len(ncells)) ])
+</string_value>
     </test>
   </tests>
 </harness_options>

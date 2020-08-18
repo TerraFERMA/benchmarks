@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <terraferma_options>
   <geometry>
     <dimension>
@@ -36,30 +36,32 @@
       </point>
       <array name="Wedge">
         <python>
-          <string_value lines="20" type="code" language="python">def val():
+          <string_value lines="20" type="code" language="python3">def val():
   from numpy import arange
   coords = []
   for i in arange(54.0,120.0+6.0, 6.0):
     for j in arange(-54.0, -i-6.0, -6.0):
       coords.append([i,j])
-  return coords</string_value>
+  return coords
+</string_value>
         </python>
       </array>
       <array name="Slab">
         <python>
-          <string_value lines="20" type="code" language="python">def val():
+          <string_value lines="20" type="code" language="python3">def val():
   from numpy import arange
   coords = []
   for i in arange(0.0,210.0+6.0, 6.0):
     coords.append([i,-i])
-  return coords</string_value>
+  return coords
+</string_value>
         </python>
       </array>
     </detectors>
   </io>
   <global_parameters>
     <ufl>
-      <string_value lines="20" type="code" language="python">d     = 1000.0
+      <string_value lines="20" type="code" language="python3">d     = 1000.0
 v0    = 0.05/(365.*24.*60.*60.)
 kappa = 0.7272e-6
 kappaprime = kappa/(d*v0)
@@ -101,7 +103,8 @@ dS_slabbl  = dS(113)
 dS_transtt = dS(108)
 dS_transmb = dS(114)
 dS_transfr = dS(115)
-dS_transdb = dS(107)</string_value>
+dS_transdb = dS(107)
+</string_value>
     </ufl>
   </global_parameters>
   <system name="Solid">
@@ -159,7 +162,7 @@ dS_transdb = dS(107)</string_value>
             <sub_components name="All">
               <type type="boundary_condition" name="Dirichlet">
                 <python rank="0">
-                  <string_value lines="20" type="code" language="python">def val(X):
+                  <string_value lines="20" type="code" language="python3">def val(X):
   import math
   t_50 = 50.0*1.e6*365*24*60*60
   T0 = 1573.0
@@ -167,7 +170,8 @@ dS_transdb = dS(107)</string_value>
   kappa = 0.7272e-6
   depth = -X[1]*1000.0
   value = Ts + (T0-Ts)*(math.erf(depth/(2.*math.sqrt(kappa*t_50))))
-  return value</string_value>
+  return value
+</string_value>
                 </python>
               </type>
             </sub_components>
@@ -179,11 +183,12 @@ dS_transdb = dS(107)</string_value>
             <sub_components name="All">
               <type type="boundary_condition" name="Dirichlet">
                 <python rank="0">
-                  <string_value lines="20" type="code" language="python">def val(X):
+                  <string_value lines="20" type="code" language="python3">def val(X):
   crust_grad = 0.026*1000.0
   Ts = 273.0
   value = Ts - crust_grad*X[1]
-  return value</string_value>
+  return value
+</string_value>
                 </python>
               </type>
             </sub_components>
@@ -223,7 +228,7 @@ dS_transdb = dS(107)</string_value>
               <integer_value shape="2" rank="1">88 98</integer_value>
             </region_ids>
             <python rank="1">
-              <string_value lines="20" type="code" language="python">def val(X):
+              <string_value lines="20" type="code" language="python3">def val(X):
   from math import sqrt, sin, cos, atan
   plate_thickness = 50.0
   values = [] 
@@ -241,7 +246,8 @@ dS_transdb = dS(107)</string_value>
   vr = (((alfa-theta)*cos(theta)*sin(alfa)) - (sin(alfa)*sin(theta)) - (alfa*sin(alfa-theta)) + (alfa*theta*cos(alfa-theta)))/(alfa**2 - (sin(alfa))**2);
   values.append(- (vtheta*sin(theta) - vr*cos(theta)));
   values.append(- (vtheta*cos(theta) + vr*sin(theta)));
-  return values</string_value>
+  return values
+</string_value>
             </python>
           </initial_condition>
           <boundary_condition name="Coupling">
@@ -356,7 +362,7 @@ dS_transdb = dS(107)</string_value>
     <nonlinear_solver name="Preliminary">
       <type name="Picard">
         <preamble>
-          <string_value lines="20" type="code" language="python">bT_crust = inner(grad(T_t), kappaprime*grad(T_a))
+          <string_value lines="20" type="code" language="python3">bT_crust = inner(grad(T_t), kappaprime*grad(T_a))
 bT_wedge = T_t*inner(v_i, grad(T_a))  + inner(grad(T_t), kappaprime*grad(T_a))
 bT_slab  = T_t*inner(vp_i, grad(T_a)) + inner(grad(T_t), kappaprime*grad(T_a))
 bT_dummy = T_t*z_i
@@ -378,23 +384,27 @@ F += bv*dx_wedge
 bp = p_t*(p_a-p_n)
 
 F += bp*dx_fluid
-F += bp*dx_wedge</string_value>
+F += bp*dx_wedge
+</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
-          <string_value lines="20" type="code" language="python">a = lhs(F)</string_value>
+          <string_value lines="20" type="code" language="python3">a = lhs(F)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
           <ident_zeros/>
         </form>
         <form name="Linear" rank="0">
-          <string_value lines="20" type="code" language="python">L = rhs(F)</string_value>
+          <string_value lines="20" type="code" language="python3">L = rhs(F)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">res = action(a, us_i) - L</string_value>
+          <string_value lines="20" type="code" language="python3">res = action(a, us_i) - L
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
@@ -467,7 +477,7 @@ F += bp*dx_wedge</string_value>
     <nonlinear_solver name="Solver">
       <type name="Picard">
         <preamble>
-          <string_value lines="20" type="code" language="python">bT_crust = inner(grad(T_t), kappaprime*grad(T_a))
+          <string_value lines="20" type="code" language="python3">bT_crust = inner(grad(T_t), kappaprime*grad(T_a))
 bT_wedge = T_t*inner(v_i, grad(T_a))  + inner(grad(T_t), kappaprime*grad(T_a))
 bT_slab  = T_t*inner(vp_i, grad(T_a)) + inner(grad(T_t), kappaprime*grad(T_a))
 bT_dummy = T_t*z_i
@@ -489,23 +499,27 @@ F += bv_wedge*dx_wedge
 bp_wedge = p_t*div(v_a)
 
 F += bp_wedge*dx_fluid
-F += bp_wedge*dx_wedge</string_value>
+F += bp_wedge*dx_wedge
+</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
-          <string_value lines="20" type="code" language="python">a = lhs(F)</string_value>
+          <string_value lines="20" type="code" language="python3">a = lhs(F)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
           <ident_zeros/>
         </form>
         <form name="Linear" rank="0">
-          <string_value lines="20" type="code" language="python">L = rhs(F)</string_value>
+          <string_value lines="20" type="code" language="python3">L = rhs(F)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">res = action(a, us_i) - L</string_value>
+          <string_value lines="20" type="code" language="python3">res = action(a, us_i) - L
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
@@ -652,25 +666,29 @@ F += bp_wedge*dx_wedge</string_value>
     <nonlinear_solver name="Solver">
       <type name="Picard">
         <preamble>
-          <string_value lines="20" type="code" language="python">b = d_t*d_a - d_t*div(v_i)
+          <string_value lines="20" type="code" language="python3">b = d_t*d_a - d_t*div(v_i)
 r  = b*dx_fluid
-r += b*dx_wedge</string_value>
+r += b*dx_wedge
+</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
-          <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
+          <string_value lines="20" type="code" language="python3">a = lhs(r)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
           <ident_zeros/>
         </form>
         <form name="Linear" rank="0">
-          <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
+          <string_value lines="20" type="code" language="python3">L = rhs(r)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">res = action(a, ud_i) - L</string_value>
+          <string_value lines="20" type="code" language="python3">res = action(a, ud_i) - L
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
@@ -764,27 +782,31 @@ r += b*dx_wedge</string_value>
     <nonlinear_solver name="Solver">
       <type name="Picard">
         <preamble>
-          <string_value lines="20" type="code" language="python">bvisc = visc_t*visc_a - visc_t*etaprime
+          <string_value lines="20" type="code" language="python3">bvisc = visc_t*visc_a - visc_t*etaprime
 
 F  = bvisc*dx_crust
 F += bvisc*dx_fluid
 F += bvisc*dx_wedge
-F += bvisc*dx_mantle</string_value>
+F += bvisc*dx_mantle
+</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
-          <string_value lines="20" type="code" language="python">a = lhs(F)</string_value>
+          <string_value lines="20" type="code" language="python3">a = lhs(F)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
-          <string_value lines="20" type="code" language="python">L = rhs(F)</string_value>
+          <string_value lines="20" type="code" language="python3">L = rhs(F)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">res = action(a, uvisc_i) - L</string_value>
+          <string_value lines="20" type="code" language="python3">res = action(a, uvisc_i) - L
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>

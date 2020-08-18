@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <terraferma_options>
   <geometry>
     <dimension>
@@ -40,10 +40,11 @@
     <detectors>
       <array name="Array">
         <python>
-          <string_value lines="20" type="code" language="python">def val():
+          <string_value lines="20" type="code" language="python3">def val():
   from numpy import arange
   loc = [[x, 1.0] for x in arange(0.0,1.0+1./1000.,1./1000.)]
-  return loc</string_value>
+  return loc
+</string_value>
         </python>
       </array>
     </detectors>
@@ -91,7 +92,7 @@
   </timestepping>
   <global_parameters>
     <ufl>
-      <string_value lines="20" type="code" language="python">theta = 1.0
+      <string_value lines="20" type="code" language="python3">theta = 1.0
 theta_v = 1.0
 
 dim = us.cell().geometric_dimension()
@@ -110,7 +111,8 @@ recRa = 1./Ra
 I = Identity(dim)
 
 def stress(v):
-  return 2*sym(grad(v))-0.666666666666666*I*div(v)</string_value>
+  return 2*sym(grad(v))-0.666666666666666*I*div(v)
+</string_value>
     </ufl>
   </global_parameters>
   <system name="Stokes">
@@ -434,7 +436,7 @@ range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
     <nonlinear_solver name="Solver">
       <type name="SNES">
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">v_theta = theta_v*v_i + (1.-theta_v)*v_n
+          <string_value lines="20" type="code" language="python3">v_theta = theta_v*v_i + (1.-theta_v)*v_n
 
 rv = (inner(sym(grad(v_t)), stress(v_i)) - div(v_t)*p_i \
       + inner(v_t, gravity)*(rhobar*alphabar*T_i - (Di/gammar)*(cpr/cvr)*rhobar*Chibar*p_i)\
@@ -448,20 +450,23 @@ rT = (T_t*(rhobar*cpbar*((T_i - T_n) \
       + dt*recRa*inner(grad(T_t), grad(Tbar))\
      )*dx
 
-r = rv + rp + rT</string_value>
+r = rv + rp + rT
+</string_value>
           <comment>No viscosity!</comment>
           <ufl_symbol name="solver">
             <string_value lines="1">r</string_value>
           </ufl_symbol>
         </form>
         <form name="Jacobian" rank="1">
-          <string_value lines="20" type="code" language="python">a = derivative(r, us_i, us_a)</string_value>
+          <string_value lines="20" type="code" language="python3">a = derivative(r, us_i, us_a)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="JacobianPC" rank="1">
-          <string_value lines="20" type="code" language="python">aPC = a + p_t*p_a*dx</string_value>
+          <string_value lines="20" type="code" language="python3">aPC = a + p_t*p_a*dx
+</string_value>
           <comment>No viscosity!</comment>
           <ufl_symbol name="solver">
             <string_value lines="1">aPC</string_value>
@@ -631,7 +636,8 @@ r = rv + rp + rT</string_value>
       <solve name="in_timeloop"/>
     </nonlinear_solver>
     <functional name="VelocityL2NormSquared">
-      <string_value lines="20" type="code" language="python">int = inner(v,v)*dx</string_value>
+      <string_value lines="20" type="code" language="python3">int = inner(v,v)*dx
+</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
@@ -640,7 +646,8 @@ r = rv + rp + rT</string_value>
       <include_in_statistics/>
     </functional>
     <functional name="VelocityTopSurfaceIntegral">
-      <string_value lines="20" type="code" language="python">int = v[0]*ds(4)</string_value>
+      <string_value lines="20" type="code" language="python3">int = v[0]*ds(4)
+</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
@@ -649,7 +656,8 @@ r = rv + rp + rT</string_value>
       <include_in_statistics/>
     </functional>
     <functional name="PressureIntegral">
-      <string_value lines="20" type="code" language="python">int = p*dx</string_value>
+      <string_value lines="20" type="code" language="python3">int = p*dx
+</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
@@ -658,7 +666,8 @@ r = rv + rp + rT</string_value>
       <include_in_statistics/>
     </functional>
     <functional name="TemperatureTopSurfaceIntegral">
-      <string_value lines="20" type="code" language="python">int = T.dx(1)*ds(4)</string_value>
+      <string_value lines="20" type="code" language="python3">int = T.dx(1)*ds(4)
+</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
@@ -667,7 +676,8 @@ r = rv + rp + rT</string_value>
       <include_in_statistics/>
     </functional>
     <functional name="TemperatureBottomSurfaceIntegral">
-      <string_value lines="20" type="code" language="python">int = T.dx(1)*ds(3)</string_value>
+      <string_value lines="20" type="code" language="python3">int = T.dx(1)*ds(3)
+</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
@@ -676,7 +686,8 @@ r = rv + rp + rT</string_value>
       <include_in_statistics/>
     </functional>
     <functional name="TemperatureIntegral">
-      <string_value lines="20" type="code" language="python">int = T*dx</string_value>
+      <string_value lines="20" type="code" language="python3">int = T*dx
+</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
@@ -685,7 +696,8 @@ r = rv + rp + rT</string_value>
       <include_in_statistics/>
     </functional>
     <functional name="TemperatureFullIntegral">
-      <string_value lines="20" type="code" language="python">int = (T + Tbar)*dx</string_value>
+      <string_value lines="20" type="code" language="python3">int = (T + Tbar)*dx
+</string_value>
       <comment>to ensure full T lies between 0 and 1 we subtract off non-dimensionalized Tsurf here</comment>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
@@ -695,7 +707,8 @@ r = rv + rp + rT</string_value>
       <include_in_statistics/>
     </functional>
     <functional name="TemperatureFullTopSurfaceIntegral">
-      <string_value lines="20" type="code" language="python">int = (T+Tbar).dx(1)*ds(4)</string_value>
+      <string_value lines="20" type="code" language="python3">int = (T+Tbar).dx(1)*ds(4)
+</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
@@ -738,22 +751,26 @@ r = rv + rp + rT</string_value>
     <nonlinear_solver name="Solver">
       <type name="Picard">
         <preamble>
-          <string_value lines="20" type="code" language="python">r = (d_t*d_a - d_t*div(v_i))*dx</string_value>
+          <string_value lines="20" type="code" language="python3">r = (d_t*d_a - d_t*div(v_i))*dx
+</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
-          <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
+          <string_value lines="20" type="code" language="python3">a = lhs(r)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
-          <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
+          <string_value lines="20" type="code" language="python3">L = rhs(r)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">res = action(a, ud_i) - L</string_value>
+          <string_value lines="20" type="code" language="python3">res = action(a, ud_i) - L
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
@@ -825,26 +842,30 @@ r = rv + rp + rT</string_value>
     <nonlinear_solver name="Solver">
       <type name="Picard">
         <preamble>
-          <string_value lines="20" type="code" language="python">n = FacetNormal(c_e.cell())
+          <string_value lines="20" type="code" language="python3">n = FacetNormal(c_e.cell())
 vn = dot(v_i, n)
 vout = 0.5*(vn + abs(vn))
 
-r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS - c_t*vout*dt*ds(1) - c_t*vout*dt*ds(2) - c_t*vout*dt*ds(3) - c_t*vout*dt*ds(4)</string_value>
+r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS - c_t*vout*dt*ds(1) - c_t*vout*dt*ds(2) - c_t*vout*dt*ds(3) - c_t*vout*dt*ds(4)
+</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
-          <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
+          <string_value lines="20" type="code" language="python3">a = lhs(r)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
-          <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
+          <string_value lines="20" type="code" language="python3">L = rhs(r)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">res = action(a, uc_i) - L</string_value>
+          <string_value lines="20" type="code" language="python3">res = action(a, uc_i) - L
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
@@ -906,23 +927,27 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
     <nonlinear_solver name="Solver">
       <type name="Picard">
         <preamble>
-          <string_value lines="20" type="code" language="python">r = phi_t*phi_a*dx - phi_t*inner(stress(v_i), grad(v_i))*dx</string_value>
+          <string_value lines="20" type="code" language="python3">r = phi_t*phi_a*dx - phi_t*inner(stress(v_i), grad(v_i))*dx
+</string_value>
           <comment>Missing divergence and viscosity!</comment>
         </preamble>
         <form name="Bilinear" rank="1">
-          <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
+          <string_value lines="20" type="code" language="python3">a = lhs(r)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
-          <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
+          <string_value lines="20" type="code" language="python3">L = rhs(r)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">res = action(a, uphi_i) - L</string_value>
+          <string_value lines="20" type="code" language="python3">res = action(a, uphi_i) - L
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
@@ -958,7 +983,8 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
       <solve name="with_diagnostics"/>
     </nonlinear_solver>
     <functional name="ViscousDissipationIntegral">
-      <string_value lines="20" type="code" language="python">int = phi*dx</string_value>
+      <string_value lines="20" type="code" language="python3">int = phi*dx
+</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
@@ -1002,22 +1028,26 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
     <nonlinear_solver name="Solver">
       <type name="Picard">
         <preamble>
-          <string_value lines="20" type="code" language="python">r = work_t*work_a*dx + work_t*Di*inner(gravity, v_i)*alphabar*rhobar*T_i*dx</string_value>
+          <string_value lines="20" type="code" language="python3">r = work_t*work_a*dx + work_t*Di*inner(gravity, v_i)*alphabar*rhobar*T_i*dx
+</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
-          <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
+          <string_value lines="20" type="code" language="python3">a = lhs(r)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
-          <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
+          <string_value lines="20" type="code" language="python3">L = rhs(r)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">res = action(a, uwork_i) - L</string_value>
+          <string_value lines="20" type="code" language="python3">res = action(a, uwork_i) - L
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
@@ -1053,7 +1083,8 @@ r = c_t*c_a*dx - c_t('+')*vout('+')*dt('+')*dS - c_t('-')*vout('-')*dt('-')*dS -
       <solve name="with_diagnostics"/>
     </nonlinear_solver>
     <functional name="WorkDoneIntegral">
-      <string_value lines="20" type="code" language="python">int = work*dx</string_value>
+      <string_value lines="20" type="code" language="python3">int = work*dx
+</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>

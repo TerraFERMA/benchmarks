@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <terraferma_options>
   <geometry>
     <dimension>
@@ -78,9 +78,10 @@
   </timestepping>
   <global_parameters>
     <ufl>
-      <string_value lines="20" type="code" language="python">theta = 0.5
+      <string_value lines="20" type="code" language="python3">theta = 0.5
 
-ds_topfs = ds(4)</string_value>
+ds_topfs = ds(4)
+</string_value>
     </ufl>
   </global_parameters>
   <system name="Stokes">
@@ -202,13 +203,14 @@ ds_topfs = ds(4)</string_value>
           </element>
           <initial_condition type="initial_condition" name="WholeMesh">
             <python rank="0">
-              <string_value lines="20" type="code" language="python">def val(x):
+              <string_value lines="20" type="code" language="python3">def val(x):
   import solution 
   dx = solution.dx
   if(x[1]&gt;(1.-dx/2.)):
     return solution.nond_factor()*solution.nond_F(x[0], 0.0)
   else:
-    return 0.0</string_value>
+    return 0.0
+</string_value>
             </python>
           </initial_condition>
         </rank>
@@ -266,13 +268,14 @@ ds_topfs = ds(4)</string_value>
           </element>
           <value type="value" name="WholeMesh">
             <python rank="0">
-              <string_value lines="20" type="code" language="python">def val(x,t):
+              <string_value lines="20" type="code" language="python3">def val(x,t):
   import solution 
   dx = solution.dx
   if(x[1]&gt;(1.-dx/2.)):
     return solution.nond_F(x[0], t)
   else:
-    return 0.0</string_value>
+    return 0.0
+</string_value>
             </python>
           </value>
         </rank>
@@ -329,7 +332,7 @@ values[0] = std::abs(etatildevalues[0]/scale-etabarvalues[0]);</string_value>
     <nonlinear_solver name="Solver">
       <type name="SNES">
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">n = FacetNormal(us_e.cell())
+          <string_value lines="20" type="code" language="python3">n = FacetNormal(us_e.cell())
 
 rv = inner(sym(grad(v_t)), 2*sym(grad(v_i)))*dx \
      + inner(v_t, grad(p_i))*dx - inner(v_t, n)*p_i*ds_topfs \
@@ -337,19 +340,22 @@ rv = inner(sym(grad(v_t)), 2*sym(grad(v_i)))*dx \
 rp =  p_t*inner(v_i, n)*ds_topfs - inner(grad(p_t), v_i)*dx
 reta = etatilde_t*theta*((etatilde_i - etatilde_n)*inner(k, n)/(s*dt) - inner(v_i, n))*ds_topfs
 
-r = rv + rp + reta</string_value>
+r = rv + rp + reta
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">r</string_value>
           </ufl_symbol>
         </form>
         <form name="Jacobian" rank="1">
-          <string_value lines="20" type="code" language="python">a = derivative(r, us_i, us_a)</string_value>
+          <string_value lines="20" type="code" language="python3">a = derivative(r, us_i, us_a)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="JacobianPC" rank="1">
-          <string_value lines="20" type="code" language="python">aPC = a + p_t*p_a*dx</string_value>
+          <string_value lines="20" type="code" language="python3">aPC = a + p_t*p_a*dx
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">aPC</string_value>
           </ufl_symbol>
@@ -485,7 +491,8 @@ r = rv + rp + reta</string_value>
       <solve name="in_timeloop"/>
     </nonlinear_solver>
     <functional name="AnalyticalFreeSurfaceL2ErrorSquaredTop">
-      <string_value lines="20" type="code" language="python">err = (etatilde/s-etabar)*(etatilde/s-etabar)*ds_topfs</string_value>
+      <string_value lines="20" type="code" language="python3">err = (etatilde/s-etabar)*(etatilde/s-etabar)*ds_topfs
+</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">err</string_value>
       </ufl_symbol>
@@ -494,7 +501,8 @@ r = rv + rp + reta</string_value>
       <include_in_statistics/>
     </functional>
     <functional name="FreeSurfaceAbsoluteDifferenceL2ErrorSquaredTop">
-      <string_value lines="20" type="code" language="python">err = etaabsdiff*etaabsdiff*ds_topfs</string_value>
+      <string_value lines="20" type="code" language="python3">err = etaabsdiff*etaabsdiff*ds_topfs
+</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">err</string_value>
       </ufl_symbol>
@@ -537,24 +545,28 @@ r = rv + rp + reta</string_value>
     <nonlinear_solver name="Solver">
       <type name="Picard">
         <preamble>
-          <string_value lines="20" type="code" language="python">n = FacetNormal(ud_e.cell())
+          <string_value lines="20" type="code" language="python3">n = FacetNormal(ud_e.cell())
 
-r = d_t*d_a*dx + inner(grad(d_t), v_i)*dx - d_t*inner(v_i, n)*ds_topfs</string_value>
+r = d_t*d_a*dx + inner(grad(d_t), v_i)*dx - d_t*inner(v_i, n)*ds_topfs
+</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
-          <string_value lines="20" type="code" language="python">a = lhs(r)</string_value>
+          <string_value lines="20" type="code" language="python3">a = lhs(r)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
-          <string_value lines="20" type="code" language="python">L = rhs(r)</string_value>
+          <string_value lines="20" type="code" language="python3">L = rhs(r)
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python">res = action(a, ud_i) - L</string_value>
+          <string_value lines="20" type="code" language="python3">res = action(a, ud_i) - L
+</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
