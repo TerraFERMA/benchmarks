@@ -15,6 +15,9 @@
         <string_value type="filename" lines="1">king.tfml</string_value>
       </input_file>
       <run_when name="input_changed_or_output_missing"/>
+      <number_processes>
+        <integer_value rank="0">1</integer_value>
+      </number_processes>
       <parameter_sweep>
         <parameter name="ncells">
           <values>
@@ -86,10 +89,18 @@ from collections import OrderedDict
 filename = os.path.split(input_filename)[-1]
 threadlibspud.load_options(filename)
 basename = libspud.get_option("/io/output_base_name")
+finishtime = libspud.get_option("/timestepping/finish_time")
+steadytol = libspud.get_option("/timestepping/steady_state/tolerance")
 threadlibspud.clear_options()
 
 det = parser(basename+".det")
 stat = parser(basename+".stat")
+steady = parser(basename+".steady")
+
+change = max(steady["Stokes"]["Velocity"]["change(linf)"][:,-1].max(), 
+             steady["Stokes"]["Pressure"]["change(linf)"][-1],
+             steady["Stokes"]["Temperature"]["change(linf)"][-1])
+time = steady["ElapsedTime"]["value"][-1]
 
 variables = OrderedDict()
 variables["Nu_top"]  = -stat["Stokes"]["TemperatureTopSurfaceIntegral"]["functional_value"][-1]
@@ -99,28 +110,10 @@ variables["Vtopmax"] = np.abs(det["Stokes"]["Velocity_0"]["Array"][:,-1]).max()*
 variables["Vtopint"] = stat["Stokes"]["VelocityTopSurfaceIntegral"]["functional_value"][-1]*float(Ra)
 variables["Tint"]    = stat["Stokes"]["TemperatureIntegral"]["functional_value"][-1]
 variables["Phiint"]  = stat["ViscousDissipation"]["ViscousDissipationIntegral"]["functional_value"][-1]*float(Ra)
-variables["Wint"]    = stat["WorkDone"]["WorkDoneIntegral"]["functional_value"][-1]*float(Ra)</string_value>
-        </variable>
-        <variable name="steady_state_attained">
-          <string_value type="code" language="python3" lines="20">from buckettools.statfile import parser
-import os
-from buckettools.threadlibspud import *
-
-filename = os.path.split(input_filename)[-1]
-threadlibspud.load_options(filename)
-basename = libspud.get_option("/io/output_base_name")
-finishtime = libspud.get_option("/timestepping/finish_time")
-steadytol = libspud.get_option("/timestepping/steady_state/tolerance")
-threadlibspud.clear_options()
-
-steady = parser(basename+".steady")
-
-change = max(steady["Stokes"]["Velocity"]["change(linf)"][:,-1].max(), 
-             steady["Stokes"]["Pressure"]["change(linf)"][-1],
-             steady["Stokes"]["Temperature"]["change(linf)"][-1])
-time = steady["ElapsedTime"]["value"][-1]
-
-steady_state_attained = change &lt; steadytol and time &lt; finishtime</string_value>
+variables["Wint"]    = stat["WorkDone"]["WorkDoneIntegral"]["functional_value"][-1]*float(Ra)
+variables["steady"]  = "T" if change &lt; steadytol and time &lt; finishtime else "F"
+variables["Vtoprev"] = "T" if det["Stokes"]["Velocity_0"]["Array"][:,-1].max()*det["Stokes"]["Velocity_0"]["Array"][:,-1].min() &lt; 0 else "F"
+</string_value>
         </variable>
         <variable name="errfile">
           <string_value type="code" language="python3" lines="20">import os
@@ -174,17 +167,15 @@ assert(noerrors)</string_value>
 
 params = list(variables.parameters.keys())
 
+#sstring = "{}\t"*len(variables[0].keys())
+#print("Ra\tDi\t"+sstring.format(*[k for k in variables[0].keys()]))
+
 for values in itertools.product(*variables.parameters.values()):
-  label = ", ".join(["{} = {}".format(params[i], v) for i,v in enumerate(values) if len(variables.parameters[params[i]])&gt;1])
+  label = "\t".join(["{}".format(v) for i,v in enumerate(values) if len(variables.parameters[params[i]])&gt;1])
   key = {params[i]:v for i,v in enumerate(values)}
   variable = variables[key]
-  sstring = "{}\t"*len(variable.keys())
-  vstring = "{:.4f}\t"*len(variable.keys())
-  steady = "T" if steady_state_attained[key] else "F"
-  print(label+":")
-  print("  "+sstring.format(*[k for k in variable.keys()])+"steady?")
-  print("  "+vstring.format(*[v for v in variable.values()])+steady)
-</string_value>
+  vstring = "{:.4f}\t"*(len(variable.keys())-2)+"{}\t"*2
+  print(label+"\t"+vstring.format(*[v for v in variable.values()]))</string_value>
     </test>
   </tests>
 </harness_options>

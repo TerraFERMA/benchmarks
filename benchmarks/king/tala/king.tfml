@@ -112,6 +112,9 @@ I = Identity(dim)
 def stress(v):
   return 2*sym(grad(v))-0.666666666666666*I*div(v)</string_value>
     </ufl>
+    <dolfin>
+        <ghost_mode name="shared_facet"></ghost_mode>
+    </dolfin>
   </global_parameters>
   <system name="Stokes">
     <mesh name="Mesh"/>
