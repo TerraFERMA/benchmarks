@@ -103,17 +103,20 @@ change = max(steady["Stokes"]["Velocity"]["change(linf)"][:,-1].max(),
 time = steady["ElapsedTime"]["value"][-1]
 
 variables = OrderedDict()
+variables["Ra"]      = Ra
+variables["Di"]      = Di
 variables["Nu_top"]  = -stat["Stokes"]["TemperatureTopSurfaceIntegral"]["functional_value"][-1]
 variables["Nu_bot"]  = -stat["Stokes"]["TemperatureBottomSurfaceIntegral"]["functional_value"][-1]
 variables["Vrms"]    = np.sqrt(stat["Stokes"]["VelocityL2NormSquared"]["functional_value"][-1])*float(Ra)
-variables["Vtopmax"] = np.abs(det["Stokes"]["Velocity_0"]["Array"][:,-1]).max()*float(Ra)
+variables["Vtopinf"] = np.abs(det["Stokes"]["Velocity_0"]["Array"][:,-1]).max()*float(Ra)
 variables["Vtopint"] = stat["Stokes"]["VelocityTopSurfaceIntegral"]["functional_value"][-1]*float(Ra)
 variables["Tint"]    = stat["Stokes"]["TemperatureIntegral"]["functional_value"][-1]
 variables["Phiint"]  = stat["ViscousDissipation"]["ViscousDissipationIntegral"]["functional_value"][-1]*float(Ra)
 variables["Wint"]    = stat["WorkDone"]["WorkDoneIntegral"]["functional_value"][-1]*float(Ra)
+variables["Vtopmax"] = det["Stokes"]["Velocity_0"]["Array"][:,-1].max()*float(Ra)
+variables["Vtopmin"] = det["Stokes"]["Velocity_0"]["Array"][:,-1].min()*float(Ra)
 variables["steady"]  = "T" if change &lt; steadytol and time &lt; finishtime else "F"
-variables["Vtoprev"] = "T" if det["Stokes"]["Velocity_0"]["Array"][:,-1].max()*det["Stokes"]["Velocity_0"]["Array"][:,-1].min() &lt; 0 else "F"
-</string_value>
+variables["Vtoprev"] = "T" if variables["Vtopmax"]*variables["Vtopmin"] &lt; -1.e-6 else "F"</string_value>
         </variable>
         <variable name="errfile">
           <string_value type="code" language="python3" lines="20">import os
@@ -167,15 +170,18 @@ assert(noerrors)</string_value>
 
 params = list(variables.parameters.keys())
 
-#sstring = "{}\t"*len(variables[0].keys())
-#print("Ra\tDi\t"+sstring.format(*[k for k in variables[0].keys()]))
+variable = variables[0]
+for i in range(len(params)-1):
+  variable = variable[0]
+sstring = "{}\t"*len(variable.keys())
+print(sstring.format(*[k for k in variable.keys()]))
 
 for values in itertools.product(*variables.parameters.values()):
   label = "\t".join(["{}".format(v) for i,v in enumerate(values) if len(variables.parameters[params[i]])&gt;1])
   key = {params[i]:v for i,v in enumerate(values)}
   variable = variables[key]
-  vstring = "{:.4f}\t"*(len(variable.keys())-2)+"{}\t"*2
-  print(label+"\t"+vstring.format(*[v for v in variable.values()]))</string_value>
+  vstring = "{}\t"*2+"{:.4f}\t"*(len(variable.keys())-4)+"{}\t"*2
+  print(vstring.format(*[v for v in variable.values()]))</string_value>
     </test>
   </tests>
 </harness_options>
