@@ -569,6 +569,15 @@ r = rv + rp + rT</string_value>
       <quadrature_rule name="default"/>
       <include_in_statistics/>
     </functional>
+    <functional name="TemperatureFullBottomSurfaceIntegral">
+      <string_value type="code" language="python3" lines="20">int = (T+Tbar).dx(1)*ds(3)</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <form_representation name="quadrature"/>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
   </system>
   <system name="CourantNumber">
     <mesh name="Mesh"/>
