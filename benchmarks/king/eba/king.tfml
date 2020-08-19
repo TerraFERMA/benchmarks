@@ -94,6 +94,9 @@
       <string_value type="code" language="python3" lines="20">theta = 1.0
 theta_v = 1.0</string_value>
     </ufl>
+    <dolfin>
+        <ghost_mode name="shared_facet"></ghost_mode>
+    </dolfin>
   </global_parameters>
   <system name="Stokes">
     <mesh name="Mesh"/>
