@@ -102,6 +102,8 @@ variables["Vtopint"] = stat["Stokes"]["VelocityTopSurfaceIntegral"]["functional_
 variables["Tint"]    = stat["Stokes"]["TemperatureIntegral"]["functional_value"][-1]
 variables["Phiint"]  = 0.0
 variables["Wint"]    = 0.0
+variables["dPhiW"]   = 0.0
+variables["dNu"]     = abs(variables["Nu_top"]-variables["Nu_bot"])/variables["Nu_bot"]*100
 variables["Vtopmax"] = det["Stokes"]["Velocity_0"]["Array"][:,-1].max()*float(Ra)
 variables["Vtopmin"] = det["Stokes"]["Velocity_0"]["Array"][:,-1].min()*float(Ra)
 variables["steady"]  = "T" if change &lt; steadytol and time &lt; finishtime else "F"
@@ -165,7 +167,8 @@ for i in range(len(params)-1):
 sstring = "{}\t"*len(variable.keys())
 print(sstring.format(*[k for k in variable.keys()]))
 
-for values in itertools.product(*variables.parameters.values()):
+paramvals = sorted(list(itertools.product(*variables.parameters.values())), key=lambda x: [float(xi) for xi in x[::-1]])
+for values in paramvals:
   label = "\t".join(["{}".format(v) for i,v in enumerate(values) if len(variables.parameters[params[i]])&gt;1])
   key = {params[i]:v for i,v in enumerate(values)}
   variable = variables[key]
