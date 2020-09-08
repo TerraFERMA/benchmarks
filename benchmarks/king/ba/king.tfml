@@ -247,8 +247,7 @@ theta_v = 1.0</string_value>
           <initial_condition name="WholeMesh" type="initial_condition">
             <cpp rank="0">
               <members>
-                <string_value type="code" language="cpp" lines="20">double y1;
-
+                <string_value type="code" language="cpp" lines="20">double range;
 int power;
 
 double cos_taper_uu(const double &amp;x) const
@@ -262,12 +261,12 @@ double cos_taper_ud(const double &amp;x) const
 }</string_value>
               </members>
               <initialization>
-                <string_value type="code" language="cpp" lines="20">power = 200;</string_value>
+                <string_value type="code" language="cpp" lines="20">power = 200;
+
+range = 1.0;</string_value>
               </initialization>
               <eval>
-                <string_value type="code" language="cpp" lines="20">double range = 1.0;
-
-double xtaper = cos_taper_ud(x[0])*(1.0-cos_taper_uu(x[1]));
+                <string_value type="code" language="cpp" lines="20">double xtaper = cos_taper_ud(x[0])*(1.0-cos_taper_uu(x[1]));
 double ytaper = cos_taper_ud(x[1])*(1.0-cos_taper_uu(x[0]));
 double corner = cos_taper_ud(x[1])*cos_taper_uu(x[0]);
 

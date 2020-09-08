@@ -265,10 +265,23 @@ def stress(v):
           <initial_condition name="WholeMesh" type="initial_condition">
             <cpp rank="0">
               <members>
-                <string_value type="code" language="cpp" lines="20">mutable double range;</string_value>
+                <string_value type="code" language="cpp" lines="20">double range;
+int power;
+
+double cos_taper_uu(const double &amp;x) const
+{
+  return std::pow(std::cos(0.5*M_PI*x), power) + std::pow(std::cos(0.5*M_PI*(1+x)), power);
+}
+
+double cos_taper_ud(const double &amp;x) const
+{
+  return std::pow(std::cos(0.5*M_PI*x), power) - std::pow(std::cos(0.5*M_PI*(1+x)), power);
+}</string_value>
               </members>
               <initialization>
-                <string_value type="code" language="cpp" lines="20">GenericFunction_ptr Di_ptr, TSurf_ptr;
+                <string_value type="code" language="cpp" lines="20">power = 200;
+
+GenericFunction_ptr Di_ptr, TSurf_ptr;
 Di_ptr = system()-&gt;fetch_coeff("DissipationNumber")-&gt;genericfunction_ptr(time());
 TSurf_ptr = system()-&gt;fetch_coeff("SurfaceTemperature")-&gt;genericfunction_ptr(time());
 
@@ -278,8 +291,11 @@ double TSurf = double(*std::dynamic_pointer_cast&lt;dolfin::Constant&gt;(TSurf_p
 range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
               </initialization>
               <eval>
-                <string_value type="code" language="cpp" lines="20">const double pi = 3.141592653589793;
-values[0] = (1.-x[1])*range + 0.2*std::cos(x[0]*pi)*std::sin(x[1]*pi);</string_value>
+                <string_value type="code" language="cpp" lines="20">double xtaper = cos_taper_ud(x[0])*(1.0-cos_taper_uu(x[1]));
+double ytaper = cos_taper_ud(x[1])*(1.0-cos_taper_uu(x[0]));
+double corner = cos_taper_ud(x[1])*cos_taper_uu(x[0]);
+
+values[0] = 0.5*range*(xtaper + ytaper + corner + 1.0);</string_value>
               </eval>
             </cpp>
           </initial_condition>
