@@ -245,11 +245,35 @@ theta_v = 1.0</string_value>
             </degree>
           </element>
           <initial_condition name="WholeMesh" type="initial_condition">
-            <python rank="0">
-              <string_value type="code" language="python3" lines="20">def val(x):
-  from math import sin, cos, pi
-  return 1.-x[1] + 0.2*cos(x[0]*pi)*sin(x[1]*pi)</string_value>
-            </python>
+            <cpp rank="0">
+              <members>
+                <string_value type="code" language="cpp" lines="20">double y1;
+
+int power;
+
+double cos_taper_uu(const double &amp;x) const
+{
+  return std::pow(std::cos(0.5*M_PI*x), power) + std::pow(std::cos(0.5*M_PI*(1+x)), power);
+}
+
+double cos_taper_ud(const double &amp;x) const
+{
+  return std::pow(std::cos(0.5*M_PI*x), power) - std::pow(std::cos(0.5*M_PI*(1+x)), power);
+}</string_value>
+              </members>
+              <initialization>
+                <string_value type="code" language="cpp" lines="20">power = 200;</string_value>
+              </initialization>
+              <eval>
+                <string_value type="code" language="cpp" lines="20">double range = 1.0;
+
+double xtaper = cos_taper_ud(x[0])*(1.0-cos_taper_uu(x[1]));
+double ytaper = cos_taper_ud(x[1])*(1.0-cos_taper_uu(x[0]));
+double corner = cos_taper_ud(x[1])*cos_taper_uu(x[0]);
+
+values[0] = 0.5*range*(xtaper + ytaper + corner + 1.0);</string_value>
+              </eval>
+            </cpp>
           </initial_condition>
           <boundary_condition name="Top">
             <boundary_ids>
