@@ -47,6 +47,11 @@
         </python>
       </array>
     </detectors>
+    <checkpointing>
+      <checkpoint_period>
+        <real_value rank="0">2.e5</real_value>
+      </checkpoint_period>
+    </checkpointing>
   </io>
   <timestepping>
     <current_time>
@@ -113,7 +118,7 @@ def stress(v):
   return 2*sym(grad(v))-0.666666666666666*I*div(v)</string_value>
     </ufl>
     <dolfin>
-        <ghost_mode name="shared_facet"></ghost_mode>
+      <ghost_mode name="shared_facet"/>
     </dolfin>
   </global_parameters>
   <system name="Stokes">
