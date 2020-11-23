@@ -31,7 +31,7 @@
           <update>
             <string_value type="code" language="python3" lines="20">import libspud
 
-libspud.set_option("/system::Stokes/coefficient::RayleighNumber/type/rank/value/constant", float(Ra_b[0]))</string_value>
+libspud.set_option("/system::Stokes/coefficient::RayleighNumber/type/rank/value/constant", float(Ra_b.strip("()").split()[0]))</string_value>
             <single_build/>
           </update>
         </parameter>
@@ -42,7 +42,7 @@ libspud.set_option("/system::Stokes/coefficient::RayleighNumber/type/rank/value/
           <update>
             <string_value type="code" language="python3" lines="20">import libspud
 
-libspud.set_option("/system::Stokes/coefficient::DissipationNumber/type/rank/value/constant", float(Di_b[0]))</string_value>
+libspud.set_option("/system::Stokes/coefficient::DissipationNumber/type/rank/value/constant", float(Di_b.strip("()").split()[0]))</string_value>
             <single_build/>
           </update>
         </parameter>
@@ -62,7 +62,7 @@ libspud.set_option("/system::Stokes/coefficient::DissipationNumber/type/rank/val
               <update>
                 <string_value type="code" language="python3" lines="20">import libspud
 
-libspud.set_option("/system::Stokes/coefficient::RayleighNumber/type/rank/value/constant", float(Ra_b[1]))</string_value>
+libspud.set_option("/system::Stokes/coefficient::RayleighNumber/type/rank/value/constant", float(Ra_b.strip("()").split()[1]))</string_value>
                 <single_build/>
               </update>
             </parameter>
@@ -70,7 +70,7 @@ libspud.set_option("/system::Stokes/coefficient::RayleighNumber/type/rank/value/
               <update>
                 <string_value type="code" language="python3" lines="20">import libspud
 
-libspud.set_option("/system::Stokes/coefficient::DissipationNumber/type/rank/value/constant", float(Di_b[1]))</string_value>
+libspud.set_option("/system::Stokes/coefficient::DissipationNumber/type/rank/value/constant", float(Di_b.strip("()").split()[1]))</string_value>
                 <single_build/>
               </update>
             </parameter>
