@@ -188,6 +188,19 @@ err.close()</string_value>
           </variables>
         </simulation>
       </dependencies>
+      <checkpoint>
+        <parameter name="finishtime">
+          <values>
+            <string_value lines="1">2.e5</string_value>
+          </values>
+          <update>
+            <string_value type="code" language="python3" lines="20">import libspud
+
+currentfinishtime = libspud.get_option("/timestepping/finish_time")
+libspud.set_option("/timestepping/finish_time", currentfinishtime+float(finishtime))</string_value>
+          </update>
+        </parameter>
+      </checkpoint>
       <variables>
         <variable name="variables">
           <string_value type="code" language="python3" lines="20">from buckettools.statfile import parser
