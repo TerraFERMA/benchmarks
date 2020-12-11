@@ -412,7 +412,7 @@ r = rv + rp + rT</string_value>
       <quadrature_rule name="default"/>
       <include_in_statistics/>
     </functional>
-    <functional name="TemperatureTopSurfaceIntegral">
+    <functional name="TemperatureGradientTopSurfaceIntegral">
       <string_value type="code" language="python3" lines="20">int = T.dx(1)*ds(4)</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
@@ -422,7 +422,7 @@ r = rv + rp + rT</string_value>
       <include_in_statistics/>
     </functional>
     <functional name="TemperatureBottomSurfaceIntegral">
-      <string_value type="code" language="python3" lines="20">int = T.dx(1)*ds(3)</string_value>
+      <string_value type="code" language="python3" lines="20">int = T*ds(3)</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
