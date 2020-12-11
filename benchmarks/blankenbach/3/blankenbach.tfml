@@ -112,8 +112,7 @@
 eta = 1.
 
 #Inverse Ra number 
-recRa = 1./Ra
-</string_value>
+recRa = 1./Ra</string_value>
     </ufl>
     <dolfin>
       <ghost_mode name="shared_facet"/>
@@ -269,7 +268,7 @@ recRa = 1./Ra
             <python rank="0">
               <string_value type="code" language="python3" lines="20">def val(x):
   from math import sin, cos, pi
-  return 1.-x[1] + 0.1*cos(x[0]*pi/1.5)*sin(x[1]*pi)</string_value>
+  return 0.5*(1.-x[1]**2) + 0.1*cos(x[0]*pi/1.5)*sin(x[1]*pi)</string_value>
             </python>
           </initial_condition>
           <boundary_condition name="Top">
