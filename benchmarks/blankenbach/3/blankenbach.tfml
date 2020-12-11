@@ -20,12 +20,12 @@
       <string_value lines="1">rbconvection</string_value>
     </output_base_name>
     <visualization>
-      <element name="P2DG">
+      <element name="P1">
         <family>
-          <string_value lines="1">DG</string_value>
+          <string_value lines="1">CG</string_value>
         </family>
         <degree>
-          <integer_value rank="0">2</integer_value>
+          <integer_value rank="0">1</integer_value>
         </degree>
       </element>
     </visualization>
@@ -33,12 +33,6 @@
       <visualization_period>
         <real_value rank="0">1.e4</real_value>
       </visualization_period>
-      <statistics_period_in_timesteps>
-        <integer_value rank="0">10</integer_value>
-      </statistics_period_in_timesteps>
-      <steady_state_period_in_timesteps>
-        <integer_value rank="0">5</integer_value>
-      </steady_state_period_in_timesteps>
       <detectors_period>
         <real_value rank="0">1.e4</real_value>
       </detectors_period>
@@ -67,7 +61,7 @@
     </detectors>
     <checkpointing>
       <checkpoint_period>
-        <real_value rank="0">1.e4</real_value>
+        <real_value rank="0">1.e6</real_value>
       </checkpoint_period>
     </checkpointing>
   </io>
@@ -98,7 +92,7 @@
           <system name="CourantNumber"/>
           <field name="CourantNumber"/>
           <requested_maximum_value>
-            <real_value rank="0">2.5</real_value>
+            <real_value rank="0">2.0</real_value>
           </requested_maximum_value>
         </constraint>
         <increase_tolerance>
@@ -108,7 +102,7 @@
     </timestep>
     <steady_state>
       <tolerance>
-        <real_value rank="0">1.e-9</real_value>
+        <real_value rank="0">1.e-6</real_value>
       </tolerance>
     </steady_state>
   </timestepping>
@@ -121,6 +115,9 @@ eta = 1.
 recRa = 1./Ra
 </string_value>
     </ufl>
+    <dolfin>
+      <ghost_mode name="shared_facet"/>
+    </dolfin>
   </global_parameters>
   <system name="Stokes">
     <mesh name="Mesh"/>
