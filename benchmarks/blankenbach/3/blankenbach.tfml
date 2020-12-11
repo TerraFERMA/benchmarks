@@ -366,15 +366,6 @@ r = rv + rp + rT</string_value>
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
-        <form name="JacobianPC" rank="1">
-          <string_value type="code" language="python3" lines="20"># add a term for the viscosity weighted pressure mass matrix
-inveta = 1./eta
-
-aPC = a + inveta*p_t*p_a*dx</string_value>
-          <ufl_symbol name="solver">
-            <string_value lines="1">aPC</string_value>
-          </ufl_symbol>
-        </form>
         <form_representation name="quadrature"/>
         <quadrature_rule name="default"/>
         <snes_type name="ls">
