@@ -63,7 +63,7 @@ libspud.set_option("/system::Stokes/coefficient::RayleighNumber/type/rank/value/
           <required_output>
             <filenames name="ics">
               <python>
-                <string_value type="code" language="python3" lines="20">systems = ["Stokes", "CourantNumber", "ViscousDissipation", "WorkDone"]
+                <string_value type="code" language="python3" lines="20">systems = ["Stokes", "Divergence", "CourantNumber", "TemperatureGradient"]
 ics  = ["rbconvection_{}_0.xdmf".format(system,) for system in systems]
 ics += ["rbconvection_{}_0.h5".format(system,) for system in systems]</string_value>
               </python>
