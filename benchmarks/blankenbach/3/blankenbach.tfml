@@ -176,13 +176,10 @@ recRa = 1./Ra</string_value>
             <boundary_ids>
               <integer_value rank="1" shape="1">3</integer_value>
             </boundary_ids>
-            <sub_components name="Y">
-              <components>
-                <integer_value rank="1" shape="1">1</integer_value>
-              </components>
+            <sub_components name="All">
               <type name="Dirichlet" type="boundary_condition">
-                <constant>
-                  <real_value rank="0">0</real_value>
+                <constant name="dim">
+                  <real_value rank="1" dim1="dim" shape="2">0.0 0.0</real_value>
                 </constant>
               </type>
             </sub_components>
@@ -191,13 +188,10 @@ recRa = 1./Ra</string_value>
             <boundary_ids>
               <integer_value rank="1" shape="1">4</integer_value>
             </boundary_ids>
-            <sub_components name="Y">
-              <components>
-                <integer_value rank="1" shape="1">1</integer_value>
-              </components>
+            <sub_components name="All">
               <type name="Dirichlet" type="boundary_condition">
-                <constant>
-                  <real_value rank="0">0</real_value>
+                <constant name="dim">
+                  <real_value rank="1" dim1="dim" shape="2">0.0 0.0</real_value>
                 </constant>
               </type>
             </sub_components>
@@ -423,6 +417,15 @@ r = rv + rp + rT</string_value>
     </functional>
     <functional name="TemperatureBottomSurfaceIntegral">
       <string_value type="code" language="python3" lines="20">int = T*ds(3)</string_value>
+      <ufl_symbol name="functional">
+        <string_value lines="1">int</string_value>
+      </ufl_symbol>
+      <form_representation name="quadrature"/>
+      <quadrature_rule name="default"/>
+      <include_in_statistics/>
+    </functional>
+    <functional name="TemperatureIntegral">
+      <string_value type="code" language="python3" lines="20">int = T*dx</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
