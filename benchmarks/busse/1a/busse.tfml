@@ -7,7 +7,7 @@
     <mesh name="Mesh">
       <source name="File">
         <file>
-          <string_value type="filename" lines="1">transfinite_box</string_value>
+          <string_value type="filename" lines="1">Busse_C1</string_value>
         </file>
         <cell>
           <string_value lines="1">tetrahedron</string_value>
@@ -102,7 +102,7 @@
           <system name="CourantNumber"/>
           <field name="CourantNumber"/>
           <requested_maximum_value>
-            <real_value rank="0">2.5</real_value>
+            <real_value rank="0">1.0</real_value>
           </requested_maximum_value>
         </constraint>
         <increase_tolerance>

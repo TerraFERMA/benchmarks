@@ -7,7 +7,7 @@
     <mesh name="Mesh">
       <source name="File">
         <file>
-          <string_value type="filename" lines="1">transfinite_box</string_value>
+          <string_value type="filename" lines="1">Busse_C1</string_value>
         </file>
         <cell>
           <string_value lines="1">tetrahedron</string_value>
@@ -17,7 +17,7 @@
     <mesh name="MeshInit">
       <source name="File">
         <file>
-          <string_value type="filename" lines="1">transfinite_box_td</string_value>
+          <string_value type="filename" lines="1">Busse_C1</string_value>
         </file>
         <cell>
           <string_value lines="1">tetrahedron</string_value>
