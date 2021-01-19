@@ -74,7 +74,10 @@
           </element>
           <initial_condition name="WholeMesh" type="initial_condition">
             <file>
-              <string_value lines="1">rbconvection_Stokes_0</string_value>
+              <string_value type="filename" lines="1">rbconvection_Stokes_0</string_value>
+              <fieldname>
+                <string_value lines="1">Velocity</string_value>
+              </fieldname>
             </file>
           </initial_condition>
         </rank>
@@ -99,7 +102,10 @@
           </element>
           <initial_condition name="WholeMesh" type="initial_condition">
             <file>
-              <string_value lines="1">rbconvection_Stokes_0</string_value>
+              <string_value type="filename" lines="1">rbconvection_Stokes_0</string_value>
+              <fieldname>
+                <string_value lines="1">Pressure</string_value>
+              </fieldname>
             </file>
           </initial_condition>
         </rank>
@@ -124,7 +130,10 @@
           </element>
           <initial_condition name="WholeMesh" type="initial_condition">
             <file>
-              <string_value lines="1">rbconvection_Stokes_0</string_value>
+              <string_value type="filename" lines="1">rbconvection_Stokes_0</string_value>
+              <fieldname>
+                <string_value lines="1">Temperature</string_value>
+              </fieldname>
             </file>
           </initial_condition>
         </rank>
