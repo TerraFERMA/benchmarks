@@ -26,7 +26,7 @@
         </parameter>
         <parameter name="Ra_b">
           <values>
-            <string_value lines="1">(9.e5 7.e5)</string_value>
+            <string_value lines="1">(216000 21600)</string_value>
           </values>
           <update>
             <string_value type="code" language="python3" lines="20">import libspud
@@ -39,22 +39,11 @@ libspud.set_option("/system::Stokes/coefficient::RayleighNumber/type/rank/value/
             <single_build/>
           </update>
         </parameter>
-        <parameter name="Di_b">
-          <values>
-            <string_value lines="1">(0.25 0.25)</string_value>
-          </values>
-          <update>
-            <string_value type="code" language="python3" lines="20">import libspud
-
-libspud.set_option("/system::Stokes/coefficient::DissipationNumber/type/rank/value/constant", float(Di_b.strip("()").split()[0]))</string_value>
-            <single_build/>
-          </update>
-        </parameter>
       </parameter_sweep>
       <dependencies>
         <simulation name="SteadyState">
           <input_file>
-            <string_value type="filename" lines="1">king.tfml</string_value>
+            <string_value type="filename" lines="1">blankenbach.tfml</string_value>
           </input_file>
           <run_when name="input_changed_or_output_missing"/>
           <number_processes>
@@ -70,19 +59,11 @@ libspud.set_option("/system::Stokes/coefficient::RayleighNumber/type/rank/value/
                 <single_build/>
               </update>
             </parameter>
-            <parameter name="Di_b">
-              <update>
-                <string_value type="code" language="python3" lines="20">import libspud
-
-libspud.set_option("/system::Stokes/coefficient::DissipationNumber/type/rank/value/constant", float(Di_b.strip("()").split()[1]))</string_value>
-                <single_build/>
-              </update>
-            </parameter>
           </parameter_sweep>
           <required_output>
             <filenames name="ics">
               <python>
-                <string_value type="code" language="python3" lines="20">systems = ["Stokes", "CourantNumber", "ViscousDissipation", "WorkDone"]
+                <string_value type="code" language="python3" lines="20">systems = ["Stokes", "Divergence", "CourantNumber", "TemperatureGradient"]
 ics  = ["rbconvection_{}_0.xdmf".format(system,) for system in systems]
 ics += ["rbconvection_{}_0.h5".format(system,) for system in systems]</string_value>
               </python>
@@ -96,30 +77,30 @@ ics += ["rbconvection_{}_0.h5".format(system,) for system in systems]</string_va
           <dependencies>
             <run name="Mesh">
               <input_file>
-                <string_value type="filename" lines="1">../../src/transfinite_square.geo</string_value>
+                <string_value type="filename" lines="1">../../src/transfinite_rectangle.geo</string_value>
               </input_file>
               <run_when name="input_changed_or_output_missing"/>
               <parameter_sweep>
                 <parameter name="ncells">
                   <update>
                     <string_value type="code" language="python3" lines="20">from string import Template as template
-input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.01'})</string_value>
+input_file = template(input_file).safe_substitute({'ncells':ncells, 'factor':'0.01', 'aspect':'1.5'})</string_value>
                   </update>
                 </parameter>
               </parameter_sweep>
               <required_output>
                 <filenames name="meshfiles">
                   <python>
-                    <string_value type="code" language="python3" lines="20">meshfiles = ["transfinite_square"+ext for ext in [".xdmf", ".h5", "_facet_ids.xdmf", "_facet_ids.h5", "_cell_ids.xdmf", "_cell_ids.h5"]]</string_value>
+                    <string_value type="code" language="python3" lines="20">meshfiles = ["transfinite_rectangle"+ext for ext in [".xdmf", ".h5", "_facet_ids.xdmf", "_facet_ids.h5", "_cell_ids.xdmf", "_cell_ids.h5"]]</string_value>
                   </python>
                 </filenames>
               </required_output>
               <commands>
                 <command name="GMsh">
-                  <string_value lines="1">gmsh -2 transfinite_square.geo</string_value>
+                  <string_value lines="1">gmsh -2 transfinite_rectangle.geo</string_value>
                 </command>
                 <command name="Convert">
-                  <string_value lines="1">tfgmsh2xdmf transfinite_square.msh</string_value>
+                  <string_value lines="1">tfgmsh2xdmf transfinite_rectangle.msh</string_value>
                 </command>
               </commands>
             </run>
@@ -149,19 +130,13 @@ change = max(steady["Stokes"]["Velocity"]["change(linf)"][:,-1].max(),
 time = steady["ElapsedTime"]["value"][-1]
 
 Ra = Ra_b.strip("()").split()[1]
-Di = Di_b.strip("()").split()[1]
 variables_ss = OrderedDict()
 variables_ss["Ra"]      = Ra
-variables_ss["Di"]      = Di
-variables_ss["Nu_top"]  = -stat["Stokes"]["TemperatureFullTopSurfaceIntegral"]["functional_value"][-1]
-variables_ss["Nu_bot"]  = -stat["Stokes"]["TemperatureFullBottomSurfaceIntegral"]["functional_value"][-1]
+variables_ss["Nu_top"]  = -stat["Stokes"]["TemperatureGradientTopSurfaceIntegral"]["functional_value"][-1]/stat["Stokes"]["TemperatureBottomSurfaceIntegral"]["functional_value"][-1]
 variables_ss["Vrms"]    = np.sqrt(stat["Stokes"]["VelocityL2NormSquared"]["functional_value"][-1])*float(Ra)
 variables_ss["Vtopinf"] = np.abs(det["Stokes"]["Velocity_0"]["Array"][:,-1]).max()*float(Ra)
 variables_ss["Vtopint"] = stat["Stokes"]["VelocityTopSurfaceIntegral"]["functional_value"][-1]*float(Ra)
 variables_ss["Tint"]    = stat["Stokes"]["TemperatureFullIntegral"]["functional_value"][-1]
-variables_ss["Phiint"]  = stat["ViscousDissipation"]["ViscousDissipationIntegral"]["functional_value"][-1]*float(Ra)*float(Di)
-variables_ss["Wint"]    = stat["WorkDone"]["WorkDoneIntegral"]["functional_value"][-1]*float(Ra)
-variables_ss["dPhiW"]   = abs(variables_ss["Phiint"]-variables_ss["Wint"])/variables_ss["Wint"]*100
 variables_ss["dNu"]     = abs(variables_ss["Nu_top"]-variables_ss["Nu_bot"])/variables_ss["Nu_bot"]*100
 variables_ss["Vtopmax"] = det["Stokes"]["Velocity_0"]["Array"][:,-1].max()*float(Ra)
 variables_ss["Vtopmin"] = det["Stokes"]["Velocity_0"]["Array"][:,-1].min()*float(Ra)
@@ -204,8 +179,7 @@ err.close()</string_value>
 
 currentfinishtime = libspud.get_option("/timestepping/finish_time")
 libspud.set_option("/timestepping/finish_time", currentfinishtime+float(finishtime))
-libspud.set_option("/timestepping/steady_state/tolerance", 1.e-50)
-</string_value>
+libspud.set_option("/timestepping/steady_state/tolerance", 1.e-50)</string_value>
           </update>
         </parameter>
       </checkpoint>
@@ -234,19 +208,13 @@ change = max(steady["Stokes"]["Velocity"]["change(linf)"][:,-1].max(),
 time = steady["ElapsedTime"]["value"][-1]
 
 Ra = Ra_b.strip("()").split()[0]
-Di = Di_b.strip("()").split()[0]
 variables = OrderedDict()
 variables["Ra"]      = Ra
-variables["Di"]      = Di
-variables["Nu_top"]  = -stat["Stokes"]["TemperatureFullTopSurfaceIntegral"]["functional_value"][-1]
-variables["Nu_bot"]  = -stat["Stokes"]["TemperatureFullBottomSurfaceIntegral"]["functional_value"][-1]
+variables["Nu_top"]  = -stat["Stokes"]["TemperatureGradientTopSurfaceIntegral"]["functional_value"][-1]/stat["Stokes"]["TemperatureBottomSurfaceIntegral"]["functional_value"][-1]
 variables["Vrms"]    = np.sqrt(stat["Stokes"]["VelocityL2NormSquared"]["functional_value"][-1])*float(Ra)
 variables["Vtopinf"] = np.abs(det["Stokes"]["Velocity_0"]["Array"][:,-1]).max()*float(Ra)
 variables["Vtopint"] = stat["Stokes"]["VelocityTopSurfaceIntegral"]["functional_value"][-1]*float(Ra)
 variables["Tint"]    = stat["Stokes"]["TemperatureFullIntegral"]["functional_value"][-1]
-variables["Phiint"]  = stat["ViscousDissipation"]["ViscousDissipationIntegral"]["functional_value"][-1]*float(Ra)*float(Di)
-variables["Wint"]    = stat["WorkDone"]["WorkDoneIntegral"]["functional_value"][-1]*float(Ra)
-variables["dPhiW"]   = abs(variables["Phiint"]-variables["Wint"])/variables["Wint"]*100
 variables["dNu"]     = abs(variables["Nu_top"]-variables["Nu_bot"])/variables["Nu_bot"]*100
 variables["Vtopmax"] = det["Stokes"]["Velocity_0"]["Array"][:,-1].max()*float(Ra)
 variables["Vtopmin"] = det["Stokes"]["Velocity_0"]["Array"][:,-1].min()*float(Ra)
@@ -316,7 +284,7 @@ for values in paramvals:
   label = "\t".join(["{}".format(v) for i,v in enumerate(values) if len(variables_ss.parameters[params[i]])&gt;1])
   key = {params[i]:v for i,v in enumerate(values)}
   variable = variables_ss[key]
-  vstring = "{}\t"*2+"{:.4f}\t"*(len(variable.keys())-4)+"{}\t"*2
+  vstring = "{}\t"+"{:.4f}\t"*(len(variable.keys())-4)+"{}\t"*2
   print(vstring.format(*[v for v in variable.values()]))</string_value>
     </test>
     <test name="errors">
@@ -355,7 +323,7 @@ for values in paramvals:
   label = "\t".join(["{}".format(v) for i,v in enumerate(values) if len(variables.parameters[params[i]])&gt;1])
   key = {params[i]:v for i,v in enumerate(values)}
   variable = variables[key]
-  vstring = "{}\t"*2+"{:.4f}\t"*(len(variable.keys())-4)+"{}\t"*2
+  vstring = "{}\t"+"{:.4f}\t"*(len(variable.keys())-4)+"{}\t"*2
   print(vstring.format(*[v for v in variable.values()]))</string_value>
     </test>
   </tests>

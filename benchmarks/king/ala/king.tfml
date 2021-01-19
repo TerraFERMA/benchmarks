@@ -96,10 +96,7 @@
   </timestepping>
   <global_parameters>
     <ufl>
-      <string_value type="code" language="python3" lines="20">theta = 1.0
-theta_v = 1.0
-
-dim = us_e.cell().geometric_dimension()
+      <string_value type="code" language="python3" lines="20">dim = us_e.cell().geometric_dimension()
 
 depth = 1.0 - SpatialCoordinate(us_e.cell())[1]
 
@@ -454,6 +451,36 @@ range = 1.0 - TSurf*std::exp(Di) + TSurf;</string_value>
           <value name="WholeMesh" type="value">
             <constant>
               <real_value rank="0">0.091</real_value>
+            </constant>
+          </value>
+        </rank>
+      </type>
+      <diagnostics/>
+    </coefficient>
+    <coefficient name="Theta">
+      <ufl_symbol name="global">
+        <string_value lines="1">theta</string_value>
+      </ufl_symbol>
+      <type name="Constant">
+        <rank name="Scalar" rank="0">
+          <value name="WholeMesh" type="value">
+            <constant>
+              <real_value rank="0">1.0</real_value>
+            </constant>
+          </value>
+        </rank>
+      </type>
+      <diagnostics/>
+    </coefficient>
+    <coefficient name="ThetaVelocity">
+      <ufl_symbol name="global">
+        <string_value lines="1">theta_v</string_value>
+      </ufl_symbol>
+      <type name="Constant">
+        <rank name="Scalar" rank="0">
+          <value name="WholeMesh" type="value">
+            <constant>
+              <real_value rank="0">1.0</real_value>
             </constant>
           </value>
         </rank>
