@@ -83,7 +83,7 @@
           </element>
           <initial_condition name="WholeMesh" type="initial_condition">
             <file>
-              <string_value lines="1">rbconvection_StokesProject_0.xml</string_value>
+              <string_value lines="1">rbconvection_StokesProject_0</string_value>
             </file>
           </initial_condition>
           <boundary_condition name="LeftRightX">
@@ -157,7 +157,7 @@
           </element>
           <initial_condition name="WholeMesh" type="initial_condition">
             <file>
-              <string_value lines="1">rbconvection_StokesProject_0.xml</string_value>
+              <string_value lines="1">rbconvection_StokesProject_0</string_value>
             </file>
           </initial_condition>
         </rank>
@@ -188,7 +188,7 @@
           </element>
           <initial_condition name="WholeMesh" type="initial_condition">
             <file>
-              <string_value lines="1">rbconvection_StokesProject_0.xml</string_value>
+              <string_value lines="1">rbconvection_StokesProject_0</string_value>
             </file>
           </initial_condition>
           <boundary_condition name="Top">
