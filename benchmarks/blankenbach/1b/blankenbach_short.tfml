@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <terraferma_options>
   <geometry>
     <dimension>
@@ -7,7 +7,7 @@
     <mesh name="Mesh">
       <source name="File">
         <file>
-          <string_value lines="1" type="filename">transfinite_square</string_value>
+          <string_value type="filename" lines="1">transfinite_square</string_value>
         </file>
         <cell>
           <string_value lines="1">triangle</string_value>
@@ -17,7 +17,7 @@
     <mesh name="MeshInit">
       <source name="File">
         <file>
-          <string_value lines="1" type="filename">transfinite_square_td</string_value>
+          <string_value type="filename" lines="1">transfinite_square_td</string_value>
           <comment>mesh for time-dependent initial file</comment>
         </file>
         <cell>
@@ -47,36 +47,34 @@
     </dump_periods>
     <detectors>
       <point name="TopLeft">
-        <real_value shape="2" dim1="dim" rank="1">0.0 1.0</real_value>
+        <real_value rank="1" dim1="dim" shape="2">0.0 1.0</real_value>
       </point>
       <point name="TopRight">
-        <real_value shape="2" dim1="dim" rank="1">1.0 1.0</real_value>
+        <real_value rank="1" dim1="dim" shape="2">1.0 1.0</real_value>
       </point>
       <point name="BottomLeft">
-        <real_value shape="2" dim1="dim" rank="1">0.0 0.0</real_value>
+        <real_value rank="1" dim1="dim" shape="2">0.0 0.0</real_value>
       </point>
       <point name="BottomRight">
-        <real_value shape="2" dim1="dim" rank="1">1.0 0.0</real_value>
+        <real_value rank="1" dim1="dim" shape="2">1.0 0.0</real_value>
       </point>
       <array name="Array">
         <python>
-          <string_value lines="20" type="code" language="python3">def val():
+          <string_value type="code" language="python3" lines="20">def val():
   from numpy import arange
   loc = [[0.5, y] for y in arange(0.0,1.0+1./1000.,1./1000.)]
-  return loc
-</string_value>
+  return loc</string_value>
         </python>
       </array>
     </detectors>
   </io>
   <global_parameters>
     <ufl>
-      <string_value lines="20" type="code" language="python3"># Constant viscosity
+      <string_value type="code" language="python3" lines="20"># Constant viscosity
 eta = 1.
 
 #Inverse Ra number 
-recRa = 1./Ra
-</string_value>
+recRa = 1./Ra</string_value>
     </ufl>
   </global_parameters>
   <system name="Init">
@@ -98,9 +96,12 @@ recRa = 1./Ra
               <integer_value rank="0">2</integer_value>
             </degree>
           </element>
-          <initial_condition type="initial_condition" name="WholeMesh">
+          <initial_condition name="WholeMesh" type="initial_condition">
             <file>
-              <string_value lines="1">rbconvection_Stokes_0.xml</string_value>
+              <string_value type="filename" lines="1">rbconvection_Stokes_0</string_value>
+              <fieldname>
+                <string_value lines="1">Velocity</string_value>
+              </fieldname>
             </file>
           </initial_condition>
         </rank>
@@ -123,9 +124,12 @@ recRa = 1./Ra
               <integer_value rank="0">1</integer_value>
             </degree>
           </element>
-          <initial_condition type="initial_condition" name="WholeMesh">
+          <initial_condition name="WholeMesh" type="initial_condition">
             <file>
-              <string_value lines="1">rbconvection_Stokes_0.xml</string_value>
+              <string_value type="filename" lines="1">rbconvection_Stokes_0</string_value>
+              <fieldname>
+                <string_value lines="1">Pressure</string_value>
+              </fieldname>
             </file>
           </initial_condition>
         </rank>
@@ -148,9 +152,12 @@ recRa = 1./Ra
               <integer_value rank="0">2</integer_value>
             </degree>
           </element>
-          <initial_condition type="initial_condition" name="WholeMesh">
+          <initial_condition name="WholeMesh" type="initial_condition">
             <file>
-              <string_value lines="1">rbconvection_Stokes_0.xml</string_value>
+              <string_value type="filename" lines="1">rbconvection_Stokes_0</string_value>
+              <fieldname>
+                <string_value lines="1">Temperature</string_value>
+              </fieldname>
             </file>
           </initial_condition>
         </rank>
@@ -162,15 +169,13 @@ recRa = 1./Ra
     <nonlinear_solver name="Project">
       <type name="SNES">
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python3">F = inner(ui_t,(ui_i - ui_n))*dx
-</string_value>
+          <string_value type="code" language="python3" lines="20">F = inner(ui_t,(ui_i - ui_n))*dx</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">F</string_value>
           </ufl_symbol>
         </form>
         <form name="Jacobian" rank="1">
-          <string_value lines="20" type="code" language="python3">J = derivative(F, ui_i, ui_a)
-</string_value>
+          <string_value type="code" language="python3" lines="20">J = derivative(F, ui_i, ui_a)</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">J</string_value>
           </ufl_symbol>
@@ -224,35 +229,35 @@ Here I'll just do a simple projection</comment>
               <integer_value rank="0">2</integer_value>
             </degree>
           </element>
-          <initial_condition type="initial_condition" name="WholeMesh">
+          <initial_condition name="WholeMesh" type="initial_condition">
             <cpp rank="1">
               <members>
-                <string_value lines="20" type="code" language="cpp">GenericFunction_ptr Tinit_ptr;
+                <string_value type="code" language="cpp" lines="20">GenericFunction_ptr Tinit_ptr;
 GenericFunction_ptr vinit_ptr;
 GenericFunction_ptr pinit_ptr;</string_value>
               </members>
               <initialization>
-                <string_value lines="20" type="code" language="cpp">// get pointers to the initial Temperature, velocity and pressure
+                <string_value type="code" language="cpp" lines="20">// get pointers to the initial Temperature, velocity and pressure
 
 Tinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("TemperatureInit")-&gt;genericfunction_ptr(time());
 vinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("VelocityInit")-&gt;genericfunction_ptr(time());
 pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&gt;genericfunction_ptr(time());</string_value>
               </initialization>
               <eval>
-                <string_value lines="20" type="code" language="cpp">printf("x,y=(%g,%g)\n",x[0],x[1]);
+                <string_value type="code" language="cpp" lines="20">printf("x,y=(%g,%g)\n",x[0],x[1]);
 vinit_ptr-&gt;eval(values,x,cell);</string_value>
               </eval>
             </cpp>
           </initial_condition>
           <boundary_condition name="LeftX">
             <boundary_ids>
-              <integer_value shape="1" rank="1">1</integer_value>
+              <integer_value rank="1" shape="1">1</integer_value>
             </boundary_ids>
             <sub_components name="X">
               <components>
-                <integer_value shape="1" rank="1">0</integer_value>
+                <integer_value rank="1" shape="1">0</integer_value>
               </components>
-              <type type="boundary_condition" name="Dirichlet">
+              <type name="Dirichlet" type="boundary_condition">
                 <constant>
                   <real_value rank="0">0</real_value>
                 </constant>
@@ -261,13 +266,13 @@ vinit_ptr-&gt;eval(values,x,cell);</string_value>
           </boundary_condition>
           <boundary_condition name="RightX">
             <boundary_ids>
-              <integer_value shape="1" rank="1">2</integer_value>
+              <integer_value rank="1" shape="1">2</integer_value>
             </boundary_ids>
             <sub_components name="X">
               <components>
-                <integer_value shape="1" rank="1">0</integer_value>
+                <integer_value rank="1" shape="1">0</integer_value>
               </components>
-              <type type="boundary_condition" name="Dirichlet">
+              <type name="Dirichlet" type="boundary_condition">
                 <constant>
                   <real_value rank="0">0</real_value>
                 </constant>
@@ -276,13 +281,13 @@ vinit_ptr-&gt;eval(values,x,cell);</string_value>
           </boundary_condition>
           <boundary_condition name="BottomY">
             <boundary_ids>
-              <integer_value shape="1" rank="1">3</integer_value>
+              <integer_value rank="1" shape="1">3</integer_value>
             </boundary_ids>
             <sub_components name="Y">
               <components>
-                <integer_value shape="1" rank="1">1</integer_value>
+                <integer_value rank="1" shape="1">1</integer_value>
               </components>
-              <type type="boundary_condition" name="Dirichlet">
+              <type name="Dirichlet" type="boundary_condition">
                 <constant>
                   <real_value rank="0">0</real_value>
                 </constant>
@@ -291,13 +296,13 @@ vinit_ptr-&gt;eval(values,x,cell);</string_value>
           </boundary_condition>
           <boundary_condition name="TopY">
             <boundary_ids>
-              <integer_value shape="1" rank="1">4</integer_value>
+              <integer_value rank="1" shape="1">4</integer_value>
             </boundary_ids>
             <sub_components name="Y">
               <components>
-                <integer_value shape="1" rank="1">1</integer_value>
+                <integer_value rank="1" shape="1">1</integer_value>
               </components>
-              <type type="boundary_condition" name="Dirichlet">
+              <type name="Dirichlet" type="boundary_condition">
                 <constant>
                   <real_value rank="0">0</real_value>
                 </constant>
@@ -331,28 +336,28 @@ vinit_ptr-&gt;eval(values,x,cell);</string_value>
               <integer_value rank="0">1</integer_value>
             </degree>
           </element>
-          <initial_condition type="initial_condition" name="WholeMesh">
+          <initial_condition name="WholeMesh" type="initial_condition">
             <cpp rank="0">
               <members>
-                <string_value lines="20" type="code" language="cpp">GenericFunction_ptr Tinit_ptr;
+                <string_value type="code" language="cpp" lines="20">GenericFunction_ptr Tinit_ptr;
 GenericFunction_ptr vinit_ptr;
 GenericFunction_ptr pinit_ptr;</string_value>
               </members>
               <initialization>
-                <string_value lines="20" type="code" language="cpp">// get pointers to the initial Temperature, velocity and pressure
+                <string_value type="code" language="cpp" lines="20">// get pointers to the initial Temperature, velocity and pressure
 
 Tinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("TemperatureInit")-&gt;genericfunction_ptr(time());
 vinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("VelocityInit")-&gt;genericfunction_ptr(time());
 pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&gt;genericfunction_ptr(time());</string_value>
               </initialization>
               <eval>
-                <string_value lines="20" type="code" language="cpp">pinit_ptr-&gt;eval(values,x,cell);</string_value>
+                <string_value type="code" language="cpp" lines="20">pinit_ptr-&gt;eval(values,x,cell);</string_value>
               </eval>
             </cpp>
           </initial_condition>
           <reference_point name="Point">
             <coordinates>
-              <real_value shape="2" dim1="dim" rank="1">0.5 0.5</real_value>
+              <real_value rank="1" dim1="dim" shape="2">0.5 0.5</real_value>
             </coordinates>
           </reference_point>
         </rank>
@@ -381,31 +386,31 @@ pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&g
               <integer_value rank="0">2</integer_value>
             </degree>
           </element>
-          <initial_condition type="initial_condition" name="WholeMesh">
+          <initial_condition name="WholeMesh" type="initial_condition">
             <cpp rank="0">
               <members>
-                <string_value lines="20" type="code" language="cpp">GenericFunction_ptr Tinit_ptr;
+                <string_value type="code" language="cpp" lines="20">GenericFunction_ptr Tinit_ptr;
 GenericFunction_ptr vinit_ptr;
 GenericFunction_ptr pinit_ptr;</string_value>
               </members>
               <initialization>
-                <string_value lines="20" type="code" language="cpp">// get pointers to the initial Temperature, velocity and pressure
+                <string_value type="code" language="cpp" lines="20">// get pointers to the initial Temperature, velocity and pressure
 
 Tinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("TemperatureInit")-&gt;genericfunction_ptr(time());
 vinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("VelocityInit")-&gt;genericfunction_ptr(time());
 pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&gt;genericfunction_ptr(time());</string_value>
               </initialization>
               <eval>
-                <string_value lines="20" type="code" language="cpp">Tinit_ptr-&gt;eval(values,x,cell);</string_value>
+                <string_value type="code" language="cpp" lines="20">Tinit_ptr-&gt;eval(values,x,cell);</string_value>
               </eval>
             </cpp>
           </initial_condition>
           <boundary_condition name="Top">
             <boundary_ids>
-              <integer_value shape="1" rank="1">4</integer_value>
+              <integer_value rank="1" shape="1">4</integer_value>
             </boundary_ids>
             <sub_components name="All">
-              <type type="boundary_condition" name="Dirichlet">
+              <type name="Dirichlet" type="boundary_condition">
                 <constant>
                   <real_value rank="0">0.0</real_value>
                 </constant>
@@ -414,10 +419,10 @@ pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&g
           </boundary_condition>
           <boundary_condition name="Bottom">
             <boundary_ids>
-              <integer_value shape="1" rank="1">3</integer_value>
+              <integer_value rank="1" shape="1">3</integer_value>
             </boundary_ids>
             <sub_components name="All">
-              <type type="boundary_condition" name="Dirichlet">
+              <type name="Dirichlet" type="boundary_condition">
                 <constant>
                   <real_value rank="0">1.0</real_value>
                 </constant>
@@ -443,7 +448,7 @@ pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&g
       </ufl_symbol>
       <type name="Constant">
         <rank name="Scalar" rank="0">
-          <value type="value" name="WholeMesh">
+          <value name="WholeMesh" type="value">
             <constant>
               <real_value rank="0">1.e5</real_value>
             </constant>
@@ -455,20 +460,18 @@ pinit_ptr = bucket()-&gt;fetch_system("Init")-&gt;fetch_field("PressureInit")-&g
     <nonlinear_solver name="Newton">
       <type name="SNES">
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python3">rT = (T_t*inner(v_i, grad(T_i)) + recRa*inner(grad(T_t), grad(T_i)))*dx
+          <string_value type="code" language="python3" lines="20">rT = (T_t*inner(v_i, grad(T_i)) + recRa*inner(grad(T_t), grad(T_i)))*dx
 rv = (inner(sym(grad(v_t)), 2.*eta*sym(grad(v_i))) - div(v_t)*p_i - T_i*v_t[1])*dx
 rp = p_t*div(v_i)*dx
 
 
-r = rT + rv + rp
-</string_value>
+r = rT + rv + rp</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">r</string_value>
           </ufl_symbol>
         </form>
         <form name="Jacobian" rank="1">
-          <string_value lines="20" type="code" language="python3">a = derivative(r, us_i, us_a)
-</string_value>
+          <string_value type="code" language="python3" lines="20">a = derivative(r, us_i, us_a)</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
@@ -538,8 +541,7 @@ r = rT + rv + rp
       <solve name="in_timeloop"/>
     </nonlinear_solver>
     <functional name="VelocityL2NormSquared">
-      <string_value lines="20" type="code" language="python3">int = inner(v,v)*dx
-</string_value>
+      <string_value type="code" language="python3" lines="20">int = inner(v,v)*dx</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
@@ -548,8 +550,7 @@ r = rT + rv + rp
       <include_in_statistics/>
     </functional>
     <functional name="PressureIntegral">
-      <string_value lines="20" type="code" language="python3">int = p*dx
-</string_value>
+      <string_value type="code" language="python3" lines="20">int = p*dx</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
@@ -558,8 +559,7 @@ r = rT + rv + rp
       <include_in_statistics/>
     </functional>
     <functional name="TemperatureTopSurfaceIntegral">
-      <string_value lines="20" type="code" language="python3">int = T.dx(1)*ds(4)
-</string_value>
+      <string_value type="code" language="python3" lines="20">int = T.dx(1)*ds(4)</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
@@ -568,8 +568,7 @@ r = rT + rv + rp
       <include_in_statistics/>
     </functional>
     <functional name="TemperatureBottomSurfaceIntegral">
-      <string_value lines="20" type="code" language="python3">int = T.dx(1)*ds(3)
-</string_value>
+      <string_value type="code" language="python3" lines="20">int = T.dx(1)*ds(3)</string_value>
       <ufl_symbol name="functional">
         <string_value lines="1">int</string_value>
       </ufl_symbol>
@@ -597,7 +596,7 @@ r = rT + rv + rp
               <integer_value rank="0">1</integer_value>
             </degree>
           </element>
-          <initial_condition type="initial_condition" name="WholeMesh">
+          <initial_condition name="WholeMesh" type="initial_condition">
             <constant>
               <real_value rank="0">0.0</real_value>
             </constant>
@@ -612,26 +611,22 @@ r = rT + rv + rp
     <nonlinear_solver name="Solver">
       <type name="Picard">
         <preamble>
-          <string_value lines="20" type="code" language="python3">r = (d_t*d_a - d_t*div(v_i))*dx
-</string_value>
+          <string_value type="code" language="python3" lines="20">r = (d_t*d_a - d_t*div(v_i))*dx</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
-          <string_value lines="20" type="code" language="python3">a = lhs(r)
-</string_value>
+          <string_value type="code" language="python3" lines="20">a = lhs(r)</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
-          <string_value lines="20" type="code" language="python3">L = rhs(r)
-</string_value>
+          <string_value type="code" language="python3" lines="20">L = rhs(r)</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python3">res = action(a, ud_i) - L
-</string_value>
+          <string_value type="code" language="python3" lines="20">res = action(a, ud_i) - L</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
@@ -688,7 +683,7 @@ r = rT + rv + rp
               <integer_value rank="0">1</integer_value>
             </degree>
           </element>
-          <initial_condition type="initial_condition" name="WholeMesh">
+          <initial_condition name="WholeMesh" type="initial_condition">
             <constant>
               <real_value rank="0">0.0</real_value>
             </constant>
@@ -704,26 +699,22 @@ r = rT + rv + rp
     <nonlinear_solver name="Solver">
       <type name="Picard">
         <preamble>
-          <string_value lines="20" type="code" language="python3">r = q_t*q_a*dx - q_t*T_i.dx(1)*dx
-</string_value>
+          <string_value type="code" language="python3" lines="20">r = q_t*q_a*dx - q_t*T_i.dx(1)*dx</string_value>
         </preamble>
         <form name="Bilinear" rank="1">
-          <string_value lines="20" type="code" language="python3">a = lhs(r)
-</string_value>
+          <string_value type="code" language="python3" lines="20">a = lhs(r)</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">a</string_value>
           </ufl_symbol>
         </form>
         <form name="Linear" rank="0">
-          <string_value lines="20" type="code" language="python3">L = rhs(r)
-</string_value>
+          <string_value type="code" language="python3" lines="20">L = rhs(r)</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">L</string_value>
           </ufl_symbol>
         </form>
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python3">res = action(a, uq_i) - L
-</string_value>
+          <string_value type="code" language="python3" lines="20">res = action(a, uq_i) - L</string_value>
           <ufl_symbol name="solver">
             <string_value lines="1">res</string_value>
           </ufl_symbol>
