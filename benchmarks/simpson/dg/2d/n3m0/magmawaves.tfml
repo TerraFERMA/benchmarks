@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <terraferma_options>
   <geometry>
     <dimension>
@@ -408,8 +408,8 @@ values[0] = (v_max*bucket()-&gt;timestep())/2/dcell.circumradius();</string_valu
     <nonlinear_solver name="Solver">
       <type name="SNES">
         <form name="Residual" rank="0">
-          <string_value lines="20" type="code" language="python3">#facet normal on pressure
-pn = FacetNormal(p.cell())
+          <string_value type="code" language="python3" lines="20">#facet normal on pressure
+pn = FacetNormal(p_e.cell())
 
 # body integral for pressure
 bcp = inner(grad(p_t), K*grad(p_i)) + p_t*p_i*Xi_i + inner(grad(p_t),K*gradP_forced)
@@ -421,7 +421,7 @@ scpbot   = -p_t*inner(K*gradP_forced, pn)
 rp = bcp*dx + scptop*ds_top + scpbot*ds_bottom
 
 #facet normal for porosity
-fn = FacetNormal(f.cell())
+fn = FacetNormal(f_e.cell())
 # facet normal solid velocity
 vn = dot(W, fn)
 vnabs = 0.5*(vn + abs(vn))

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <harness_options>
   <length>
     <string_value lines="1">long</string_value>
@@ -95,8 +95,8 @@ lastfile_errors = lastfile.replace(".tfml","_errors.pkl")
 if os.path.isfile(lastfile_errors):
   last_errors = pickle.load( open(lastfile_errors,"rb"))
 else:
-  last_errors = tf.geterrors(lastfile)
-  pickle.dump(last_errors, open(lastfile_errors,"wb"))
+last_errors = tf.geterrors(lastfile)
+pickle.dump(last_errors, open(lastfile_errors,"wb"))
   
 errors = last_errors
 </string_value>
@@ -147,7 +147,6 @@ for n in ncells:
   index = relerrors[:,0] == h
   rn = relerrors[index]
   pl.loglog(rn[:,1],rn[:,2],'o-',label="h={0}".format(h))
-  pl.hold(True)
   # and calculate best fit slopes on a log-log plot
   p = np.polyfit(np.log(rn[:,1]),np.log(rn[:,2]),1)
   ph_shape.append(p[0])
@@ -169,7 +168,6 @@ for n in ncells:
   index = relerrors[:,0] == h
   rn = relerrors[index]
   pl.loglog(rn[:,1],abs(rn[:,3]),'o-',label="h={0}".format(h))
-  pl.hold(True)
   # and calculate best fit slopes on a log-log plot
   p = np.polyfit(np.log(rn[:,1]),np.log(abs(rn[:,3])),1)
   ph_velocity.append(p[0])
@@ -229,7 +227,6 @@ for cfl  in cfl_delta:
   index = relerrors[:,1] == float(cfl)
   rn = relerrors[index]
   pl.loglog(rn[:,0],rn[:,2],'o-',label="$cfl_\delta=${0}".format(cfl))
-  pl.hold(True)
   # and calculate best fit slopes on a log-log plot
   p = np.polyfit(np.log(rn[:,0]),np.log(rn[:,2]),1)
   ph_shape.append(p[0])
@@ -250,7 +247,6 @@ for cfl in cfl_delta:
   index = relerrors[:,1] == float(cfl)
   rn = relerrors[index]
   pl.loglog(rn[:,0],abs(rn[:,3]),'o-',label="$cfl_\delta=${0}".format(cfl))
-  pl.hold(True)
   # and calculate best fit slopes on a log-log plot
   p = np.polyfit(np.log(rn[:,0]),np.log(abs(rn[:,3])),1)
   ph_velocity.append(p[0])
@@ -308,7 +304,7 @@ for line in table0:
   print(line[0:-1])
 
 filename = "table0.tex"
-filehandle = file(filename, 'w')
+filehandle = open(filename, 'w')
 filehandle.writelines(table0)
 filehandle.close()
 </string_value>
