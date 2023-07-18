@@ -147,7 +147,6 @@ for n in ncells:
   index = relerrors[:,0] == h
   rn = relerrors[index]
   pl.loglog(rn[:,1],rn[:,2],'o-',label="h={0}".format(h))
-  pl.hold(True)
   # and calculate best fit slopes on a log-log plot
   p = np.polyfit(np.log(rn[:,1]),np.log(rn[:,2]),1)
   ph_shape.append(p[0])
@@ -169,7 +168,6 @@ for n in ncells:
   index = relerrors[:,0] == h
   rn = relerrors[index]
   pl.loglog(rn[:,1],abs(rn[:,3]),'o-',label="h={0}".format(h))
-  pl.hold(True)
   # and calculate best fit slopes on a log-log plot
   p = np.polyfit(np.log(rn[:,1]),np.log(abs(rn[:,3])),1)
   ph_velocity.append(p[0])

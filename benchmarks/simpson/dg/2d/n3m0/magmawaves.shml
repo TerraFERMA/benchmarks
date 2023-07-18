@@ -95,8 +95,8 @@ lastfile_errors = lastfile.replace(".tfml","_errors.pkl")
 if os.path.isfile(lastfile_errors):
   last_errors = pickle.load( open(lastfile_errors,"rb"))
 else:
-last_errors = tf.geterrors(lastfile)
-pickle.dump(last_errors, open(lastfile_errors,"wb"))
+  last_errors = tf.geterrors(lastfile)
+  pickle.dump(last_errors, open(lastfile_errors,"wb"))
   
 errors = last_errors
 </string_value>
